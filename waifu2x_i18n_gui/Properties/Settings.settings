@@ -1,0 +1,27 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="waifu2x_ncnn_vulkan_gui.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="scale_ratio" Type="System.String" Scope="User">
+      <Value Profile="(Default)">2</Value>
+    </Setting>
+    <Setting Name="noise_level" Type="System.String" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="block_size" Type="System.String" Scope="User">
+      <Value Profile="(Default)">128</Value>
+    </Setting>
+    <Setting Name="mode" Type="System.String" Scope="User">
+      <Value Profile="(Default)">scale</Value>
+    </Setting>
+    <Setting Name="SoundBeep" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="output_dir" Type="System.String" Scope="User">
+      <Value Profile="(Default)">null</Value>
+    </Setting>
+    <Setting Name="store_output_dir" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
