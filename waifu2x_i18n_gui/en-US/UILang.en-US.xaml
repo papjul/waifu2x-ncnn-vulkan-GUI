@@ -30,6 +30,7 @@
     <sys:String x:Key="Main_Mode_Denoise_1">Level 1</sys:String>
     <sys:String x:Key="Main_Mode_Denoise_2">Level 2</sys:String>
     <sys:String x:Key="Main_Mode_Denoise_3">Level 3</sys:String>
+    <sys:String x:Key="Main_Device_Block">Block Size</sys:String>
     <!-- Tabs -->
     <sys:String x:Key="MainTab_Preferences">Preferences</sys:String>
     <!-- Tab:Preferences -->

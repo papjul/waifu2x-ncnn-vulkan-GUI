@@ -79,16 +79,14 @@
                                 <RadioButton Tag="3" Name="btnDenoise3" Margin="2" Content="{DynamicResource ResourceKey=Main_Mode_Denoise_3}" Checked="OnDenoiseChecked"></RadioButton>
                             </StackPanel>
                         </GroupBox>
-                        <!--
                         <GroupBox Name="gpBlock" Header="{DynamicResource ResourceKey=Main_Device_Block}" Padding="3" Margin="3">
                             <StackPanel Orientation="Vertical" Margin="3">
-                                <RadioButton Tag="-l 32" Name="btn32" Margin="2" Checked="OnBlockChecked">32</RadioButton>
-                                <RadioButton Tag="-l 64" Name="btn64" Margin="2" Checked="OnBlockChecked">64</RadioButton>
-                                <RadioButton Tag="-l 128" Name="btn128" Margin="2" Checked="OnBlockChecked">128</RadioButton>
-                                <RadioButton Tag="-l 256" Name="btn256" Margin="2" Checked="OnBlockChecked">256</RadioButton>
+                                <RadioButton Tag="100" Name="btn100" Margin="2" Checked="OnBlockChecked">100</RadioButton>
+                                <RadioButton Tag="200" Name="btn200" Margin="2" Checked="OnBlockChecked">200</RadioButton>
+                                <RadioButton Tag="300" Name="btn300" Margin="2" Checked="OnBlockChecked">300</RadioButton>
+                                <RadioButton Tag="400" Name="btn400" Margin="2" Checked="OnBlockChecked">400</RadioButton>
                             </StackPanel>
                         </GroupBox>
-                        -->
                     </StackPanel>
                 </StackPanel>
             </TabItem>

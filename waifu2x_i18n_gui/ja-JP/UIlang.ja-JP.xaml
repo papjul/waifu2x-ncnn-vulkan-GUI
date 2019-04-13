@@ -30,6 +30,7 @@
     <sys:String x:Key="Main_Mode_Denoise_1">レベル1</sys:String>
     <sys:String x:Key="Main_Mode_Denoise_2">レベル2</sys:String>
     <sys:String x:Key="Main_Mode_Denoise_3">レベル3</sys:String>
+    <sys:String x:Key="Main_Device_Block">分割サイズ</sys:String>
     <!-- Tabs -->
     <sys:String x:Key="MainTab_Preferences">動作設定</sys:String>
     <!-- Tab:Preferences -->

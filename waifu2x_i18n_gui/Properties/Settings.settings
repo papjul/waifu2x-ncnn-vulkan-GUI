@@ -9,7 +9,7 @@
       <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="block_size" Type="System.String" Scope="User">
-      <Value Profile="(Default)">128</Value>
+      <Value Profile="(Default)">200</Value>
     </Setting>
     <Setting Name="mode" Type="System.String" Scope="User">
       <Value Profile="(Default)">scale</Value>

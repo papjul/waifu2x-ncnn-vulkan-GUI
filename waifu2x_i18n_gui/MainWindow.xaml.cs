@@ -60,18 +60,16 @@ namespace waifu2x_ncnn_vulkan_gui
             if (Properties.Settings.Default.output_dir != "null")
             { txtDstPath.Text = Properties.Settings.Default.output_dir; }
 
-            /*
-            if (Properties.Settings.Default.block_size == "256")
-            { btn256.IsChecked = true; }
-            if (Properties.Settings.Default.block_size == "128")
-            { btn128.IsChecked = true; }
-            if (Properties.Settings.Default.block_size == "64")
-            { btn64.IsChecked = true; }
-            if (Properties.Settings.Default.block_size == "32")
-            { btn32.IsChecked = true; }
+            btn200.IsChecked = true;
 
-            btnBatch16.IsChecked = true;
-            */
+            if (Properties.Settings.Default.block_size == "400")
+            { btn400.IsChecked = true; }
+            if (Properties.Settings.Default.block_size == "300")
+            { btn300.IsChecked = true; }
+            if (Properties.Settings.Default.block_size == "200")
+            { btn200.IsChecked = true; }
+            if (Properties.Settings.Default.block_size == "100")
+            { btn100.IsChecked = true; }
 
             //btnCUDA.IsChecked = true;
             btnDenoise0.IsChecked = true;
@@ -109,7 +107,7 @@ namespace waifu2x_ncnn_vulkan_gui
         public static StringBuilder param_mag = new StringBuilder("2");
         public static StringBuilder param_denoise = new StringBuilder("");
         public static StringBuilder param_denoise2 = new StringBuilder("");
-        // public static StringBuilder param_block = new StringBuilder("-l 128");
+        public static StringBuilder param_block = new StringBuilder("400");
         public static StringBuilder param_mode = new StringBuilder("noise_scale");
 
         public static bool EventHandler_Flag = false;
@@ -149,7 +147,7 @@ namespace waifu2x_ncnn_vulkan_gui
             // Properties.Settings.Default.Device_ID = txtDevice.Text;
 
 
-            // Properties.Settings.Default.block_size = param_block.ToString().Replace("-l ", "");
+            Properties.Settings.Default.block_size = param_block.ToString();
             
             // Properties.Settings.Default.mode = param_mode.ToString().Replace("-m ", "");
 
@@ -200,8 +198,8 @@ namespace waifu2x_ncnn_vulkan_gui
             string msg =
                 "Multilingual GUI for waifu2x-ncnn-vulkan\n" +
                 "f11894 (2019)\n" +
-                "Version 1.0.0\n" +
-                "BuildDate: 9 Apr,2019\n" +
+                "Version 1.0.1\n" +
+                "BuildDate: 14 Apr,2019\n" +
                 "License: Do What the Fuck You Want License";
             MessageBox.Show(msg);
         }
@@ -315,14 +313,12 @@ namespace waifu2x_ncnn_vulkan_gui
         }
         */
 
-        /*
         private void OnBlockChecked(object sender, RoutedEventArgs e)
         {
             param_block.Clear();
             RadioButton optsrc= sender as RadioButton;
             param_block.Append(optsrc.Tag.ToString());
         }
-        */
         
         private void OnConsoleDataRecv(object sender, DataReceivedEventArgs e)
         {
@@ -518,8 +514,8 @@ namespace waifu2x_ncnn_vulkan_gui
                 // param_informat.ToString(),
                 // param_mode.ToString(),
                 param_denoise2.ToString(),
-                param_mag.ToString()
-                // param_block.ToString(),
+                param_mag.ToString(),
+                param_block.ToString()
             );
             // Setup ProcessStartInfo
             psinfo.FileName = "waifu2x.exe";
