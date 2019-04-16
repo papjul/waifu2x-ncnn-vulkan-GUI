@@ -44,14 +44,14 @@
         <TabControl Grid.Row="1" Grid.RowSpan="3" Grid.ColumnSpan="4" >
             <TabItem Header="{DynamicResource ResourceKey=MainTab_IO}">
                 <StackPanel Orientation="Vertical" Margin="3" MinWidth="800" MinHeight="250">
-                    <StackPanel Orientation="Horizontal" Margin="3" HorizontalAlignment="Stretch">
-                        <Label Target="{Binding ElementName=txtSrcPath}" HorizontalAlignment="Left" Content="{DynamicResource ResourceKey=Main_IO_SrcPath}"></Label>
+                    <StackPanel Orientation="Horizontal" Margin="3" HorizontalAlignment="Right">
+                        <Label Target="{Binding ElementName=txtSrcPath}" HorizontalAlignment="Right" Content="{DynamicResource ResourceKey=Main_IO_SrcPath}"></Label>
                         <TextBox Name="txtSrcPath" MinWidth="600" MaxWidth="600" AllowDrop="True" PreviewDragOver="On_DragOver" PreviewDragEnter="On_DragOver" PreviewDrop="On_SrcDrop" ToolTip="{DynamicResource ResourceKey=Main_IO_Src_Tooltip}" Height="100" MaxHeight="100" VerticalScrollBarVisibility="Visible"></TextBox>
                         <Button Name="btnOpenSrc" HorizontalAlignment="Right" Content="{DynamicResource ResourceKey=Main_IO_btnSrc}" Click="OnBtnSrc"></Button>
                         <Button Name="btnSrcClear" HorizontalAlignment="Right" Content="{DynamicResource ResourceKey=Main_IO_SrcClear}" Click="OnSrcClear"></Button>
                     </StackPanel>
-                    <StackPanel Orientation="Horizontal" Margin="3" HorizontalAlignment="Stretch">
-                        <Label Target="{Binding ElementName=txtDstPath}" HorizontalAlignment="Left" Content="{DynamicResource ResourceKey=Main_IO_DstPath}"></Label>
+                    <StackPanel Orientation="Horizontal" Margin="3" HorizontalAlignment="Right">
+                        <Label Target="{Binding ElementName=txtDstPath}" HorizontalAlignment="Right" Content="{DynamicResource ResourceKey=Main_IO_DstPath}"></Label>
                         <TextBox Name="txtDstPath" MinWidth="600" MaxWidth="600" AllowDrop="True" PreviewDragEnter="On_DragOver" PreviewDragOver="On_DragOver" PreviewDrop="On_DstDrop" ToolTip="{DynamicResource ResourceKey=Main_IO_Dst_Tooltip}"></TextBox>
                         <Button Name="btnOpenDst" HorizontalAlignment="Right" Content="{DynamicResource ResourceKey=Main_IO_btnDst}" Click="OnBtnDst"></Button>
                         <Button Name="btnDstClear" HorizontalAlignment="Right" Content="{DynamicResource ResourceKey=Main_IO_DstClear}" Click="OnDstClear"></Button>
