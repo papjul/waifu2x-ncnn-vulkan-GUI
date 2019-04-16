@@ -59,7 +59,7 @@
                     <Label Target="{Binding ElementName=slider_zoom}" Content="{DynamicResource ResourceKey=Main_Mode_Mag}"></Label>
                     <StackPanel Orientation="Horizontal" Margin="3" HorizontalAlignment="Stretch">
                         <StackPanel Orientation="Horizontal">
-                            <Slider Name="slider_zoom" Minimum="1.0" Maximum="2.0" Margin="15" MinWidth="550" Value="2" TickPlacement="BottomRight" TickFrequency="1" IsSnapToTickEnabled="True"></Slider>
+                            <Slider Name="slider_zoom" Minimum="1.0" Maximum="10.0" Margin="15" MinWidth="550" Value="2" TickPlacement="BottomRight" TickFrequency="1" IsSnapToTickEnabled="True"></Slider>
                             <TextBox Name="slider_value" HorizontalAlignment="Right" MaxHeight="20" MinWidth="50" MaxWidth="50" Margin="1" Text="{Binding ElementName=slider_zoom, Path=Value, Mode=TwoWay}" ></TextBox>
                         </StackPanel>
                     </StackPanel>
