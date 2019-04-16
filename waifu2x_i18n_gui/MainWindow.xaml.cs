@@ -102,13 +102,18 @@ namespace waifu2x_ncnn_vulkan_gui
 
         }
 
-        public static StringBuilder param_src= new StringBuilder("");
+        // public static StringBuilder param_src= new StringBuilder("");
         public static StringBuilder param_dst = new StringBuilder("");
         public static StringBuilder param_mag = new StringBuilder("2");
         public static StringBuilder param_denoise = new StringBuilder("");
         public static StringBuilder param_denoise2 = new StringBuilder("");
-        public static StringBuilder param_block = new StringBuilder("400");
+        public static StringBuilder param_block = new StringBuilder("200");
         public static StringBuilder param_mode = new StringBuilder("noise_scale");
+        public static String[] param_src;
+        public static StringBuilder random32 = new StringBuilder("");
+        public static StringBuilder Commandline = new StringBuilder("");
+        public static StringBuilder waifu2x_bat = new StringBuilder("");
+        // public static int FileCount = (0);
 
         public static bool EventHandler_Flag = false;
 
@@ -171,7 +176,7 @@ namespace waifu2x_ncnn_vulkan_gui
 
             try
             {
-                pHandle.Kill();
+                KillProcessTree(pHandle);
             }
             catch (Exception) { /*Nothing*/ }
         }
@@ -198,8 +203,8 @@ namespace waifu2x_ncnn_vulkan_gui
             string msg =
                 "Multilingual GUI for waifu2x-ncnn-vulkan\n" +
                 "f11894 (2019)\n" +
-                "Version 1.0.1\n" +
-                "BuildDate: 14 Apr,2019\n" +
+                "Version 1.0.2\n" +
+                "BuildDate: 16 Apr,2019\n" +
                 "License: Do What the Fuck You Want License";
             MessageBox.Show(msg);
         }
@@ -207,9 +212,10 @@ namespace waifu2x_ncnn_vulkan_gui
         private void OnBtnSrc(object sender, RoutedEventArgs e)
         {
             OpenFileDialog fdlg= new OpenFileDialog();
+            fdlg.Multiselect = true;
             if (fdlg.ShowDialog() == true)
             {
-                this.txtSrcPath.Text = fdlg.FileName;
+                this.txtSrcPath.Text = string.Join("\n", fdlg.FileNames);
             }
         }
 
@@ -220,12 +226,10 @@ namespace waifu2x_ncnn_vulkan_gui
 
         private void OnBtnDst(object sender, RoutedEventArgs e)
         {
-            SaveFileDialog fdlg = new SaveFileDialog();
-            fdlg.Filter = "PNG Image | *.png";
-            fdlg.DefaultExt = "png";
-            if (fdlg.ShowDialog() == true)
+            var dlg = new Forms.FolderBrowserDialog();
+            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                this.txtDstPath.Text = fdlg.FileName;
+                this.txtDstPath.Text = dlg.SelectedPath;
             }
         }
 
@@ -264,7 +268,9 @@ namespace waifu2x_ncnn_vulkan_gui
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 string[] fn = (string[])e.Data.GetData(DataFormats.FileDrop);
-                this.txtSrcPath.Text = fn[0];
+                this.txtSrcPath.Text = string.Join("\n", fn);
+                param_src = (string[])e.Data.GetData(DataFormats.FileDrop);
+
             }
         }
 
@@ -368,7 +374,7 @@ namespace waifu2x_ncnn_vulkan_gui
             flagAbort = false;
         }
 
-        private void OnAbort(object sender, RoutedEventArgs e)
+        private async void OnAbort(object sender, RoutedEventArgs e)
         {
             this.btnAbort.IsEnabled = false;
             try
@@ -380,13 +386,31 @@ namespace waifu2x_ncnn_vulkan_gui
 
             if (!pHandle.HasExited)
             {
-                pHandle.Kill();
+                try
+                {
+                    await Task.Run(() => KillProcessTree(pHandle));
+                }
+                catch (Exception) { /*Nothing*/ }
 
                 flagAbort = true;
                 this.CLIOutput.Clear();
             }
         }
-        
+
+        private void KillProcessTree(System.Diagnostics.Process process)
+        {
+            string taskkill = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), "taskkill.exe");
+            using (var procKiller = new System.Diagnostics.Process())
+            {
+                procKiller.StartInfo.FileName = taskkill;
+                procKiller.StartInfo.Arguments = string.Format("/PID {0} /T /F", process.Id);
+                procKiller.StartInfo.CreateNoWindow = true;
+                procKiller.StartInfo.UseShellExecute = false;
+                procKiller.Start();
+                procKiller.WaitForExit();
+            }
+        }
+
         public void Errormessage(string x)
         { 
           System.Media.SystemSounds.Beep.Play();
@@ -405,121 +429,115 @@ namespace waifu2x_ncnn_vulkan_gui
             }
             // Sets Source
             // The source must be a file or folder that exists
-            if (File.Exists(this.txtSrcPath.Text) || Directory.Exists(this.txtSrcPath.Text))
-            {
-                if (this.txtSrcPath.Text.Trim() == "") //When source path is empty, replace with current folder
-                {
-                    param_src.Clear();
-                    // param_src.Append("-i ");
-                    param_src.Append("\"");
-                    param_src.Append(App.directory);
-                    param_src.Append("\"");
-                }
-                else
-                {
-                    param_src.Clear();
-                    // param_src.Append("-i ");
-                    param_src.Append("\"");
-                    param_src.Append(this.txtSrcPath.Text);
-                    param_src.Append("\"");
-                }
-            }
-            else
-            {
-                Errormessage(@"The source folder or file does not exists!");
-                return;
-            }
-
-            param_mag.Clear();
-            // param_mag.Append("-s ");
-            param_mag.Append(this.slider_value.Text);
-
-            // 数字が入力されてなかったらクリアする
 
             // logをクリアする
             this.CLIOutput.Clear();
-
-            // Set Destination
-            if (this.txtDstPath.Text.Trim() == "")
+            if (this.txtDstPath.Text.Trim() != "") if (Directory.Exists(this.txtDstPath.Text) == false)
+                {
+                    try
+                    {
+                        Directory.CreateDirectory(this.txtDstPath.Text);
+                    }
+                    catch (Exception)
+                    {
+                        MessageBox.Show(@"Failed to create output destination folder.");
+                        return;
+                    }
+                }
+            Commandline.Clear();
+            int FileCount = 0;
+            for (int i = 0; i < param_src.Length; i++)
+            {
+                FileCount++;
+            }
+            Commandline.Append("@echo off\r\n");
+            Commandline.Append("chcp 65001 >nul\r\n");
+            Commandline.Append("set \"FileCount=" + FileCount + "\"\r\n");
+            Commandline.Append("set \"ProcessedCount=0\"\r\n");
+            Commandline.Append("echo progress %ProcessedCount%/%FileCount%\r\n");
+            for (int i = 0; i < param_src.Length; i++)
             {
                 param_dst.Clear();
-                param_dst.Append("\"");
-                System.IO.DirectoryInfo hDirInfo = System.IO.Directory.GetParent(this.txtSrcPath.Text);
-                param_dst.Append(hDirInfo.FullName);
-                param_dst.Append("\\");
-                param_dst.Append(System.IO.Path.GetFileNameWithoutExtension(this.txtSrcPath.Text));
-                param_dst.Append("(CUnet)");
-                param_dst.Append("(");
-                param_dst.Append(param_mode.ToString().Replace("-m ", ""));
-                param_dst.Append(")");
-                if (param_mode.ToString() == "-m noise" || param_mode.ToString() == "-m noise_scale")
-                {
+                if (this.txtDstPath.Text.Trim() != "") {
+                    param_dst.Append("\"");
+                    param_dst.Append(this.txtDstPath.Text);
+                    param_dst.Append("\\");
+                    param_dst.Append(System.IO.Path.GetFileNameWithoutExtension(param_src[i].Replace("%", "%%")));
+                    param_dst.Append(".png\"");
+                } else {
+                    param_dst.Append("\"");
+                    System.IO.DirectoryInfo hDirInfo = System.IO.Directory.GetParent(param_src[i]);
+                    param_dst.Append(hDirInfo.FullName);
+                    param_dst.Append("\\");
+                    param_dst.Append(System.IO.Path.GetFileNameWithoutExtension(param_src[i].Replace("%", "%%")));
+                    param_dst.Append("(CUnet)");
                     param_dst.Append("(");
-                    param_dst.Append("Level");
-                    param_dst.Append(param_denoise.ToString());
+                    param_dst.Append(param_mode.ToString().Replace("-m ", ""));
                     param_dst.Append(")");
+                    if (param_mode.ToString() == "-m noise" || param_mode.ToString() == "-m noise_scale")
+                    {
+                        param_dst.Append("(");
+                        param_dst.Append("Level");
+                        param_dst.Append(param_denoise.ToString());
+                        param_dst.Append(")");
+                    }
+
+                    if (param_mode.ToString() == "-m scale" || param_mode.ToString() == "-m noise_scale")
+                    {
+                        param_dst.Append("(x");
+                        param_dst.Append(this.slider_zoom.Value.ToString());
+                        param_dst.Append(")");
+                    }
+                    param_dst.Append(".png\"");
                 }
-                if (param_mode.ToString() == "-m scale" || param_mode.ToString() == "-m noise_scale")
-                {
-                    param_dst.Append("(x");
-                    param_dst.Append(this.slider_zoom.Value.ToString());
-                    param_dst.Append(")");
-                }
-                param_dst.Append(".png\"");
-            }
-            else
-            {
-                param_dst.Clear();
-                param_dst.Append("\"");
-                param_dst.Append(this.txtDstPath.Text);
-                param_dst.Append("\"");
-            }
-
-            // Set input format
-            // param_informat.Clear();
-            //param_informat.Append("-l ");
-            // param_informat.Append(this.txtExt.Text);
-            //param_informat.Append(@":");
-            //param_informat.Append(this.txtExt.Text.ToUpper());
-
-            // Set output format
-            //param_outformat.Clear();
-            //param_outformat.Append("-e ");
-            //param_outformat.Append(this.txtOExt.Text);
-
-            // Set scale ratio
-
-            param_denoise2.Clear();
-            param_denoise2.Append(param_denoise.ToString());
-
-            // Set mode
-            if (param_mode.ToString() == "-m noise")
-            {
                 param_mag.Clear();
-                param_mag.Append("1");
-            }
-            if (param_mode.ToString() == "-m scale")
-            {
+                // param_mag.Append("-s ");
+                param_mag.Append(this.slider_value.Text);
+
                 param_denoise2.Clear();
-                param_denoise2.Append("-1");
+                param_denoise2.Append(param_denoise.ToString());
+
+                // Set mode
+                if (param_mode.ToString() == "-m noise")
+                {
+                    param_mag.Clear();
+                    param_mag.Append("1");
+                }
+                if (param_mode.ToString() == "-m scale")
+                {
+                    param_denoise2.Clear();
+                    param_denoise2.Append("-1");
+                }
+                Commandline.Append("echo " + "waifu2x.exe " + "\"" + param_src[i].Replace("%", "%%") + "\"" + " " + param_dst + " " + param_denoise2 + " " + param_mag + " " + param_block + "\r\n");
+                Commandline.Append("waifu2x.exe " + "\"" + param_src[i].Replace("%", "%%") + "\"" + " " + param_dst + " " + param_denoise2 + " " + param_mag + " " + param_block + "\r\n");
+                Commandline.Append("set /a ProcessedCount=%ProcessedCount%+1\r\n");
+                Commandline.Append("echo progress %ProcessedCount%/%FileCount%\r\n");
             }
+
+            Guid g = System.Guid.NewGuid();
+            random32.Clear();
+            random32.Append(g.ToString("N").Substring(0, 32));
+            waifu2x_bat.Clear();
+            waifu2x_bat.Append(System.IO.Path.GetTempPath() + "waifu2x_" + random32.ToString() + ".bat");
+
+            System.IO.StreamWriter sw = new System.IO.StreamWriter(
+            @waifu2x_bat.ToString(),
+            false
+            // ,
+            // System.Text.Encoding.GetEncoding("utf-8")
+            );
+            sw.Write(Commandline);
+            sw.Close();
 
             this.btnRun.IsEnabled = false;
             this.btnAbort.IsEnabled = true;
 
-            // Assemble parameters
-            string full_param = String.Join(" ",
-                param_src.ToString(),
-                param_dst.ToString(),
-                // param_informat.ToString(),
-                // param_mode.ToString(),
-                param_denoise2.ToString(),
-                param_mag.ToString(),
-                param_block.ToString()
-            );
             // Setup ProcessStartInfo
-            psinfo.FileName = "waifu2x.exe";
-            psinfo.Arguments = full_param;
+            psinfo.FileName = System.Environment.GetEnvironmentVariable("ComSpec");
+            psinfo.StandardErrorEncoding = Encoding.UTF8;
+            psinfo.StandardOutputEncoding = Encoding.UTF8;
+            psinfo.Arguments = "/c \"" + waifu2x_bat.ToString() + "\"";
+            psinfo.RedirectStandardInput = true;
             psinfo.RedirectStandardError = true;
             psinfo.RedirectStandardOutput = true;
             psinfo.UseShellExecute = false;
@@ -558,9 +576,9 @@ namespace waifu2x_ncnn_vulkan_gui
             Dispatcher.BeginInvoke(new Action(delegate
             {
                 CLIOutput.Focus();
-                this.CLIOutput.AppendText("waifu2x.exe " + full_param.ToString());
-                this.CLIOutput.AppendText(Environment.NewLine);
-                this.CLIOutput.AppendText(Environment.NewLine);
+                // this.CLIOutput.AppendText("waifu2x.exe " + full_param.ToString());
+                // this.CLIOutput.AppendText(Environment.NewLine);
+                // this.CLIOutput.AppendText(Environment.NewLine);
                 CLIOutput.Select(CLIOutput.Text.Length, 0);
             }), System.Windows.Threading.DispatcherPriority.ApplicationIdle, null);
 

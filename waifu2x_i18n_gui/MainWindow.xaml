@@ -6,9 +6,9 @@
         xmlns:local="clr-namespace:waifu2x_ncnn_vulkan_gui"
         mc:Ignorable="d"
         Closing="MainWindow_Closing"  
-        Height="565" Width="828"
-        MinHeight="550" MinWidth="828"
-        MaxHeight="550" MaxWidth="828"
+        Height="647" Width="828"
+        MinHeight="632" MinWidth="828"
+        MaxHeight="632" MaxWidth="828"
         ResizeMode="CanMinimize"
         Title="{DynamicResource ResourceKey=MainWnd_Title}" SizeToContent="WidthAndHeight" Background="LightGray">
     <Grid>
@@ -46,7 +46,7 @@
                 <StackPanel Orientation="Vertical" Margin="3" MinWidth="800" MinHeight="250">
                     <StackPanel Orientation="Horizontal" Margin="3" HorizontalAlignment="Stretch">
                         <Label Target="{Binding ElementName=txtSrcPath}" HorizontalAlignment="Left" Content="{DynamicResource ResourceKey=Main_IO_SrcPath}"></Label>
-                        <TextBox Name="txtSrcPath" MinWidth="600" MaxWidth="600" AllowDrop="True" PreviewDragOver="On_DragOver" PreviewDragEnter="On_DragOver" PreviewDrop="On_SrcDrop" ToolTip="{DynamicResource ResourceKey=Main_IO_Src_Tooltip}"></TextBox>
+                        <TextBox Name="txtSrcPath" MinWidth="600" MaxWidth="600" AllowDrop="True" PreviewDragOver="On_DragOver" PreviewDragEnter="On_DragOver" PreviewDrop="On_SrcDrop" ToolTip="{DynamicResource ResourceKey=Main_IO_Src_Tooltip}" Height="100" MaxHeight="100" VerticalScrollBarVisibility="Visible"></TextBox>
                         <Button Name="btnOpenSrc" HorizontalAlignment="Right" Content="{DynamicResource ResourceKey=Main_IO_btnSrc}" Click="OnBtnSrc"></Button>
                         <Button Name="btnSrcClear" HorizontalAlignment="Right" Content="{DynamicResource ResourceKey=Main_IO_SrcClear}" Click="OnSrcClear"></Button>
                     </StackPanel>
@@ -103,6 +103,6 @@
         </TabControl>
         <Button Name="btnRun" Grid.Column="3" Grid.Row="4" MaxHeight="240" Padding="5" Content="{DynamicResource ResourceKey=Main_btnRun}" Click="OnRun"></Button>
         <Button Name="btnAbort" Grid.Column="2" Grid.Row="4" MaxHeight="240" Padding="5" IsEnabled="False" Content="{DynamicResource ResourceKey=Main_btnAbort}" Click="OnAbort"></Button>
-        <TextBox Name="CLIOutput" Grid.Column="0" Grid.Row="5" Grid.ColumnSpan="4" MinHeight="120" MaxHeight="120" MinWidth="800" MaxWidth="800" Margin="3,3,0,3" Padding="3" Background="White" IsReadOnly="False" TextWrapping="Wrap"  VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">Log</TextBox>
+        <TextBox Name="CLIOutput" Grid.Column="0" Grid.Row="5" Grid.ColumnSpan="4" MinHeight="132" MaxHeight="132" MinWidth="800" MaxWidth="800" Margin="3,3,0,3" Padding="3" Background="White" IsReadOnly="False" TextWrapping="Wrap"  VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">Log</TextBox>
     </Grid>
 </Window>
