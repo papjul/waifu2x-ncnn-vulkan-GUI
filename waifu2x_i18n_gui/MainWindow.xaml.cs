@@ -215,6 +215,7 @@ namespace waifu2x_ncnn_vulkan_gui
         {
             OpenFileDialog fdlg= new OpenFileDialog();
             fdlg.Multiselect = true;
+            fdlg.Filter = "Graphic Files(*.png;*.jpg;*jpeg;*.gif;*.bmp;*.tif;*.tiff;*.webp)|*.png;*.jpg;*jpeg;*.gif;*.bmp;*.tif;*.tiff;*.webp|All Files(*.*)|*.*";
             if (fdlg.ShowDialog() == true)
             {
                 this.txtSrcPath.Text = string.Join("\n", fdlg.FileNames);
