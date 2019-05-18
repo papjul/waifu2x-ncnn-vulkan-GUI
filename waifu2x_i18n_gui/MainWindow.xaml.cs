@@ -456,7 +456,7 @@ namespace waifu2x_ncnn_vulkan_gui
             Commandline.Append("chcp 65001 >nul\r\n");
             Commandline.Append("set \"FileCount=" + FileCount + "\"\r\n");
             Commandline.Append("set \"ProcessedCount=0\"\r\n");
-            Commandline.Append("echo progress %ProcessedCount%/%FileCount%\r\n");
+            Commandline.Append("if not \"%FileCount%\"==\"1\" echo progress %ProcessedCount%/%FileCount%\r\n");
             for (int i = 0; i < param_src.Length; i++)
             {
                 param_dst.Clear();
@@ -526,7 +526,7 @@ namespace waifu2x_ncnn_vulkan_gui
             Commandline.Append("echo " + "waifu2x.exe " + "%input_image%" + " " + "%output_image%" + " " + "%noise_level%" + " " + param_mag + " " + param_block + "\r\n");
             Commandline.Append("waifu2x.exe " + "%input_image%" + " " + "%output_image%" + " " + " %noise_level%" + " " + param_mag + " " + param_block + "\r\n");
             Commandline.Append("set /a ProcessedCount=%ProcessedCount%+1\r\n");
-            Commandline.Append("echo progress %ProcessedCount%/%FileCount%\r\n");
+            Commandline.Append("if not \"%FileCount%\"==\"1\" echo progress %ProcessedCount%/%FileCount%\r\n");
             Commandline.Append("exit /b\r\n");
 
             Guid g = System.Guid.NewGuid();
