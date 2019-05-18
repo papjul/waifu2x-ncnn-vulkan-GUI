@@ -96,7 +96,7 @@ namespace waifu2x_ncnn_vulkan_gui
 
             checkSoundBeep.IsChecked = Properties.Settings.Default.SoundBeep;
             checkStore_output_dir.IsChecked = Properties.Settings.Default.store_output_dir;
-
+            checkOutput_no_overwirit.IsChecked = Properties.Settings.Default.output_no_overwirit;
             slider_value.Text = Properties.Settings.Default.scale_ratio;
             slider_zoom.Value = double.Parse(Properties.Settings.Default.scale_ratio);
 
@@ -153,7 +153,7 @@ namespace waifu2x_ncnn_vulkan_gui
 
             // Properties.Settings.Default.Device_ID = txtDevice.Text;
 
-
+            Properties.Settings.Default.output_no_overwirit = Convert.ToBoolean(checkOutput_no_overwirit.IsChecked);
             Properties.Settings.Default.block_size = param_block.ToString();
             
             // Properties.Settings.Default.mode = param_mode.ToString().Replace("-m ", "");
@@ -205,8 +205,8 @@ namespace waifu2x_ncnn_vulkan_gui
             string msg =
                 "Multilingual GUI for waifu2x-ncnn-vulkan\n" +
                 "f11894 (2019)\n" +
-                "Version 1.0.2\n" +
-                "BuildDate: 16 Apr,2019\n" +
+                "Version 1.0.3\n" +
+                "BuildDate: 18 May,2019\n" +
                 "License: Do What the Fuck You Want License";
             MessageBox.Show(msg);
         }
@@ -456,6 +456,7 @@ namespace waifu2x_ncnn_vulkan_gui
             Commandline.Append("chcp 65001 >nul\r\n");
             Commandline.Append("set \"FileCount=" + FileCount + "\"\r\n");
             Commandline.Append("set \"ProcessedCount=0\"\r\n");
+            Commandline.Append("set \"Output_no_overwirit=" + checkOutput_no_overwirit.IsChecked.ToString() + "\"\r\n");
             Commandline.Append("if not \"%FileCount%\"==\"1\" echo progress %ProcessedCount%/%FileCount%\r\n");
             for (int i = 0; i < param_src.Length; i++)
             {
@@ -518,6 +519,7 @@ namespace waifu2x_ncnn_vulkan_gui
             Commandline.Append("\r\n");
             Commandline.Append(":waifu2x_run\r\n");
             Commandline.Append("set input_image_jpg=\r\n");
+            Commandline.Append("if \"%Output_no_overwirit%\"==\"True\" if exist %output_image% goto waifu2x_run_skip\r\n");
             Commandline.Append("for %%i in (%input_image%) do set \"input_image_ext=%%~xi\"\r\n");
             Commandline.Append("if /i \"%input_image_ext%\"==\".jpg\" set \"input_image_jpg=1\"\r\n");
             Commandline.Append("if /i \"%input_image_ext%\"==\".jpeg\" set \"input_image_jpg=1\"\r\n");
@@ -525,6 +527,7 @@ namespace waifu2x_ncnn_vulkan_gui
             Commandline.Append("if \"" + param_mode.ToString() + "\"==\"-m auto_scale\" if not \"%input_image_jpg%\"==\"1\" set \"noise_level=-1\"\r\n");
             Commandline.Append("echo " + "waifu2x.exe " + "%input_image%" + " " + "%output_image%" + " " + "%noise_level%" + " " + param_mag + " " + param_block + "\r\n");
             Commandline.Append("waifu2x.exe " + "%input_image%" + " " + "%output_image%" + " " + " %noise_level%" + " " + param_mag + " " + param_block + "\r\n");
+            Commandline.Append(":waifu2x_run_skip\r\n");
             Commandline.Append("set /a ProcessedCount=%ProcessedCount%+1\r\n");
             Commandline.Append("if not \"%FileCount%\"==\"1\" echo progress %ProcessedCount%/%FileCount%\r\n");
             Commandline.Append("exit /b\r\n");
