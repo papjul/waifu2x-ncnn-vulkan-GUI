@@ -91,6 +91,8 @@ namespace waifu2x_ncnn_vulkan_gui
             { btnModeNoiseScale.IsChecked = true; }
             if (Properties.Settings.Default.mode == "noise")
             { btnModeNoise.IsChecked = true; }
+            if (Properties.Settings.Default.mode == "auto_scale")
+            { btnModeAutoScale.IsChecked = true; }
 
             checkSoundBeep.IsChecked = Properties.Settings.Default.SoundBeep;
             checkStore_output_dir.IsChecked = Properties.Settings.Default.store_output_dir;
@@ -474,7 +476,7 @@ namespace waifu2x_ncnn_vulkan_gui
                     param_dst.Append("(");
                     param_dst.Append(param_mode.ToString().Replace("-m ", ""));
                     param_dst.Append(")");
-                    if (param_mode.ToString() == "-m noise" || param_mode.ToString() == "-m noise_scale")
+                    if (param_mode.ToString() == "-m noise" || param_mode.ToString() == "-m noise_scale" || param_mode.ToString() == "-m auto_scale")
                     {
                         param_dst.Append("(");
                         param_dst.Append("Level");
@@ -482,7 +484,7 @@ namespace waifu2x_ncnn_vulkan_gui
                         param_dst.Append(")");
                     }
 
-                    if (param_mode.ToString() == "-m scale" || param_mode.ToString() == "-m noise_scale")
+                    if (param_mode.ToString() == "-m scale" || param_mode.ToString() == "-m noise_scale" || param_mode.ToString() == "-m auto_scale")
                     {
                         param_dst.Append("(x");
                         param_dst.Append(this.slider_zoom.Value.ToString());
@@ -508,11 +510,24 @@ namespace waifu2x_ncnn_vulkan_gui
                     param_denoise2.Clear();
                     param_denoise2.Append("-1");
                 }
-                Commandline.Append("echo " + "waifu2x.exe " + "\"" + param_src[i].Replace("%", "%%") + "\"" + " " + param_dst + " " + param_denoise2 + " " + param_mag + " " + param_block + "\r\n");
-                Commandline.Append("waifu2x.exe " + "\"" + param_src[i].Replace("%", "%%") + "\"" + " " + param_dst + " " + param_denoise2 + " " + param_mag + " " + param_block + "\r\n");
-                Commandline.Append("set /a ProcessedCount=%ProcessedCount%+1\r\n");
-                Commandline.Append("echo progress %ProcessedCount%/%FileCount%\r\n");
+                Commandline.Append("set input_image=\"" + param_src[i].Replace("%", "%%") + "\"\r\n");
+                Commandline.Append("set output_image="+ param_dst + "\r\n");
+                Commandline.Append("call :waifu2x_run\r\n");
             }
+            Commandline.Append("exit /b\r\n");
+            Commandline.Append("\r\n");
+            Commandline.Append(":waifu2x_run\r\n");
+            Commandline.Append("set input_image_jpg=\r\n");
+            Commandline.Append("for %%i in (%input_image%) do set \"input_image_ext=%%~xi\"\r\n");
+            Commandline.Append("if /i \"%input_image_ext%\"==\".jpg\" set \"input_image_jpg=1\"\r\n");
+            Commandline.Append("if /i \"%input_image_ext%\"==\".jpeg\" set \"input_image_jpg=1\"\r\n");
+            Commandline.Append("set \"noise_level=" + param_denoise2 + "\"\r\n");
+            Commandline.Append("if \"" + param_mode.ToString() + "\"==\"-m auto_scale\" if not \"%input_image_jpg%\"==\"1\" set \"noise_level=-1\"\r\n");
+            Commandline.Append("echo " + "waifu2x.exe " + "%input_image%" + " " + "%output_image%" + " " + "%noise_level%" + " " + param_mag + " " + param_block + "\r\n");
+            Commandline.Append("waifu2x.exe " + "%input_image%" + " " + "%output_image%" + " " + " %noise_level%" + " " + param_mag + " " + param_block + "\r\n");
+            Commandline.Append("set /a ProcessedCount=%ProcessedCount%+1\r\n");
+            Commandline.Append("echo progress %ProcessedCount%/%FileCount%\r\n");
+            Commandline.Append("exit /b\r\n");
 
             Guid g = System.Guid.NewGuid();
             random32.Clear();
