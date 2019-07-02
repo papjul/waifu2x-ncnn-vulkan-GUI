@@ -80,12 +80,26 @@
                                 <RadioButton Tag="3" Name="btnDenoise3" Margin="2" Content="{DynamicResource ResourceKey=Main_Mode_Denoise_3}" Checked="OnDenoiseChecked"></RadioButton>
                             </StackPanel>
                         </GroupBox>
+                        <GroupBox Name="gpModel" Header="{DynamicResource ResourceKey=Main_Mode_Model}" Padding="3" Margin="3">
+                            <StackPanel Orientation="Vertical" Margin="3">
+                                <RadioButton Tag="models-cunet" Name="btnCUnet" Margin="2" Content="{DynamicResource ResourceKey=Main_Mode_Model_CUnet}" Checked="OnModelChecked"></RadioButton>
+                                <RadioButton Tag="models-upconv_7_anime_style_art_rgb" Name="btnUpRGB" Margin="2" Content="{DynamicResource ResourceKey=Main_Mode_Model_UpRGB}" Checked="OnModelChecked"></RadioButton>
+                            </StackPanel>
+                        </GroupBox>
                         <GroupBox Name="gpBlock" Header="{DynamicResource ResourceKey=Main_Device_Block}" Padding="3" Margin="3">
                             <StackPanel Orientation="Vertical" Margin="3">
                                 <RadioButton Tag="100" Name="btn100" Margin="2" Checked="OnBlockChecked">100</RadioButton>
                                 <RadioButton Tag="200" Name="btn200" Margin="2" Checked="OnBlockChecked">200</RadioButton>
                                 <RadioButton Tag="300" Name="btn300" Margin="2" Checked="OnBlockChecked">300</RadioButton>
                                 <RadioButton Tag="400" Name="btn400" Margin="2" Checked="OnBlockChecked">400</RadioButton>
+                            </StackPanel>
+                        </GroupBox>
+                        <GroupBox Name="gpDevice" Header="{DynamicResource ResourceKey=Main_Device_gp}" Padding="1" Margin="1">
+                            <StackPanel Orientation="Vertical" Margin="1">
+                                <StackPanel Orientation="Horizontal" Margin="1">
+                                    <Label Target="{Binding ElementName=txtDevice}" HorizontalAlignment="Left" Content="{DynamicResource ResourceKey=Main_Device_GPU_ID}"></Label>
+                                    <TextBox Name="txtGPU_ID" HorizontalAlignment="Right" MinWidth="50" MaxWidth="50"  Margin="1" MaxHeight="20" Text="" ></TextBox>
+                                </StackPanel>
                             </StackPanel>
                         </GroupBox>
                     </StackPanel>

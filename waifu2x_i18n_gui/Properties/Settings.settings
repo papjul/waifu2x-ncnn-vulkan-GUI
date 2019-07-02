@@ -26,5 +26,11 @@
     <Setting Name="output_no_overwirit" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
+    <Setting Name="model" Type="System.String" Scope="User">
+      <Value Profile="(Default)">models-cunet</Value>
+    </Setting>
+    <Setting Name="gpu_id" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>

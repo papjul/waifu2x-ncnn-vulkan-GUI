@@ -30,8 +30,12 @@
     <sys:String x:Key="Main_Mode_Denoise_1">Level 1</sys:String>
     <sys:String x:Key="Main_Mode_Denoise_2">Level 2</sys:String>
     <sys:String x:Key="Main_Mode_Denoise_3">Level 3</sys:String>
+    <sys:String x:Key="Main_Mode_Model">Model</sys:String>
+    <sys:String x:Key="Main_Mode_Model_CUnet">2-D illust (CUnet Model)</sys:String>
+    <sys:String x:Key="Main_Mode_Model_UpRGB">2-D illust (UpRGB Model)</sys:String> 
     <sys:String x:Key="Main_Device_Block">Block Size</sys:String>
-    <!-- Tabs -->
+    <sys:String x:Key="Main_Device_gp">Device</sys:String>
+    <sys:String x:Key="Main_Device_GPU_ID">GPU ID</sys:String>    <!-- Tabs -->
     <sys:String x:Key="MainTab_Preferences">Preferences</sys:String>
     <!-- Tab:Preferences -->
     <sys:String x:Key="Main_checkStore_output_dir">store the last output path</sys:String>

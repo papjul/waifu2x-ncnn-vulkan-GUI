@@ -60,6 +60,14 @@ namespace waifu2x_ncnn_vulkan_gui
             if (Properties.Settings.Default.output_dir != "null")
             { txtDstPath.Text = Properties.Settings.Default.output_dir; }
 
+            if (System.Text.RegularExpressions.Regex.IsMatch(
+                Properties.Settings.Default.gpu_id,
+                @"^\d+$",
+                System.Text.RegularExpressions.RegexOptions.ECMAScript))
+            {
+                txtGPU_ID.Text = Properties.Settings.Default.gpu_id;
+            }
+
             btn200.IsChecked = true;
 
             if (Properties.Settings.Default.block_size == "400")
@@ -94,6 +102,14 @@ namespace waifu2x_ncnn_vulkan_gui
             if (Properties.Settings.Default.mode == "auto_scale")
             { btnModeAutoScale.IsChecked = true; }
 
+            btnCUnet.IsChecked = true;
+
+            if (Properties.Settings.Default.model == "models-cunet")
+            { btnCUnet.IsChecked = true; }
+            if (Properties.Settings.Default.model == "models-upconv_7_anime_style_art_rgb")
+            { btnUpRGB.IsChecked = true; }
+
+
             checkSoundBeep.IsChecked = Properties.Settings.Default.SoundBeep;
             checkStore_output_dir.IsChecked = Properties.Settings.Default.store_output_dir;
             checkOutput_no_overwirit.IsChecked = Properties.Settings.Default.output_no_overwirit;
@@ -109,8 +125,10 @@ namespace waifu2x_ncnn_vulkan_gui
         public static StringBuilder param_mag = new StringBuilder("2");
         public static StringBuilder param_denoise = new StringBuilder("");
         public static StringBuilder param_denoise2 = new StringBuilder("");
+        public static StringBuilder param_model = new StringBuilder("models-cunet");
         public static StringBuilder param_block = new StringBuilder("200");
         public static StringBuilder param_mode = new StringBuilder("noise_scale");
+        public static StringBuilder param_gpu_id = new StringBuilder("");
         public static String[] param_src;
         public static StringBuilder random32 = new StringBuilder("");
         public static StringBuilder Commandline = new StringBuilder("");
@@ -151,11 +169,9 @@ namespace waifu2x_ncnn_vulkan_gui
                 Properties.Settings.Default.output_dir = "null";
             }
 
-            // Properties.Settings.Default.Device_ID = txtDevice.Text;
-
             Properties.Settings.Default.output_no_overwirit = Convert.ToBoolean(checkOutput_no_overwirit.IsChecked);
             Properties.Settings.Default.block_size = param_block.ToString();
-            
+            Properties.Settings.Default.model = param_model.ToString();
             // Properties.Settings.Default.mode = param_mode.ToString().Replace("-m ", "");
 
             Properties.Settings.Default.SoundBeep = Convert.ToBoolean(checkSoundBeep.IsChecked);
@@ -172,6 +188,18 @@ namespace waifu2x_ncnn_vulkan_gui
             } else 
             {
                Properties.Settings.Default.scale_ratio = "2";
+            }
+
+            if (System.Text.RegularExpressions.Regex.IsMatch(
+                txtGPU_ID.Text,
+                @"^\d+$",
+                System.Text.RegularExpressions.RegexOptions.ECMAScript))
+            {
+                Properties.Settings.Default.gpu_id = txtGPU_ID.Text;
+            }
+            else
+            {
+                Properties.Settings.Default.gpu_id = "Unspecified";
             }
 
             Properties.Settings.Default.Save();
@@ -205,8 +233,8 @@ namespace waifu2x_ncnn_vulkan_gui
             string msg =
                 "Multilingual GUI for waifu2x-ncnn-vulkan\n" +
                 "f11894 (2019)\n" +
-                "Version 1.0.3\n" +
-                "BuildDate: 18 May,2019\n" +
+                "Version 1.0.4\n" +
+                "BuildDate: 2 Jul,2019\n" +
                 "License: Do What the Fuck You Want License";
             MessageBox.Show(msg);
         }
@@ -316,12 +344,18 @@ namespace waifu2x_ncnn_vulkan_gui
 
         /*private void OnDeviceChecked(object sender, RoutedEventArgs e)
         {
-            param_device.Clear();
+            param_gpu_id.Clear();
             RadioButton optsrc= sender as RadioButton;
-            param_device.Append(optsrc.Tag.ToString());
+            param_gpu_id.Append(optsrc.Tag.ToString());
         }
         */
 
+        private void OnModelChecked(object sender, RoutedEventArgs e)
+        {
+            param_model.Clear();
+            RadioButton optsrc = sender as RadioButton;
+            param_model.Append(optsrc.Tag.ToString());
+        }
         private void OnBlockChecked(object sender, RoutedEventArgs e)
         {
             param_block.Clear();
@@ -425,14 +459,26 @@ namespace waifu2x_ncnn_vulkan_gui
 
         private void OnRun(object sender, RoutedEventArgs e)
         {
-            if (!File.Exists("waifu2x.exe"))
+            if (!File.Exists("waifu2x-ncnn-vulkan.exe"))
             {
-                MessageBox.Show(@"waifu2x.exe is missing!");
+                MessageBox.Show(@"waifu2x-ncnn-vulkan.exe is missing!");
                 return;
             }
             // Sets Source
             // The source must be a file or folder that exists
-
+            if (System.Text.RegularExpressions.Regex.IsMatch(
+                txtGPU_ID.Text,
+                @"^(\d+)$",
+                System.Text.RegularExpressions.RegexOptions.ECMAScript))
+            {
+                param_gpu_id.Clear();
+                param_gpu_id.Append("-g ");
+                param_gpu_id.Append(txtGPU_ID.Text);
+            }
+            else
+            {
+                param_gpu_id.Clear();
+            }
             // logをクリアする
             this.CLIOutput.Clear();
             if (this.txtDstPath.Text.Trim() != "") if (Directory.Exists(this.txtDstPath.Text) == false)
@@ -466,15 +512,18 @@ namespace waifu2x_ncnn_vulkan_gui
                     param_dst.Append("\"");
                     param_dst.Append(this.txtDstPath.Text);
                     param_dst.Append("\\");
-                    param_dst.Append(System.IO.Path.GetFileNameWithoutExtension(param_src[i].Replace("%", "%%")));
+                    param_dst.Append(System.IO.Path.GetFileNameWithoutExtension(param_src[i].Replace("%", "%%%%")));
                     param_dst.Append(".png\"");
                 } else {
                     param_dst.Append("\"");
                     System.IO.DirectoryInfo hDirInfo = System.IO.Directory.GetParent(param_src[i]);
                     param_dst.Append(hDirInfo.FullName);
                     param_dst.Append("\\");
-                    param_dst.Append(System.IO.Path.GetFileNameWithoutExtension(param_src[i].Replace("%", "%%")));
-                    param_dst.Append("(CUnet)");
+                    param_dst.Append(System.IO.Path.GetFileNameWithoutExtension(param_src[i].Replace("%", "%%%%")));
+                    if (param_model.ToString() == "models-cunet")
+                       { param_dst.Append("(CUnet)"); }
+                    if (param_model.ToString() == "models-upconv_7_anime_style_art_rgb")
+                       { param_dst.Append("(UpRGB)"); }
                     param_dst.Append("(");
                     param_dst.Append(param_mode.ToString().Replace("-m ", ""));
                     param_dst.Append(")");
@@ -512,22 +561,19 @@ namespace waifu2x_ncnn_vulkan_gui
                     param_denoise2.Clear();
                     param_denoise2.Append("-1");
                 }
-                Commandline.Append("set input_image=\"" + param_src[i].Replace("%", "%%") + "\"\r\n");
-                Commandline.Append("set output_image="+ param_dst + "\r\n");
-                Commandline.Append("call :waifu2x_run\r\n");
+                Commandline.Append("call :waifu2x_run " + "\"" + param_src[i].Replace("%", "%%%%") + "\" " + param_dst + "\r\n");
             }
             Commandline.Append("exit /b\r\n");
             Commandline.Append("\r\n");
             Commandline.Append(":waifu2x_run\r\n");
             Commandline.Append("set input_image_jpg=\r\n");
-            Commandline.Append("if \"%Output_no_overwirit%\"==\"True\" if exist %output_image% goto waifu2x_run_skip\r\n");
-            Commandline.Append("for %%i in (%input_image%) do set \"input_image_ext=%%~xi\"\r\n");
-            Commandline.Append("if /i \"%input_image_ext%\"==\".jpg\" set \"input_image_jpg=1\"\r\n");
-            Commandline.Append("if /i \"%input_image_ext%\"==\".jpeg\" set \"input_image_jpg=1\"\r\n");
+            Commandline.Append("if \"%Output_no_overwirit%\"==\"True\" if exist \"%~2\" goto waifu2x_run_skip\r\n");
+            Commandline.Append("if /i \"%~nx1\"==\".jpg\" set \"input_image_jpg=1\"\r\n");
+            Commandline.Append("if /i \"%~nx1\"==\".jpeg\" set \"input_image_jpg=1\"\r\n");
             Commandline.Append("set \"noise_level=" + param_denoise2 + "\"\r\n");
             Commandline.Append("if \"" + param_mode.ToString() + "\"==\"-m auto_scale\" if not \"%input_image_jpg%\"==\"1\" set \"noise_level=-1\"\r\n");
-            Commandline.Append("echo " + "waifu2x.exe " + "%input_image%" + " " + "%output_image%" + " " + "%noise_level%" + " " + param_mag + " " + param_block + "\r\n");
-            Commandline.Append("waifu2x.exe " + "%input_image%" + " " + "%output_image%" + " " + " %noise_level%" + " " + param_mag + " " + param_block + "\r\n");
+            Commandline.Append("echo " + "waifu2x-ncnn-vulkan.exe " + "-i \"%~1\"" + " " + "-o \"%~2\"" + " " + "-n %noise_level%" + " -s " + param_mag + " -t " + param_block + " -m "+ param_model.ToString() + " " + param_gpu_id.ToString() + " \r\n");
+            Commandline.Append("waifu2x-ncnn-vulkan.exe " + "-i \"%~1\"" + " " + "-o \"%~2\"" + " " + "-n %noise_level%" + " -s " + param_mag + " -t " + param_block + " -m " + param_model.ToString() + " " + param_gpu_id.ToString() + " \r\n");
             Commandline.Append(":waifu2x_run_skip\r\n");
             Commandline.Append("set /a ProcessedCount=%ProcessedCount%+1\r\n");
             Commandline.Append("if not \"%FileCount%\"==\"1\" echo progress %ProcessedCount%/%FileCount%\r\n");
