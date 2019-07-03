@@ -568,8 +568,8 @@ namespace waifu2x_ncnn_vulkan_gui
             Commandline.Append(":waifu2x_run\r\n");
             Commandline.Append("set input_image_jpg=\r\n");
             Commandline.Append("if \"%Output_no_overwirit%\"==\"True\" if exist \"%~2\" goto waifu2x_run_skip\r\n");
-            Commandline.Append("if /i \"%~nx1\"==\".jpg\" set \"input_image_jpg=1\"\r\n");
-            Commandline.Append("if /i \"%~nx1\"==\".jpeg\" set \"input_image_jpg=1\"\r\n");
+            Commandline.Append("if /i \"%~x1\"==\".jpg\" set \"input_image_jpg=1\"\r\n");
+            Commandline.Append("if /i \"%~x1\"==\".jpeg\" set \"input_image_jpg=1\"\r\n");
             Commandline.Append("set \"noise_level=" + param_denoise2 + "\"\r\n");
             Commandline.Append("if \"" + param_mode.ToString() + "\"==\"-m auto_scale\" if not \"%input_image_jpg%\"==\"1\" set \"noise_level=-1\"\r\n");
             Commandline.Append("echo " + "waifu2x-ncnn-vulkan.exe " + "-i \"%~1\"" + " " + "-o \"%~2\"" + " " + "-n %noise_level%" + " -s " + param_mag + " -t " + param_block + " -m "+ param_model.ToString() + " " + param_gpu_id.ToString() + " \r\n");
