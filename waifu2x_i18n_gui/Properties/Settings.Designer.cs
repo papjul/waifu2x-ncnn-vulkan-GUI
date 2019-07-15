@@ -145,7 +145,7 @@ namespace waifu2x_ncnn_vulkan_gui.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        [global::System.Configuration.DefaultSettingValueAttribute("1:2:2")]
         public string thread {
             get {
                 return ((string)(this["thread"]));
