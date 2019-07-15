@@ -68,6 +68,8 @@ namespace waifu2x_ncnn_vulkan_gui
                 txtGPU_ID.Text = Properties.Settings.Default.gpu_id;
             }
 
+            txtThread.Text = Properties.Settings.Default.thread;
+
             btn200.IsChecked = true;
 
             if (Properties.Settings.Default.block_size == "400")
@@ -129,6 +131,7 @@ namespace waifu2x_ncnn_vulkan_gui
         public static StringBuilder param_block = new StringBuilder("200");
         public static StringBuilder param_mode = new StringBuilder("noise_scale");
         public static StringBuilder param_gpu_id = new StringBuilder("");
+        public static StringBuilder param_thread = new StringBuilder("1:2:2");
         public static String[] param_src;
         public static StringBuilder random32 = new StringBuilder("");
         public static StringBuilder Commandline = new StringBuilder("");
@@ -200,6 +203,18 @@ namespace waifu2x_ncnn_vulkan_gui
             else
             {
                 Properties.Settings.Default.gpu_id = "Unspecified";
+            }
+
+            if (System.Text.RegularExpressions.Regex.IsMatch(
+                txtThread.Text,
+                @"^\d+:\d+:\d+$",
+                System.Text.RegularExpressions.RegexOptions.ECMAScript))
+            {
+                Properties.Settings.Default.thread = txtThread.Text;
+            }
+            else
+            {
+                Properties.Settings.Default.thread = "1:2:2";
             }
 
             Properties.Settings.Default.Save();
@@ -479,6 +494,20 @@ namespace waifu2x_ncnn_vulkan_gui
             {
                 param_gpu_id.Clear();
             }
+
+            if (System.Text.RegularExpressions.Regex.IsMatch(
+                txtThread.Text,
+                 @"^(\d+:\d+:\d+)$",
+               System.Text.RegularExpressions.RegexOptions.ECMAScript))
+            {
+                param_thread.Clear();
+                param_thread.Append("-j ");
+                param_thread.Append(txtThread.Text);
+            }
+            else
+            {
+                param_thread.Clear();
+            }
             // logをクリアする
             this.CLIOutput.Clear();
             if (this.txtDstPath.Text.Trim() != "") if (Directory.Exists(this.txtDstPath.Text) == false)
@@ -591,8 +620,8 @@ namespace waifu2x_ncnn_vulkan_gui
             Commandline.Append("   echo mkdir \"%~2\"\r\n"); 
             Commandline.Append("   mkdir \"%~2\"\r\n"); 
             Commandline.Append(")\r\n"); 
-            Commandline.Append("echo " + "waifu2x-ncnn-vulkan.exe " + "-i \"%~1\"" + " " + "-o \"%~2\"" + " " + "-n %noise_level%" + " -s " + param_mag + " -t " + param_block + " -m "+ param_model.ToString() + " " + param_gpu_id.ToString() + " \r\n");
-            Commandline.Append("waifu2x-ncnn-vulkan.exe " + "-i \"%~1\"" + " " + "-o \"%~2\"" + " " + "-n %noise_level%" + " -s " + param_mag + " -t " + param_block + " -m " + param_model.ToString() + " " + param_gpu_id.ToString() + " \r\n");
+            Commandline.Append("echo " + "waifu2x-ncnn-vulkan.exe " + "-i \"%~1\"" + " " + "-o \"%~2\"" + " " + "-n %noise_level%" + " -s " + param_mag + " -t " + param_block + " -m " + param_model.ToString() + " " + param_gpu_id.ToString() + " " + param_thread.ToString() + " \r\n");
+            Commandline.Append("waifu2x-ncnn-vulkan.exe " + "-i \"%~1\"" + " " + "-o \"%~2\"" + " " + "-n %noise_level%" + " -s " + param_mag + " -t " + param_block + " -m " + param_model.ToString() + " " + param_gpu_id.ToString() + " " + param_thread.ToString() + " \r\n");
             Commandline.Append(":waifu2x_run_skip\r\n");
             Commandline.Append("set /a ProcessedCount=%ProcessedCount%+1\r\n");
             Commandline.Append("if not \"%FileCount%\"==\"1\" echo progress %ProcessedCount%/%FileCount%\r\n");

@@ -142,5 +142,17 @@ namespace waifu2x_ncnn_vulkan_gui.Properties {
                 this["gpu_id"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string thread {
+            get {
+                return ((string)(this["thread"]));
+            }
+            set {
+                this["thread"] = value;
+            }
+        }
     }
 }
