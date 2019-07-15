@@ -248,8 +248,8 @@ namespace waifu2x_ncnn_vulkan_gui
             string msg =
                 "Multilingual GUI for waifu2x-ncnn-vulkan\n" +
                 "f11894 (2019)\n" +
-                "Version 1.0.4\n" +
-                "BuildDate: 2 Jul,2019\n" +
+                "Version 1.0.5\n" +
+                "BuildDate: 15 Jul,2019\n" +
                 "License: Do What the Fuck You Want License";
             MessageBox.Show(msg);
         }
@@ -620,8 +620,8 @@ namespace waifu2x_ncnn_vulkan_gui
             Commandline.Append("   echo mkdir \"%~2\"\r\n"); 
             Commandline.Append("   mkdir \"%~2\"\r\n"); 
             Commandline.Append(")\r\n"); 
-            Commandline.Append("echo " + "waifu2x-ncnn-vulkan.exe " + "-i \"%~1\"" + " " + "-o \"%~2\"" + " " + "-n %noise_level%" + " -s " + param_mag + " -t " + param_block + " -m " + param_model.ToString() + " " + param_gpu_id.ToString() + " " + param_thread.ToString() + " \r\n");
-            Commandline.Append("waifu2x-ncnn-vulkan.exe " + "-i \"%~1\"" + " " + "-o \"%~2\"" + " " + "-n %noise_level%" + " -s " + param_mag + " -t " + param_block + " -m " + param_model.ToString() + " " + param_gpu_id.ToString() + " " + param_thread.ToString() + " \r\n");
+            Commandline.Append("echo " + "waifu2x-ncnn-vulkan.exe -v -i \"%~1\" -o \"%~2\" -n %noise_level% -s " + param_mag + " -t " + param_block + " -m " + param_model.ToString() + " " + param_gpu_id.ToString() + " " + param_thread.ToString() + " \r\n");
+            Commandline.Append("waifu2x-ncnn-vulkan.exe -v -i \"%~1\" -o \"%~2\" -n %noise_level% -s " + param_mag + " -t " + param_block + " -m " + param_model.ToString() + " " + param_gpu_id.ToString() + " " + param_thread.ToString() + " \r\n");
             Commandline.Append(":waifu2x_run_skip\r\n");
             Commandline.Append("set /a ProcessedCount=%ProcessedCount%+1\r\n");
             Commandline.Append("if not \"%FileCount%\"==\"1\" echo progress %ProcessedCount%/%FileCount%\r\n");
