@@ -513,7 +513,14 @@ namespace waifu2x_ncnn_vulkan_gui
                     param_dst.Append(this.txtDstPath.Text);
                     param_dst.Append("\\");
                     param_dst.Append(System.IO.Path.GetFileNameWithoutExtension(param_src[i].Replace("%", "%%%%")));
-                    param_dst.Append(".png\"");
+                    if (File.Exists(param_src[i]))
+                        {
+                            param_dst.Append(".png\"");
+                        }
+                        else if (Directory.Exists(param_src[i]))
+                        {
+                            param_dst.Append("\"");
+                        }
                 } else {
                     param_dst.Append("\"");
                     System.IO.DirectoryInfo hDirInfo = System.IO.Directory.GetParent(param_src[i]);
@@ -541,7 +548,14 @@ namespace waifu2x_ncnn_vulkan_gui
                         param_dst.Append(this.slider_zoom.Value.ToString());
                         param_dst.Append(")");
                     }
-                    param_dst.Append(".png\"");
+                    if (File.Exists(param_src[i]))
+                       {
+                          param_dst.Append(".png\"");
+                       }
+                       else if (Directory.Exists(param_src[i]))
+                       {
+                        param_dst.Append("\"");
+                       }
                 }
                 param_mag.Clear();
                 // param_mag.Append("-s ");
@@ -572,6 +586,11 @@ namespace waifu2x_ncnn_vulkan_gui
             Commandline.Append("if /i \"%~x1\"==\".jpeg\" set \"input_image_jpg=1\"\r\n");
             Commandline.Append("set \"noise_level=" + param_denoise2 + "\"\r\n");
             Commandline.Append("if \"" + param_mode.ToString() + "\"==\"-m auto_scale\" if not \"%input_image_jpg%\"==\"1\" set \"noise_level=-1\"\r\n");
+            Commandline.Append("for %%i in (\"%~1\") do set \"Attribute=%%~ai\"\r\n");
+            Commandline.Append("IF \"%Attribute:~0,1%\"==\"d\" if not exist \"%~2\" (\r\n");
+            Commandline.Append("   echo mkdir \"%~2\"\r\n"); 
+            Commandline.Append("   mkdir \"%~2\"\r\n"); 
+            Commandline.Append(")\r\n"); 
             Commandline.Append("echo " + "waifu2x-ncnn-vulkan.exe " + "-i \"%~1\"" + " " + "-o \"%~2\"" + " " + "-n %noise_level%" + " -s " + param_mag + " -t " + param_block + " -m "+ param_model.ToString() + " " + param_gpu_id.ToString() + " \r\n");
             Commandline.Append("waifu2x-ncnn-vulkan.exe " + "-i \"%~1\"" + " " + "-o \"%~2\"" + " " + "-n %noise_level%" + " -s " + param_mag + " -t " + param_block + " -m " + param_model.ToString() + " " + param_gpu_id.ToString() + " \r\n");
             Commandline.Append(":waifu2x_run_skip\r\n");
