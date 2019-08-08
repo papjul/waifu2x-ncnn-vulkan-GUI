@@ -262,12 +262,14 @@ namespace waifu2x_ncnn_vulkan_gui
             if (fdlg.ShowDialog() == true)
             {
                 this.txtSrcPath.Text = string.Join("\n", fdlg.FileNames);
+                param_src = fdlg.FileNames;
             }
         }
 
         private void OnSrcClear(object sender, RoutedEventArgs e)
         {
             this.txtSrcPath.Clear();
+            param_src = null;
         }
 
         private void OnBtnDst(object sender, RoutedEventArgs e)
@@ -479,6 +481,13 @@ namespace waifu2x_ncnn_vulkan_gui
                 MessageBox.Show(@"waifu2x-ncnn-vulkan.exe is missing!");
                 return;
             }
+
+            if (param_src == null)
+            {
+                MessageBox.Show(@"source images is not found!");
+                return;
+            }
+
             // Sets Source
             // The source must be a file or folder that exists
             if (System.Text.RegularExpressions.Regex.IsMatch(
