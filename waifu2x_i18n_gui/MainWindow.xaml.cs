@@ -248,8 +248,8 @@ namespace waifu2x_ncnn_vulkan_gui
             string msg =
                 "Multilingual GUI for waifu2x-ncnn-vulkan\n" +
                 "f11894 (2019)\n" +
-                "Version 1.0.5\n" +
-                "BuildDate: 15 Jul,2019\n" +
+                "Version 1.0.6\n" +
+                "BuildDate: 8 Aug,2019\n" +
                 "License: Do What the Fuck You Want License";
             MessageBox.Show(msg);
         }
