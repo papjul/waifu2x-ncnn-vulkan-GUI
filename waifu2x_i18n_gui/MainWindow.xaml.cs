@@ -110,7 +110,8 @@ namespace waifu2x_ncnn_vulkan_gui
             { btnCUnet.IsChecked = true; }
             if (Properties.Settings.Default.model == "models-upconv_7_anime_style_art_rgb")
             { btnUpRGB.IsChecked = true; }
-
+            if (Properties.Settings.Default.model == "models-upconv_7_photo")
+            { btnUpPhoto.IsChecked = true; }
 
             checkSoundBeep.IsChecked = Properties.Settings.Default.SoundBeep;
             checkStore_output_dir.IsChecked = Properties.Settings.Default.store_output_dir;
@@ -569,6 +570,8 @@ namespace waifu2x_ncnn_vulkan_gui
                        { param_dst.Append("(CUnet)"); }
                     if (param_model.ToString() == "models-upconv_7_anime_style_art_rgb")
                        { param_dst.Append("(UpRGB)"); }
+                    if (param_model.ToString() == "models-upconv_7_photo")
+                       { param_dst.Append("(UpPhoto)"); }
                     param_dst.Append("(");
                     param_dst.Append(param_mode.ToString().Replace("-m ", ""));
                     param_dst.Append(")");

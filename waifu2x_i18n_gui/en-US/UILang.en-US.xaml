@@ -33,6 +33,7 @@
     <sys:String x:Key="Main_Mode_Model">Model</sys:String>
     <sys:String x:Key="Main_Mode_Model_CUnet">2-D illust (CUnet Model)</sys:String>
     <sys:String x:Key="Main_Mode_Model_UpRGB">2-D illust (UpRGB Model)</sys:String> 
+    <sys:String x:Key="Main_Mode_Model_UpPhoto">Photo (UpPhoto Model)</sys:String> 
     <sys:String x:Key="Main_Device_Block">Block Size</sys:String>
     <sys:String x:Key="Main_Device_gp">Device</sys:String>
     <sys:String x:Key="Main_Device_GPU_ID">GPU ID</sys:String>    <!-- Tabs -->
