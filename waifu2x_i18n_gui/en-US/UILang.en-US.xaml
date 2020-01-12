@@ -24,7 +24,7 @@
     <sys:String x:Key="Main_Mode_Set_Scale">Magnify only</sys:String>
     <sys:String x:Key="Main_Mode_Set_Noise">Denoise only</sys:String>
     <sys:String x:Key="Main_Mode_Set_AutoScale">Magnify &amp; Denoise(jpg only)</sys:String>
-    <sys:String x:Key="Main_Mode_Mag">_Magnification (1.0~10.0):</sys:String>  
+    <sys:String x:Key="Main_Mode_Mag">_Magnification (1.0~2.0):</sys:String>  
     <sys:String x:Key="Main_Mode_Denoise">Denoise</sys:String>
     <sys:String x:Key="Main_Mode_Denoise_0">Level 0</sys:String>
     <sys:String x:Key="Main_Mode_Denoise_1">Level 1</sys:String>
