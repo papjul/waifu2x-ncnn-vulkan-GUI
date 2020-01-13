@@ -1,5 +1,5 @@
 # waifu2x-ncnn-vulkan-GUI
-![new](https://user-images.githubusercontent.com/16046279/61211899-bac6a380-a73b-11e9-918a-3a062081ba80.png)
+![2 0](https://user-images.githubusercontent.com/16046279/72228547-ea6f3f00-35ea-11ea-8f13-4e6fa8c55bc2.png)
 Multilingual GUI for waifu2x-ncnn-vulkan (https://github.com/nihui/waifu2x-ncnn-vulkan). Localization can be done via user-editable xaml file.
 
 This project was forked from https://github.com/MaverickTse/waifu2x_caffe_multilang_gui
