@@ -33,7 +33,7 @@
     <sys:String x:Key="Main_Mode_Model">モデル</sys:String>
     <sys:String x:Key="Main_Mode_Model_CUnet">二次元イラスト(CUnetモデル)</sys:String>
     <sys:String x:Key="Main_Mode_Model_UpRGB">二次元イラスト(UpRGBモデル)</sys:String> 
-    <sys:String x:Key="Main_Mode_Model_UpPhoto">写真・アニメ (Photoモデル)</sys:String> 
+    <sys:String x:Key="Main_Mode_Model_UpPhoto">写真・アニメ (UpPhotoモデル)</sys:String> 
     <sys:String x:Key="Main_Device_Block">分割サイズ</sys:String>
     <sys:String x:Key="Main_Device_gp">デバイス</sys:String>
     <sys:String x:Key="Main_Device_GPU_ID">GPU ID</sys:String>
