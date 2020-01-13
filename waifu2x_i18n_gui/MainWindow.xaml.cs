@@ -68,18 +68,8 @@ namespace waifu2x_ncnn_vulkan_gui
                 txtGPU_ID.Text = Properties.Settings.Default.gpu_id;
             }
 
+            txtBlocksize.Text = Properties.Settings.Default.block_size;
             txtThread.Text = Properties.Settings.Default.thread;
-
-            btn200.IsChecked = true;
-
-            if (Properties.Settings.Default.block_size == "400")
-            { btn400.IsChecked = true; }
-            if (Properties.Settings.Default.block_size == "300")
-            { btn300.IsChecked = true; }
-            if (Properties.Settings.Default.block_size == "200")
-            { btn200.IsChecked = true; }
-            if (Properties.Settings.Default.block_size == "100")
-            { btn100.IsChecked = true; }
 
             //btnCUDA.IsChecked = true;
             btnDenoise0.IsChecked = true;
@@ -174,7 +164,6 @@ namespace waifu2x_ncnn_vulkan_gui
             }
 
             Properties.Settings.Default.output_no_overwirit = Convert.ToBoolean(checkOutput_no_overwirit.IsChecked);
-            Properties.Settings.Default.block_size = param_block.ToString();
             Properties.Settings.Default.model = param_model.ToString();
             // Properties.Settings.Default.mode = param_mode.ToString().Replace("-m ", "");
 
@@ -192,6 +181,18 @@ namespace waifu2x_ncnn_vulkan_gui
             } else 
             {
                Properties.Settings.Default.scale_ratio = "2";
+            }
+
+            if (System.Text.RegularExpressions.Regex.IsMatch(
+                txtBlocksize.Text,
+                @"^\d+$",
+                System.Text.RegularExpressions.RegexOptions.ECMAScript))
+            {
+                Properties.Settings.Default.block_size = txtBlocksize.Text;
+            }
+            else
+            {
+                Properties.Settings.Default.block_size = "400";
             }
 
             if (System.Text.RegularExpressions.Regex.IsMatch(
@@ -248,9 +249,9 @@ namespace waifu2x_ncnn_vulkan_gui
         {
             string msg =
                 "Multilingual GUI for waifu2x-ncnn-vulkan\n" +
-                "f11894 (2019)\n" +
-                "Version 1.0.6\n" +
-                "BuildDate: 8 Aug,2019\n" +
+                "f11894 (2020)\n" +
+                "Version 1.0.8\n" +
+                "BuildDate: 13 Jan,2020\n" +
                 "License: Do What the Fuck You Want License";
             MessageBox.Show(msg);
         }
@@ -373,12 +374,6 @@ namespace waifu2x_ncnn_vulkan_gui
             param_model.Clear();
             RadioButton optsrc = sender as RadioButton;
             param_model.Append(optsrc.Tag.ToString());
-        }
-        private void OnBlockChecked(object sender, RoutedEventArgs e)
-        {
-            param_block.Clear();
-            RadioButton optsrc= sender as RadioButton;
-            param_block.Append(optsrc.Tag.ToString());
         }
         
         private void OnConsoleDataRecv(object sender, DataReceivedEventArgs e)
@@ -503,6 +498,28 @@ namespace waifu2x_ncnn_vulkan_gui
             else
             {
                 param_gpu_id.Clear();
+            }
+
+            if (System.Text.RegularExpressions.Regex.IsMatch(
+                txtBlocksize.Text,
+                @"^(\d+)$",
+                System.Text.RegularExpressions.RegexOptions.ECMAScript))
+            {
+                if (int.Parse(txtBlocksize.Text) % 4 != 0)
+                {
+                    MessageBox.Show(@"Block size must be a multiple of 4");
+                    return;
+                }
+                else
+                {
+                    param_block.Clear();
+                    param_block.Append("-t ");
+                    param_block.Append(txtBlocksize.Text);
+                }
+            }
+            else
+            {
+                param_block.Clear();
             }
 
             if (System.Text.RegularExpressions.Regex.IsMatch(
@@ -632,8 +649,8 @@ namespace waifu2x_ncnn_vulkan_gui
             Commandline.Append("   echo mkdir \"%~2\"\r\n"); 
             Commandline.Append("   mkdir \"%~2\"\r\n"); 
             Commandline.Append(")\r\n"); 
-            Commandline.Append("echo " + "waifu2x-ncnn-vulkan.exe -v -i \"%~1\" -o \"%~2\" -n %noise_level% -s " + param_mag + " -t " + param_block + " -m " + param_model.ToString() + " " + param_gpu_id.ToString() + " " + param_thread.ToString() + " \r\n");
-            Commandline.Append("waifu2x-ncnn-vulkan.exe -v -i \"%~1\" -o \"%~2\" -n %noise_level% -s " + param_mag + " -t " + param_block + " -m " + param_model.ToString() + " " + param_gpu_id.ToString() + " " + param_thread.ToString() + " \r\n");
+            Commandline.Append("echo " + "waifu2x-ncnn-vulkan.exe -v -i \"%~1\" -o \"%~2\" -n %noise_level% -s " + param_mag + " " + param_block + " -m " + param_model.ToString() + " " + param_gpu_id.ToString() + " " + param_thread.ToString() + " \r\n");
+            Commandline.Append("waifu2x-ncnn-vulkan.exe -v -i \"%~1\" -o \"%~2\" -n %noise_level% -s " + param_mag + " " + param_block + " -m " + param_model.ToString() + " " + param_gpu_id.ToString() + " " + param_thread.ToString() + " \r\n");
             Commandline.Append(":waifu2x_run_skip\r\n");
             Commandline.Append("set /a ProcessedCount=%ProcessedCount%+1\r\n");
             Commandline.Append("if not \"%FileCount%\"==\"1\" echo progress %ProcessedCount%/%FileCount%\r\n");
