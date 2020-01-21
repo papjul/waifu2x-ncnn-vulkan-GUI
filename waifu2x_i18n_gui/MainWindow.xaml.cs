@@ -663,8 +663,8 @@ namespace waifu2x_ncnn_vulkan_gui
             Commandline.Append("   echo mkdir \"%~2\"\r\n"); 
             Commandline.Append("   mkdir \"%~2\"\r\n"); 
             Commandline.Append(")\r\n"); 
-            Commandline.Append("echo " + "waifu2x-ncnn-vulkan.exe " + full_param + "\r\n");
-            Commandline.Append("waifu2x-ncnn-vulkan.exe " + full_param + "\r\n");
+            Commandline.Append("echo " + ".\\waifu2x-ncnn-vulkan.exe " + full_param + "\r\n");
+            Commandline.Append(".\\waifu2x-ncnn-vulkan.exe " + full_param + "\r\n");
             Commandline.Append(":waifu2x_run_skip\r\n");
             Commandline.Append("set /a ProcessedCount=%ProcessedCount%+1\r\n");
             Commandline.Append("if not \"%FileCount%\"==\"1\" echo progress %ProcessedCount%/%FileCount%\r\n");
