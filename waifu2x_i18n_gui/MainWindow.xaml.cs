@@ -169,7 +169,7 @@ namespace waifu2x_ncnn_vulkan_gui
 
             Properties.Settings.Default.SoundBeep = Convert.ToBoolean(checkSoundBeep.IsChecked);
             Properties.Settings.Default.store_output_dir = Convert.ToBoolean(checkStore_output_dir.IsChecked);
-            Properties.Settings.Default.mode = param_mode.ToString().Replace("-m ", "");
+            Properties.Settings.Default.mode = param_mode.ToString();
             Properties.Settings.Default.noise_level = param_denoise.ToString();
 
             if (System.Text.RegularExpressions.Regex.IsMatch(
@@ -593,7 +593,7 @@ namespace waifu2x_ncnn_vulkan_gui
                     param_dst.Append("(");
                     param_dst.Append(param_mode.ToString().Replace("-m ", ""));
                     param_dst.Append(")");
-                    if (param_mode.ToString() == "-m noise" || param_mode.ToString() == "-m noise_scale" || param_mode.ToString() == "-m auto_scale")
+                    if (param_mode.ToString() == "noise" || param_mode.ToString() == "noise_scale" || param_mode.ToString() == "auto_scale")
                     {
                         param_dst.Append("(");
                         param_dst.Append("Level");
@@ -601,7 +601,7 @@ namespace waifu2x_ncnn_vulkan_gui
                         param_dst.Append(")");
                     }
 
-                    if (param_mode.ToString() == "-m scale" || param_mode.ToString() == "-m noise_scale" || param_mode.ToString() == "-m auto_scale")
+                    if (param_mode.ToString() == "scale" || param_mode.ToString() == "noise_scale" || param_mode.ToString() == "auto_scale")
                     {
                         param_dst.Append("(x");
                         param_dst.Append(this.slider_zoom.Value.ToString());
@@ -624,13 +624,13 @@ namespace waifu2x_ncnn_vulkan_gui
                 param_denoise2.Append(param_denoise.ToString());
 
                 // Set mode
-                if (param_mode.ToString() == "-m noise")
+                if (param_mode.ToString() == "noise")
                 {
                     param_mag.Clear();
                     param_mag.Append("-s ");
                     param_mag.Append("1");
                 }
-                if (param_mode.ToString() == "-m scale")
+                if (param_mode.ToString() == "scale")
                 {
                     param_denoise2.Clear();
                     param_denoise2.Append("-1");
@@ -657,7 +657,7 @@ namespace waifu2x_ncnn_vulkan_gui
             Commandline.Append("if /i \"%~x1\"==\".jpg\" set \"input_image_jpg=1\"\r\n");
             Commandline.Append("if /i \"%~x1\"==\".jpeg\" set \"input_image_jpg=1\"\r\n");
             Commandline.Append("set \"noise_level=" + param_denoise2 + "\"\r\n");
-            Commandline.Append("if \"" + param_mode.ToString() + "\"==\"-m auto_scale\" if not \"%input_image_jpg%\"==\"1\" set \"noise_level=-1\"\r\n");
+            Commandline.Append("if \"" + param_mode.ToString() + "\"==\"auto_scale\" if not \"%input_image_jpg%\"==\"1\" set \"noise_level=-1\"\r\n");
             Commandline.Append("for %%i in (\"%~1\") do set \"Attribute=%%~ai\"\r\n");
             Commandline.Append("IF \"%Attribute:~0,1%\"==\"d\" if not exist \"%~2\" (\r\n");
             Commandline.Append("   echo mkdir \"%~2\"\r\n"); 
