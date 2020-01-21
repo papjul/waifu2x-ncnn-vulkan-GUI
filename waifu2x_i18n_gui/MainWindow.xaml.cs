@@ -574,7 +574,7 @@ namespace waifu2x_ncnn_vulkan_gui
                         {
                             param_dst.Append(".png\"");
                         }
-                        else if (Directory.Exists(param_src[i]))
+                    else if (Directory.Exists(param_src[i]))
                         {
                             param_dst.Append("\"");
                         }
