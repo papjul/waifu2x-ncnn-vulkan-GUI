@@ -164,7 +164,7 @@ namespace waifu2x_ncnn_vulkan_gui
             }
 
             Properties.Settings.Default.output_no_overwirit = Convert.ToBoolean(checkOutput_no_overwirit.IsChecked);
-            Properties.Settings.Default.model = param_model.ToString();
+            Properties.Settings.Default.model = param_model.ToString().Replace("-m ", "");
             // Properties.Settings.Default.mode = param_mode.ToString().Replace("-m ", "");
 
             Properties.Settings.Default.SoundBeep = Convert.ToBoolean(checkSoundBeep.IsChecked);
@@ -373,6 +373,7 @@ namespace waifu2x_ncnn_vulkan_gui
         {
             param_model.Clear();
             RadioButton optsrc = sender as RadioButton;
+            param_model.Append("-m ");
             param_model.Append(optsrc.Tag.ToString());
         }
         
@@ -583,11 +584,11 @@ namespace waifu2x_ncnn_vulkan_gui
                     param_dst.Append(hDirInfo.FullName);
                     param_dst.Append("\\");
                     param_dst.Append(System.IO.Path.GetFileNameWithoutExtension(param_src[i].Replace("%", "%%%%")));
-                    if (param_model.ToString() == "models-cunet")
+                    if (param_model.ToString().Replace("-m ", "") == "models-cunet")
                        { param_dst.Append("(CUnet)"); }
-                    if (param_model.ToString() == "models-upconv_7_anime_style_art_rgb")
+                    if (param_model.ToString().Replace("-m ", "") == "models-upconv_7_anime_style_art_rgb")
                        { param_dst.Append("(UpRGB)"); }
-                    if (param_model.ToString() == "models-upconv_7_photo")
+                    if (param_model.ToString().Replace("-m ", "") == "models-upconv_7_photo")
                        { param_dst.Append("(UpPhoto)"); }
                     param_dst.Append("(");
                     param_dst.Append(param_mode.ToString().Replace("-m ", ""));
@@ -616,7 +617,7 @@ namespace waifu2x_ncnn_vulkan_gui
                        }
                 }
                 param_mag.Clear();
-                // param_mag.Append("-s ");
+                param_mag.Append("-s ");
                 param_mag.Append(this.slider_value.Text);
 
                 param_denoise2.Clear();
@@ -626,6 +627,7 @@ namespace waifu2x_ncnn_vulkan_gui
                 if (param_mode.ToString() == "-m noise")
                 {
                     param_mag.Clear();
+                    param_mag.Append("-s ");
                     param_mag.Append("1");
                 }
                 if (param_mode.ToString() == "-m scale")
@@ -633,8 +635,20 @@ namespace waifu2x_ncnn_vulkan_gui
                     param_denoise2.Clear();
                     param_denoise2.Append("-1");
                 }
+
                 Commandline.Append("call :waifu2x_run " + "\"" + param_src[i].Replace("%", "%%%%") + "\" " + param_dst + "\r\n");
             }
+            string full_param = String.Join(" ",
+                "-v ",
+                "-i \"%~1\"",
+                "-o \"%~2\"",
+                param_mag.ToString(),
+                "-n %noise_level%",
+                param_block.ToString(),
+                param_model.ToString(),
+                param_gpu_id.ToString(),
+                param_thread.ToString());
+
             Commandline.Append("exit /b\r\n");
             Commandline.Append("\r\n");
             Commandline.Append(":waifu2x_run\r\n");
@@ -649,8 +663,8 @@ namespace waifu2x_ncnn_vulkan_gui
             Commandline.Append("   echo mkdir \"%~2\"\r\n"); 
             Commandline.Append("   mkdir \"%~2\"\r\n"); 
             Commandline.Append(")\r\n"); 
-            Commandline.Append("echo " + "waifu2x-ncnn-vulkan.exe -v -i \"%~1\" -o \"%~2\" -n %noise_level% -s " + param_mag + " " + param_block + " -m " + param_model.ToString() + " " + param_gpu_id.ToString() + " " + param_thread.ToString() + " \r\n");
-            Commandline.Append("waifu2x-ncnn-vulkan.exe -v -i \"%~1\" -o \"%~2\" -n %noise_level% -s " + param_mag + " " + param_block + " -m " + param_model.ToString() + " " + param_gpu_id.ToString() + " " + param_thread.ToString() + " \r\n");
+            Commandline.Append("echo " + "waifu2x-ncnn-vulkan.exe " + full_param + "\r\n");
+            Commandline.Append("waifu2x-ncnn-vulkan.exe " + full_param + "\r\n");
             Commandline.Append(":waifu2x_run_skip\r\n");
             Commandline.Append("set /a ProcessedCount=%ProcessedCount%+1\r\n");
             Commandline.Append("if not \"%FileCount%\"==\"1\" echo progress %ProcessedCount%/%FileCount%\r\n");
