@@ -106,6 +106,7 @@ namespace waifu2x_ncnn_vulkan_gui
             checkSoundBeep.IsChecked = Properties.Settings.Default.SoundBeep;
             checkStore_output_dir.IsChecked = Properties.Settings.Default.store_output_dir;
             checkOutput_no_overwirit.IsChecked = Properties.Settings.Default.output_no_overwirit;
+            checkPrecision_fp32.IsChecked = Properties.Settings.Default.Precision_fp32;
             slider_value.Text = Properties.Settings.Default.scale_ratio;
             slider_zoom.Value = double.Parse(Properties.Settings.Default.scale_ratio);
 
@@ -125,6 +126,7 @@ namespace waifu2x_ncnn_vulkan_gui
         public static StringBuilder param_thread = new StringBuilder("1:2:2");
         public static String[] param_src;
         public static StringBuilder random32 = new StringBuilder("");
+        public static StringBuilder binary_path = new StringBuilder("");
         public static StringBuilder Commandline = new StringBuilder("");
         public static StringBuilder waifu2x_bat = new StringBuilder("");
         // public static int FileCount = (0);
@@ -169,6 +171,7 @@ namespace waifu2x_ncnn_vulkan_gui
 
             Properties.Settings.Default.SoundBeep = Convert.ToBoolean(checkSoundBeep.IsChecked);
             Properties.Settings.Default.store_output_dir = Convert.ToBoolean(checkStore_output_dir.IsChecked);
+            Properties.Settings.Default.Precision_fp32 = Convert.ToBoolean(checkPrecision_fp32.IsChecked);
             Properties.Settings.Default.mode = param_mode.ToString();
             Properties.Settings.Default.noise_level = param_denoise.ToString();
 
@@ -250,8 +253,8 @@ namespace waifu2x_ncnn_vulkan_gui
             string msg =
                 "Multilingual GUI for waifu2x-ncnn-vulkan\n" +
                 "f11894 (2020)\n" +
-                "Version 1.0.8\n" +
-                "BuildDate: 13 Jan,2020\n" +
+                "Version 1.0.9\n" +
+                "BuildDate: 2 Feb,2020\n" +
                 "License: Do What the Fuck You Want License";
             MessageBox.Show(msg);
         }
@@ -536,6 +539,17 @@ namespace waifu2x_ncnn_vulkan_gui
             {
                 param_thread.Clear();
             }
+
+            binary_path.Clear();
+            if (checkPrecision_fp32.IsChecked == true)
+            {
+                binary_path.Append(".\\fp32\\waifu2x-ncnn-vulkan.exe ");
+            }
+            else
+            {
+                binary_path.Append(".\\waifu2x-ncnn-vulkan.exe ");
+            }
+            
             // logをクリアする
             this.CLIOutput.Clear();
             if (this.txtDstPath.Text.Trim() != "") if (Directory.Exists(this.txtDstPath.Text) == false)
@@ -663,8 +677,8 @@ namespace waifu2x_ncnn_vulkan_gui
             Commandline.Append("   echo mkdir \"%~2\"\r\n"); 
             Commandline.Append("   mkdir \"%~2\"\r\n"); 
             Commandline.Append(")\r\n"); 
-            Commandline.Append("echo " + ".\\waifu2x-ncnn-vulkan.exe " + full_param + "\r\n");
-            Commandline.Append(".\\waifu2x-ncnn-vulkan.exe " + full_param + "\r\n");
+            Commandline.Append("echo " + binary_path + full_param + "\r\n");
+            Commandline.Append(binary_path + full_param + "\r\n");
             Commandline.Append(":waifu2x_run_skip\r\n");
             Commandline.Append("set /a ProcessedCount=%ProcessedCount%+1\r\n");
             Commandline.Append("if not \"%FileCount%\"==\"1\" echo progress %ProcessedCount%/%FileCount%\r\n");

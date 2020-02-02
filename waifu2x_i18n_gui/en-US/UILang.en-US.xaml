@@ -42,6 +42,7 @@
     <sys:String x:Key="Main_checkStore_output_dir">store the last output path</sys:String>
     <sys:String x:Key="Main_checkOutput_no_overwirit">Output files No overwrite</sys:String>
     <sys:String x:Key="Main_checkSoundBeep">Play beep after processing</sys:String>
+    <sys:String x:Key="Main_checkPrecision_fp32">Execute high precision processing(fp32 mode)</sys:String>
     <!-- Run button -->
     <sys:String x:Key="Main_btnRun">Run!</sys:String>
     <!-- Abort button -->
