@@ -36,7 +36,8 @@
     <sys:String x:Key="Main_Mode_Model_UpPhoto">Photo (UpPhoto Model)</sys:String> 
     <sys:String x:Key="Main_Device_Block">Block Size</sys:String>
     <sys:String x:Key="Main_Device_gp">Device</sys:String>
-    <sys:String x:Key="Main_Device_GPU_ID">GPU ID</sys:String>    <!-- Tabs -->
+    <sys:String x:Key="Main_Device_GPU_ID">GPU ID</sys:String>
+    <!-- Tabs -->
     <sys:String x:Key="MainTab_Preferences">Preferences</sys:String>
     <!-- Tab:Preferences -->
     <sys:String x:Key="Main_checkStore_output_dir">store the last output path</sys:String>
