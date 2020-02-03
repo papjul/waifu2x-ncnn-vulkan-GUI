@@ -115,6 +115,7 @@
                             <CheckBox Name="checkOutput_no_overwirit" Margin="3" Content="{DynamicResource ResourceKey=Main_checkOutput_no_overwirit}" ></CheckBox>
                             <CheckBox Name="checkSoundBeep" Margin="3" Content="{DynamicResource ResourceKey=Main_checkSoundBeep}" ></CheckBox>
                             <CheckBox Name="checkPrecision_fp32" Margin="3" Content="{DynamicResource ResourceKey=Main_checkPrecision_fp32}" ></CheckBox>
+                            <CheckBox Name="checkPrevent_double_extensions" Margin="3" Content="{DynamicResource ResourceKey=Main_checkPrevent_double_extensions}" ></CheckBox>
                         </StackPanel>
                     </GroupBox>
                 </StackPanel>

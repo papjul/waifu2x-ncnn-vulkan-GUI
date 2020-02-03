@@ -107,6 +107,7 @@ namespace waifu2x_ncnn_vulkan_gui
             checkStore_output_dir.IsChecked = Properties.Settings.Default.store_output_dir;
             checkOutput_no_overwirit.IsChecked = Properties.Settings.Default.output_no_overwirit;
             checkPrecision_fp32.IsChecked = Properties.Settings.Default.Precision_fp32;
+            checkPrevent_double_extensions.IsChecked = Properties.Settings.Default.Prevent_double_extensions;
             slider_value.Text = Properties.Settings.Default.scale_ratio;
             slider_zoom.Value = double.Parse(Properties.Settings.Default.scale_ratio);
 
@@ -172,6 +173,7 @@ namespace waifu2x_ncnn_vulkan_gui
             Properties.Settings.Default.SoundBeep = Convert.ToBoolean(checkSoundBeep.IsChecked);
             Properties.Settings.Default.store_output_dir = Convert.ToBoolean(checkStore_output_dir.IsChecked);
             Properties.Settings.Default.Precision_fp32 = Convert.ToBoolean(checkPrecision_fp32.IsChecked);
+            Properties.Settings.Default.Prevent_double_extensions = Convert.ToBoolean(checkPrevent_double_extensions.IsChecked);
             Properties.Settings.Default.mode = param_mode.ToString();
             Properties.Settings.Default.noise_level = param_denoise.ToString();
 
@@ -253,8 +255,8 @@ namespace waifu2x_ncnn_vulkan_gui
             string msg =
                 "Multilingual GUI for waifu2x-ncnn-vulkan\n" +
                 "f11894 (2020)\n" +
-                "Version 1.0.9\n" +
-                "BuildDate: 2 Feb,2020\n" +
+                "Version 1.0.10\n" +
+                "BuildDate: 3 Feb,2020\n" +
                 "License: Do What the Fuck You Want License";
             MessageBox.Show(msg);
         }
@@ -572,9 +574,11 @@ namespace waifu2x_ncnn_vulkan_gui
             }
             Commandline.Append("@echo off\r\n");
             Commandline.Append("chcp 65001 >nul\r\n");
+            Commandline.Append("if \"%~1\"==\"sub_rename\" goto sub_rename\r\n");
             Commandline.Append("set \"FileCount=" + FileCount + "\"\r\n");
             Commandline.Append("set \"ProcessedCount=0\"\r\n");
             Commandline.Append("set \"Output_no_overwirit=" + checkOutput_no_overwirit.IsChecked.ToString() + "\"\r\n");
+            Commandline.Append("set \"Prevent_double_extensions=" + checkPrevent_double_extensions.IsChecked.ToString() + "\"\r\n");
             Commandline.Append("if not \"%FileCount%\"==\"1\" echo progress %ProcessedCount%/%FileCount%\r\n");
             for (int i = 0; i < param_src.Length; i++)
             {
@@ -676,14 +680,30 @@ namespace waifu2x_ncnn_vulkan_gui
             Commandline.Append("IF \"%Attribute:~0,1%\"==\"d\" if not exist \"%~2\" (\r\n");
             Commandline.Append("   echo mkdir \"%~2\"\r\n"); 
             Commandline.Append("   mkdir \"%~2\"\r\n"); 
-            Commandline.Append(")\r\n"); 
+            Commandline.Append(")\r\n");
+            Commandline.Append("if \"%Prevent_double_extensions%\"==\"True\" if \"%Attribute:~0,1%\"==\"d\" (\r\n");
+            Commandline.Append("    set output_dir=\"%~2\"\r\n");
+            Commandline.Append("    start \"\" /min \"%~dpnx0\" sub_rename\r\n");
+            Commandline.Append(")\r\n");
             Commandline.Append("echo " + binary_path + full_param + "\r\n");
             Commandline.Append(binary_path + full_param + "\r\n");
             Commandline.Append(":waifu2x_run_skip\r\n");
             Commandline.Append("set /a ProcessedCount=%ProcessedCount%+1\r\n");
             Commandline.Append("if not \"%FileCount%\"==\"1\" echo progress %ProcessedCount%/%FileCount%\r\n");
             Commandline.Append("exit /b\r\n");
-
+            Commandline.Append("\r\n");
+            Commandline.Append(":sub_rename\r\n");
+            Commandline.Append("PowerShell -WindowStyle Hidden -Command Exit\r\n");
+            Commandline.Append("cd %output_dir%\r\n");
+            Commandline.Append("timeout /t 3 /nobreak\r\n");
+            Commandline.Append("for %%i in (*.png.png,*.jpg.png,*.jpeg.png,*.bmp.png,*.gif.png,*.tif.png,*.tiff.png,*.webp.png) do (\r\n");
+            Commandline.Append("    for %%b in (\"%%~dpni\") do move /y \"%%~i\" \"%%~dpnb.png\"\r\n");
+            Commandline.Append(")\r\n");
+            Commandline.Append("if \"%termination%\"==\"true\" exit\r\n");
+            Commandline.Append("tasklist | find \"waifu2x-ncnn-vulkan.exe\" && goto sub_rename\r\n");
+            Commandline.Append("set termination=true\r\n");
+            Commandline.Append("goto sub_rename\r\n");
+            Commandline.Append("exit\r\n");
             Guid g = System.Guid.NewGuid();
             random32.Clear();
             random32.Append(g.ToString("N").Substring(0, 32));
