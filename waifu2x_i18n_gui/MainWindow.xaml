@@ -69,7 +69,6 @@
                                 <RadioButton Tag="noise_scale" Name="btnModeNoiseScale" Margin="2" Content="{DynamicResource ResourceKey=Main_Mode_Set_NoiseScale}" Checked="OnSetModeChecked"></RadioButton>
                                 <RadioButton Tag="scale" Name="btnModeScale" Margin="2" Content="{DynamicResource ResourceKey=Main_Mode_Set_Scale}" Checked="OnSetModeChecked"></RadioButton>
                                 <RadioButton Tag="noise" Name="btnModeNoise" Margin="2" Content="{DynamicResource ResourceKey=Main_Mode_Set_Noise}" Checked="OnSetModeChecked"></RadioButton>
-                                <RadioButton Tag="auto_scale" Name="btnModeAutoScale" Margin="2" Content="{DynamicResource ResourceKey=Main_Mode_Set_AutoScale}" Checked="OnSetModeChecked"></RadioButton>
                             </StackPanel>
                         </GroupBox>
                         <GroupBox Name="gpDenoise" Header="{DynamicResource ResourceKey=Main_Mode_Denoise}" Padding="3" Margin="3" Height="130">

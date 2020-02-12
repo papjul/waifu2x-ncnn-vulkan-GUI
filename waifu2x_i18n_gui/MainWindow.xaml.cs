@@ -255,8 +255,8 @@ namespace waifu2x_ncnn_vulkan_gui
             string msg =
                 "Multilingual GUI for waifu2x-ncnn-vulkan\n" +
                 "f11894 (2020)\n" +
-                "Version 1.0.10\n" +
-                "BuildDate: 3 Feb,2020\n" +
+                "Version 1.1.0\n" +
+                "BuildDate: 12 Feb,2020\n" +
                 "License: Do What the Fuck You Want License";
             MessageBox.Show(msg);
         }
@@ -695,10 +695,7 @@ namespace waifu2x_ncnn_vulkan_gui
             Commandline.Append("\r\n");
             Commandline.Append(":waifu2x_run\r\n");
             Commandline.Append("for %%i in (\"%~2\") do set \"Source_name=%%~ni\"\r\n");
-            Commandline.Append("set input_image_jpg=\r\n");
             Commandline.Append("if \"%Output_no_overwirit%\"==\"True\" if exist \"%~2\" goto waifu2x_run_skip\r\n");
-            Commandline.Append("if /i \"%~x1\"==\".jpg\" set \"input_image_jpg=1\"\r\n");
-            Commandline.Append("if /i \"%~x1\"==\".jpeg\" set \"input_image_jpg=1\"\r\n");
             Commandline.Append("set \"noise_level=" + param_denoise2 + "\"\r\n");
             Commandline.Append("if \"" + param_mode.ToString() + "\"==\"auto_scale\" if not \"%input_image_jpg%\"==\"1\" set \"noise_level=-1\"\r\n");
             Commandline.Append("for %%i in (\"%~1\") do set \"Attribute=%%~ai\"\r\n");
