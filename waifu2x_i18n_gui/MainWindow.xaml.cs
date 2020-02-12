@@ -91,8 +91,6 @@ namespace waifu2x_ncnn_vulkan_gui
             { btnModeNoiseScale.IsChecked = true; }
             if (Properties.Settings.Default.mode == "noise")
             { btnModeNoise.IsChecked = true; }
-            if (Properties.Settings.Default.mode == "auto_scale")
-            { btnModeAutoScale.IsChecked = true; }
 
             btnCUnet.IsChecked = true;
 
