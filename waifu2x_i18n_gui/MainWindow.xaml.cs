@@ -528,6 +528,12 @@ namespace waifu2x_ncnn_vulkan_gui
                 param_block.Clear();
             }
 
+            if (((int)slider_zoom.Value & ((int)slider_zoom.Value - 1)) != 0)
+            {
+                MessageBox.Show(@"Magnification must be a power of two.");
+                return;
+            }
+
             if (System.Text.RegularExpressions.Regex.IsMatch(
                 txtThread.Text,
                  @"^(\d+:\d+:\d+)$",
@@ -577,6 +583,9 @@ namespace waifu2x_ncnn_vulkan_gui
             Commandline.Append("if \"%~1\"==\"sub_rename\" goto sub_rename\r\n");
             Commandline.Append("set \"FileCount=" + FileCount + "\"\r\n");
             Commandline.Append("set \"ProcessedCount=0\"\r\n");
+            Commandline.Append("set \"mode=" + param_mode.ToString() + "\"\r\n");
+            Commandline.Append("set \"Scale_ratio=" + this.slider_zoom.Value.ToString() + "\"\r\n");
+            Commandline.Append("if \"%mode%\"==\"noise\" set Scale_ratio=1\r\n");
             Commandline.Append("set \"Output_no_overwirit=" + checkOutput_no_overwirit.IsChecked.ToString() + "\"\r\n");
             Commandline.Append("set \"Prevent_double_extensions=" + checkPrevent_double_extensions.IsChecked.ToString() + "\"\r\n");
             Commandline.Append("if not \"%FileCount%\"==\"1\" echo progress %ProcessedCount%/%FileCount%\r\n");
@@ -667,9 +676,25 @@ namespace waifu2x_ncnn_vulkan_gui
                 param_gpu_id.ToString(),
                 param_thread.ToString());
 
+            string multiple_full_param = String.Join(" ",
+                "-v ",
+                "-i %Temporary_input%",
+                "-o %Temporary_output%",
+                "-s 2",
+                "-n %Temporary_noise_level%",
+                param_block.ToString(),
+                param_model.ToString(),
+                param_gpu_id.ToString(),
+                param_thread.ToString());
+
+            Guid g = System.Guid.NewGuid();
+            random32.Clear();
+            random32.Append(g.ToString("N").Substring(0, 32));
+
             Commandline.Append("exit /b\r\n");
             Commandline.Append("\r\n");
             Commandline.Append(":waifu2x_run\r\n");
+            Commandline.Append("for %%i in (\"%~2\") do set \"Source_name=%%~ni\"\r\n");
             Commandline.Append("set input_image_jpg=\r\n");
             Commandline.Append("if \"%Output_no_overwirit%\"==\"True\" if exist \"%~2\" goto waifu2x_run_skip\r\n");
             Commandline.Append("if /i \"%~x1\"==\".jpg\" set \"input_image_jpg=1\"\r\n");
@@ -677,36 +702,52 @@ namespace waifu2x_ncnn_vulkan_gui
             Commandline.Append("set \"noise_level=" + param_denoise2 + "\"\r\n");
             Commandline.Append("if \"" + param_mode.ToString() + "\"==\"auto_scale\" if not \"%input_image_jpg%\"==\"1\" set \"noise_level=-1\"\r\n");
             Commandline.Append("for %%i in (\"%~1\") do set \"Attribute=%%~ai\"\r\n");
-            Commandline.Append("IF \"%Attribute:~0,1%\"==\"d\" if not exist \"%~2\" (\r\n");
+            Commandline.Append("if %Scale_ratio% LEQ 2 if \"%Attribute:~0,1%\"==\"d\" if not exist \"%~2\" (\r\n");
             Commandline.Append("   echo mkdir \"%~2\"\r\n"); 
             Commandline.Append("   mkdir \"%~2\"\r\n"); 
             Commandline.Append(")\r\n");
-            Commandline.Append("if \"%Prevent_double_extensions%\"==\"True\" if \"%Attribute:~0,1%\"==\"d\" (\r\n");
-            Commandline.Append("    set output_dir=\"%~2\"\r\n");
-            Commandline.Append("    start \"\" /min \"%~dpnx0\" sub_rename\r\n");
+            Commandline.Append("set Temporary_input=\"%~1\"\r\n");
+            Commandline.Append("if %Scale_ratio% GTR 2 (\r\n");
+            Commandline.Append("    for /L %%i in (2,2,%Scale_ratio%) do (\r\n");
+            Commandline.Append("        call :sub_multiple_magnify %%i\r\n");
+            Commandline.Append("    )\r\n");
+            Commandline.Append(") else (\r\n");
+            Commandline.Append("    echo " + binary_path + full_param + "\r\n");
+            Commandline.Append("    " + binary_path + full_param + "\r\n");
             Commandline.Append(")\r\n");
-            Commandline.Append("echo " + binary_path + full_param + "\r\n");
-            Commandline.Append(binary_path + full_param + "\r\n");
+            Commandline.Append("if %Scale_ratio% LEQ 2 if \"%Attribute:~0,1%\"==\"d\" if \"%Prevent_double_extensions%\"==\"True\" (\r\n");
+            Commandline.Append("    pushd \"%~2\"\r\n");
+            Commandline.Append("    PowerShell \"Get-ChildItem *.png | Rename-Item -NewName { $_.Name -replace '(.png.png|.jpg.png|.jpeg.png|.bmp.png|.gif.png|.tif.png|.tiff.png|.webp.png)$','.png' }\"\r\n");
+            Commandline.Append("    popd\r\n");
+            Commandline.Append(")\r\n");
+            Commandline.Append("if %Scale_ratio% GTR 2 (\r\n");
+            Commandline.Append("    move /y %Temporary_output% \"%~2\" >nul 2>&1\r\n");
+            Commandline.Append("    rd /s /q \"%TEMP%\\" + random32.ToString() + "\\\"\r\n");
+            Commandline.Append(")\r\n");
             Commandline.Append(":waifu2x_run_skip\r\n");
             Commandline.Append("set /a ProcessedCount=%ProcessedCount%+1\r\n");
             Commandline.Append("if not \"%FileCount%\"==\"1\" echo progress %ProcessedCount%/%FileCount%\r\n");
             Commandline.Append("exit /b\r\n");
             Commandline.Append("\r\n");
-            Commandline.Append(":sub_rename\r\n");
-            Commandline.Append("PowerShell -WindowStyle Hidden -Command Exit\r\n");
-            Commandline.Append("cd %output_dir%\r\n");
-            Commandline.Append("timeout /t 3 /nobreak\r\n");
-            Commandline.Append("for %%i in (*.png.png,*.jpg.png,*.jpeg.png,*.bmp.png,*.gif.png,*.tif.png,*.tiff.png,*.webp.png) do (\r\n");
-            Commandline.Append("    for %%b in (\"%%~dpni\") do move /y \"%%~i\" \"%%~dpnb.png\"\r\n");
+            Commandline.Append(":sub_multiple_magnify\r\n");
+            Commandline.Append("for %%i in (2,4,8,16,32,64,128,256) do if \"%~1\"==\"%%i\" goto sub_multiple_magnify2\r\n");
+            Commandline.Append("exit /b\r\n");
+            Commandline.Append(":sub_multiple_magnify2\r\n");
+            Commandline.Append("set Temporary_output=\"%TEMP%\\" + random32.ToString() + "\\%Source_name%_x%~1.png\"\r\n");
+            Commandline.Append("if \"%Attribute:~0,1%\"==\"d\" set Temporary_output=\"%TEMP%\\" + random32.ToString() + "\\%Source_name%_x%~1\"\r\n");
+            Commandline.Append("if \"%Attribute:~0,1%\"==\"d\" mkdir %Temporary_output%\r\n");
+            Commandline.Append("if not \"%Attribute:~0,1%\"==\"d\" if not exist \"%TEMP%\\" + random32.ToString() + "\\\" mkdir \"%TEMP%\\" + random32.ToString() + "\\\"\r\n");
+            Commandline.Append("set Temporary_noise_level=-1\r\n");
+            Commandline.Append("if \"%~1\"==\"2\" if not \"%noise_level%\"==\"-1\" set \"Temporary_noise_level=%noise_level%\"\r\n");
+            Commandline.Append("echo " + binary_path + multiple_full_param + "\r\n");
+            Commandline.Append(binary_path + multiple_full_param + "\r\n");
+            Commandline.Append("if \"%Attribute:~0,1%\"==\"d\" if \"%Prevent_double_extensions%\"==\"True\" (\r\n");
+            Commandline.Append("    pushd %Temporary_output%\r\n");
+            Commandline.Append("    PowerShell \"Get-ChildItem *.png | Rename-Item -NewName { $_.Name -replace '(.png.png|.jpg.png|.jpeg.png|.bmp.png|.gif.png|.tif.png|.tiff.png|.webp.png)$','.png' }\"\r\n");
+            Commandline.Append("    popd\r\n");
             Commandline.Append(")\r\n");
-            Commandline.Append("if \"%termination%\"==\"true\" exit\r\n");
-            Commandline.Append("tasklist | find \"waifu2x-ncnn-vulkan.exe\" && goto sub_rename\r\n");
-            Commandline.Append("set termination=true\r\n");
-            Commandline.Append("goto sub_rename\r\n");
-            Commandline.Append("exit\r\n");
-            Guid g = System.Guid.NewGuid();
-            random32.Clear();
-            random32.Append(g.ToString("N").Substring(0, 32));
+            Commandline.Append("set Temporary_input=%Temporary_output%\r\n");
+            Commandline.Append("exit /b\r\n");
             waifu2x_bat.Clear();
             waifu2x_bat.Append(System.IO.Path.GetTempPath() + "waifu2x_" + random32.ToString() + ".bat");
 
