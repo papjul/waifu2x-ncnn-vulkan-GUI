@@ -618,7 +618,7 @@ namespace waifu2x_ncnn_vulkan_gui
                     param_dst.Append("(");
                     param_dst.Append(param_mode.ToString().Replace("-m ", ""));
                     param_dst.Append(")");
-                    if (param_mode.ToString() == "noise" || param_mode.ToString() == "noise_scale" || param_mode.ToString() == "auto_scale")
+                    if (param_mode.ToString() == "noise" || param_mode.ToString() == "noise_scale")
                     {
                         param_dst.Append("(");
                         param_dst.Append("Level");
@@ -626,7 +626,7 @@ namespace waifu2x_ncnn_vulkan_gui
                         param_dst.Append(")");
                     }
 
-                    if (param_mode.ToString() == "scale" || param_mode.ToString() == "noise_scale" || param_mode.ToString() == "auto_scale")
+                    if (param_mode.ToString() == "scale" || param_mode.ToString() == "noise_scale")
                     {
                         param_dst.Append("(x");
                         param_dst.Append(this.slider_zoom.Value.ToString());
@@ -695,7 +695,6 @@ namespace waifu2x_ncnn_vulkan_gui
             Commandline.Append("for %%i in (\"%~2\") do set \"Source_name=%%~ni\"\r\n");
             Commandline.Append("if \"%Output_no_overwirit%\"==\"True\" if exist \"%~2\" goto waifu2x_run_skip\r\n");
             Commandline.Append("set \"noise_level=" + param_denoise2 + "\"\r\n");
-            Commandline.Append("if \"" + param_mode.ToString() + "\"==\"auto_scale\" if not \"%input_image_jpg%\"==\"1\" set \"noise_level=-1\"\r\n");
             Commandline.Append("for %%i in (\"%~1\") do set \"Attribute=%%~ai\"\r\n");
             Commandline.Append("if %Scale_ratio% LEQ 2 if \"%Attribute:~0,1%\"==\"d\" if not exist \"%~2\" (\r\n");
             Commandline.Append("   echo mkdir \"%~2\"\r\n"); 
