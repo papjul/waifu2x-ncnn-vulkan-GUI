@@ -711,7 +711,7 @@ namespace waifu2x_ncnn_vulkan_gui
             Commandline.Append(")\r\n");
             Commandline.Append("if %Scale_ratio% LEQ 2 if \"%Attribute:~0,1%\"==\"d\" if \"%Prevent_double_extensions%\"==\"True\" (\r\n");
             Commandline.Append("    pushd \"%~2\"\r\n");
-            Commandline.Append("    PowerShell \"Get-ChildItem *.png | Rename-Item -NewName { $_.Name -replace '(.png.png|.jpg.png|.jpeg.png|.bmp.png|.gif.png|.tif.png|.tiff.png|.webp.png)$','.png' }\"\r\n");
+            Commandline.Append("    PowerShell \"Get-ChildItem *.png | Rename-Item -NewName { $_.Name -replace '(\\.png|\\.jpe?g|\\.bmp|\\.gif|\\.tiff?|\\.webp)\\.png$','.png' }\"\r\n");
             Commandline.Append("    popd\r\n");
             Commandline.Append(")\r\n");
             Commandline.Append("if %Scale_ratio% GTR 2 (\r\n");
@@ -737,7 +737,7 @@ namespace waifu2x_ncnn_vulkan_gui
             Commandline.Append(binary_path + multiple_full_param + "\r\n");
             Commandline.Append("if \"%Attribute:~0,1%\"==\"d\" if \"%Prevent_double_extensions%\"==\"True\" (\r\n");
             Commandline.Append("    pushd %Temporary_output%\r\n");
-            Commandline.Append("    PowerShell \"Get-ChildItem *.png | Rename-Item -NewName { $_.Name -replace '(.png.png|.jpg.png|.jpeg.png|.bmp.png|.gif.png|.tif.png|.tiff.png|.webp.png)$','.png' }\"\r\n");
+            Commandline.Append("    PowerShell \"Get-ChildItem *.png | Rename-Item -NewName { $_.Name -replace '(\\.png|\\.jpe?g|\\.bmp|\\.gif|\\.tiff?|\\.webp)\\.png$','.png' }\"\r\n");
             Commandline.Append("    popd\r\n");
             Commandline.Append(")\r\n");
             Commandline.Append("set Temporary_input=%Temporary_output%\r\n");
