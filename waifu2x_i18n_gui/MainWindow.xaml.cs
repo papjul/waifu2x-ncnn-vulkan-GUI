@@ -697,6 +697,7 @@ namespace waifu2x_ncnn_vulkan_gui
             Commandline.Append(":waifu2x_run\r\n");
             Commandline.Append("if \"%Output_no_overwirit%\"==\"True\" if exist \"%~2\" goto waifu2x_run_skip\r\n");
             Commandline.Append("for %%i in (\"%~2\") do set \"Output_name=%%~ni\"\r\n");
+            Commandline.Append("set Output_path=\"%~2\"\r\n");
             Commandline.Append("for %%i in (\"%~1\") do set \"Attribute=%%~ai\"\r\n");
             Commandline.Append("if %Scale_ratio% LEQ 2 if \"%Attribute:~0,1%\"==\"d\" if not exist \"%~2\" (\r\n");
             Commandline.Append("   echo mkdir \"%~2\"\r\n"); 
@@ -709,13 +710,10 @@ namespace waifu2x_ncnn_vulkan_gui
             Commandline.Append("    echo " + binary_path + full_param + "\r\n");
             Commandline.Append("    " + binary_path + full_param + "\r\n");
             Commandline.Append(")\r\n");
-            Commandline.Append("if %Scale_ratio% GTR 2 (\r\n");
-            Commandline.Append("    move /y %Temporary_output% \"%~2\" >nul 2>&1\r\n");
-            Commandline.Append("    rd /s /q \"%TEMP%\\waifu2x_%random32%\\\"\r\n");
-            Commandline.Append(")\r\n");
+            Commandline.Append("if %Scale_ratio% GTR 2 rd /s /q \"%TEMP%\\waifu2x_%random32%\\\"\r\n");
             Commandline.Append("if \"%Attribute:~0,1%\"==\"d\" if \"%Prevent_double_extensions%\"==\"True\" (\r\n");
             Commandline.Append("    pushd \"%~2\"\r\n");
-            Commandline.Append("    PowerShell \"Get-ChildItem *.png | Rename-Item -NewName { $_.Name -replace '(\\.png|\\.jpe?g|\\.bmp|\\.gif|\\.tiff?|\\.webp)(\\.png)+$','.png' }\"\r\n");
+            Commandline.Append("    PowerShell \"Get-ChildItem *.png | Move-Item -Force -Destination { $_.Name -replace '(\\.png|\\.jpe?g|\\.bmp|\\.gif|\\.tiff?|\\.webp)(\\.png)+$','.png' }\"\r\n");
             Commandline.Append("    popd\r\n");
             Commandline.Append(")\r\n");
             Commandline.Append(":waifu2x_run_skip\r\n");
@@ -727,7 +725,8 @@ namespace waifu2x_ncnn_vulkan_gui
             Commandline.Append("if %~1 GTR %Scale_ratio% exit /b\r\n");
             Commandline.Append("set Temporary_output=\"%TEMP%\\waifu2x_%random32%\\%Output_name%_x%~1.png\"\r\n");
             Commandline.Append("if \"%Attribute:~0,1%\"==\"d\" set Temporary_output=\"%TEMP%\\waifu2x_%random32%\\%Output_name%_x%~1\"\r\n");
-            Commandline.Append("if \"%Attribute:~0,1%\"==\"d\" mkdir %Temporary_output%\r\n");
+            Commandline.Append("if \"%Scale_ratio%\"==\"%~1\" set Temporary_output=%Output_path%\r\n");
+            Commandline.Append("if \"%Attribute:~0,1%\"==\"d\" if not exist %Temporary_output% mkdir %Temporary_output%\r\n");
             Commandline.Append("if not \"%Attribute:~0,1%\"==\"d\" if not exist \"%TEMP%\\waifu2x_%random32%\\\" mkdir \"%TEMP%\\waifu2x_%random32%\\\"\r\n");
             Commandline.Append("set Temporary_noise_level=-1\r\n");
             Commandline.Append("if \"%~1\"==\"2\" if not \"%Noise_level%\"==\"-1\" set \"Temporary_noise_level=%Noise_level%\"\r\n");
