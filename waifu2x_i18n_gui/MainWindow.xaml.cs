@@ -555,7 +555,49 @@ namespace waifu2x_ncnn_vulkan_gui
             {
                 binary_path.Append(".\\waifu2x-ncnn-vulkan.exe ");
             }
-            
+
+            param_mag.Clear();
+            param_mag.Append("-s ");
+            param_mag.Append(this.slider_value.Text);
+
+            param_denoise2.Clear();
+            param_denoise2.Append(param_denoise.ToString());
+
+            // Set mode
+            if (param_mode.ToString() == "noise")
+            {
+                param_mag.Clear();
+                param_mag.Append("-s ");
+                param_mag.Append("1");
+            }
+            if (param_mode.ToString() == "scale")
+            {
+                param_denoise2.Clear();
+                param_denoise2.Append("-1");
+            }
+
+            string full_param = String.Join(" ",
+                "-v ",
+                "-i \"%~1\"",
+                "-o \"%~2\"",
+                param_mag.ToString(),
+                "-n %Noise_level%",
+                param_block.ToString(),
+                param_model.ToString(),
+                param_gpu_id.ToString(),
+                param_thread.ToString());
+
+            string multiple_full_param = String.Join(" ",
+                "-v ",
+                "-i %Temporary_input%",
+                "-o %Temporary_output%",
+                "-s 2",
+                "-n %Temporary_noise_level%",
+                param_block.ToString(),
+                param_model.ToString(),
+                param_gpu_id.ToString(),
+                param_thread.ToString());
+
             // logをクリアする
             this.CLIOutput.Clear();
             if (this.txtDstPath.Text.Trim() != "") if (Directory.Exists(this.txtDstPath.Text) == false)
@@ -576,6 +618,11 @@ namespace waifu2x_ncnn_vulkan_gui
             {
                 FileCount++;
             }
+
+            Guid g = System.Guid.NewGuid();
+            random32.Clear();
+            random32.Append(g.ToString("N").Substring(0, 32));
+
             Commandline.Append("@echo off\r\n");
             Commandline.Append("chcp 65001 >nul\r\n");
             Commandline.Append("if \"%~1\"==\"sub_rename\" goto sub_rename\r\n");
@@ -583,6 +630,8 @@ namespace waifu2x_ncnn_vulkan_gui
             Commandline.Append("set \"ProcessedCount=0\"\r\n");
             Commandline.Append("set \"mode=" + param_mode.ToString() + "\"\r\n");
             Commandline.Append("set \"Scale_ratio=" + this.slider_zoom.Value.ToString() + "\"\r\n");
+            Commandline.Append("set \"Noise_level=" + param_denoise2 + "\"\r\n");
+            Commandline.Append("set \"random32=" + random32.ToString() +"\"\r\n");
             Commandline.Append("if \"%mode%\"==\"noise\" set Scale_ratio=1\r\n");
             Commandline.Append("set \"Output_no_overwirit=" + checkOutput_no_overwirit.IsChecked.ToString() + "\"\r\n");
             Commandline.Append("set \"Prevent_double_extensions=" + checkPrevent_double_extensions.IsChecked.ToString() + "\"\r\n");
@@ -641,60 +690,13 @@ namespace waifu2x_ncnn_vulkan_gui
                         param_dst.Append("\"");
                        }
                 }
-                param_mag.Clear();
-                param_mag.Append("-s ");
-                param_mag.Append(this.slider_value.Text);
-
-                param_denoise2.Clear();
-                param_denoise2.Append(param_denoise.ToString());
-
-                // Set mode
-                if (param_mode.ToString() == "noise")
-                {
-                    param_mag.Clear();
-                    param_mag.Append("-s ");
-                    param_mag.Append("1");
-                }
-                if (param_mode.ToString() == "scale")
-                {
-                    param_denoise2.Clear();
-                    param_denoise2.Append("-1");
-                }
-
                 Commandline.Append("call :waifu2x_run " + "\"" + param_src[i].Replace("%", "%%%%") + "\" " + param_dst + "\r\n");
             }
-            string full_param = String.Join(" ",
-                "-v ",
-                "-i \"%~1\"",
-                "-o \"%~2\"",
-                param_mag.ToString(),
-                "-n %noise_level%",
-                param_block.ToString(),
-                param_model.ToString(),
-                param_gpu_id.ToString(),
-                param_thread.ToString());
-
-            string multiple_full_param = String.Join(" ",
-                "-v ",
-                "-i %Temporary_input%",
-                "-o %Temporary_output%",
-                "-s 2",
-                "-n %Temporary_noise_level%",
-                param_block.ToString(),
-                param_model.ToString(),
-                param_gpu_id.ToString(),
-                param_thread.ToString());
-
-            Guid g = System.Guid.NewGuid();
-            random32.Clear();
-            random32.Append(g.ToString("N").Substring(0, 32));
-
             Commandline.Append("exit /b\r\n");
             Commandline.Append("\r\n");
             Commandline.Append(":waifu2x_run\r\n");
-            Commandline.Append("for %%i in (\"%~2\") do set \"Source_name=%%~ni\"\r\n");
             Commandline.Append("if \"%Output_no_overwirit%\"==\"True\" if exist \"%~2\" goto waifu2x_run_skip\r\n");
-            Commandline.Append("set \"noise_level=" + param_denoise2 + "\"\r\n");
+            Commandline.Append("for %%i in (\"%~2\") do set \"Output_name=%%~ni\"\r\n");
             Commandline.Append("for %%i in (\"%~1\") do set \"Attribute=%%~ai\"\r\n");
             Commandline.Append("if %Scale_ratio% LEQ 2 if \"%Attribute:~0,1%\"==\"d\" if not exist \"%~2\" (\r\n");
             Commandline.Append("   echo mkdir \"%~2\"\r\n"); 
@@ -702,9 +704,7 @@ namespace waifu2x_ncnn_vulkan_gui
             Commandline.Append(")\r\n");
             Commandline.Append("set Temporary_input=\"%~1\"\r\n");
             Commandline.Append("if %Scale_ratio% GTR 2 (\r\n");
-            Commandline.Append("    for /L %%i in (2,2,%Scale_ratio%) do (\r\n");
-            Commandline.Append("        call :sub_multiple_magnify %%i\r\n");
-            Commandline.Append("    )\r\n");
+            Commandline.Append("    for %%i in (2,4,8,16,32,64,128,256) do call :sub_multiple_magnify %%i\r\n");
             Commandline.Append(") else (\r\n");
             Commandline.Append("    echo " + binary_path + full_param + "\r\n");
             Commandline.Append("    " + binary_path + full_param + "\r\n");
@@ -716,7 +716,7 @@ namespace waifu2x_ncnn_vulkan_gui
             Commandline.Append(")\r\n");
             Commandline.Append("if %Scale_ratio% GTR 2 (\r\n");
             Commandline.Append("    move /y %Temporary_output% \"%~2\" >nul 2>&1\r\n");
-            Commandline.Append("    rd /s /q \"%TEMP%\\" + random32.ToString() + "\\\"\r\n");
+            Commandline.Append("    rd /s /q \"%TEMP%\\waifu2x_%random32%\\\"\r\n");
             Commandline.Append(")\r\n");
             Commandline.Append(":waifu2x_run_skip\r\n");
             Commandline.Append("set /a ProcessedCount=%ProcessedCount%+1\r\n");
@@ -724,15 +724,13 @@ namespace waifu2x_ncnn_vulkan_gui
             Commandline.Append("exit /b\r\n");
             Commandline.Append("\r\n");
             Commandline.Append(":sub_multiple_magnify\r\n");
-            Commandline.Append("for %%i in (2,4,8,16,32,64,128,256) do if \"%~1\"==\"%%i\" goto sub_multiple_magnify2\r\n");
-            Commandline.Append("exit /b\r\n");
-            Commandline.Append(":sub_multiple_magnify2\r\n");
-            Commandline.Append("set Temporary_output=\"%TEMP%\\" + random32.ToString() + "\\%Source_name%_x%~1.png\"\r\n");
-            Commandline.Append("if \"%Attribute:~0,1%\"==\"d\" set Temporary_output=\"%TEMP%\\" + random32.ToString() + "\\%Source_name%_x%~1\"\r\n");
+            Commandline.Append("if %~1 GTR %Scale_ratio% exit /b\r\n");
+            Commandline.Append("set Temporary_output=\"%TEMP%\\waifu2x_%random32%\\%Output_name%_x%~1.png\"\r\n");
+            Commandline.Append("if \"%Attribute:~0,1%\"==\"d\" set Temporary_output=\"%TEMP%\\waifu2x_%random32%\\%Output_name%_x%~1\"\r\n");
             Commandline.Append("if \"%Attribute:~0,1%\"==\"d\" mkdir %Temporary_output%\r\n");
-            Commandline.Append("if not \"%Attribute:~0,1%\"==\"d\" if not exist \"%TEMP%\\" + random32.ToString() + "\\\" mkdir \"%TEMP%\\" + random32.ToString() + "\\\"\r\n");
+            Commandline.Append("if not \"%Attribute:~0,1%\"==\"d\" if not exist \"%TEMP%\\waifu2x_%random32%\\\" mkdir \"%TEMP%\\waifu2x_%random32%\\\"\r\n");
             Commandline.Append("set Temporary_noise_level=-1\r\n");
-            Commandline.Append("if \"%~1\"==\"2\" if not \"%noise_level%\"==\"-1\" set \"Temporary_noise_level=%noise_level%\"\r\n");
+            Commandline.Append("if \"%~1\"==\"2\" if not \"%Noise_level%\"==\"-1\" set \"Temporary_noise_level=%Noise_level%\"\r\n");
             Commandline.Append("echo " + binary_path + multiple_full_param + "\r\n");
             Commandline.Append(binary_path + multiple_full_param + "\r\n");
             Commandline.Append("if \"%Attribute:~0,1%\"==\"d\" if \"%Prevent_double_extensions%\"==\"True\" (\r\n");
