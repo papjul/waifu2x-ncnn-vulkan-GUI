@@ -631,7 +631,6 @@ namespace waifu2x_ncnn_vulkan_gui
 
             Commandline.Append("@echo off\r\n");
             Commandline.Append("chcp 65001 >nul\r\n");
-            Commandline.Append("if \"%~1\"==\"sub_rename\" goto sub_rename\r\n");
             Commandline.Append("set \"FileCount=" + FileCount + "\"\r\n");
             Commandline.Append("set \"ProcessedCount=0\"\r\n");
             Commandline.Append("set \"mode=" + param_mode.ToString() + "\"\r\n");
