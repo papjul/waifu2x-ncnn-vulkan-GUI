@@ -112,7 +112,7 @@ namespace waifu2x_ncnn_vulkan_gui
             //cbTTA.IsChecked = false;
 
         }
-
+        System.Diagnostics.Stopwatch Stopwatch = new System.Diagnostics.Stopwatch();
         // public static StringBuilder param_src= new StringBuilder("");
         public static StringBuilder param_dst = new StringBuilder("");
         public static StringBuilder param_mag = new StringBuilder("2");
@@ -417,6 +417,12 @@ namespace waifu2x_ncnn_vulkan_gui
             pHandle.Close();
             Dispatcher.BeginInvoke(new Action(delegate
             {
+                Stopwatch.Stop();
+                TimeSpan ts = Stopwatch.Elapsed;
+                CLIOutput.Focus();
+                this.CLIOutput.AppendText("\r\nProcessing time: " + ts.ToString(@"hh\:mm\:ss\.fff"));
+                CLIOutput.Select(CLIOutput.Text.Length, 0);
+                Stopwatch.Reset();
                 if (checkSoundBeep.IsChecked == true) if (this.btnRun.IsEnabled == false)
                 { System.Media.SystemSounds.Beep.Play(); }
                 
@@ -773,7 +779,7 @@ namespace waifu2x_ncnn_vulkan_gui
 
             // Starts working
             console_buffer.Clear();
-
+            Stopwatch.Start();
             try
             {
                 //MessageBox.Show(full_param);
