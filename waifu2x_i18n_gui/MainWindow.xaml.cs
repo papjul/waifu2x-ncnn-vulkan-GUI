@@ -253,8 +253,8 @@ namespace waifu2x_ncnn_vulkan_gui
             string msg =
                 "Multilingual GUI for waifu2x-ncnn-vulkan\n" +
                 "f11894 (2020)\n" +
-                "Version 1.1.0\n" +
-                "BuildDate: 12 Feb,2020\n" +
+                "Version 1.1.1\n" +
+                "BuildDate: 19 Feb,2020\n" +
                 "License: Do What the Fuck You Want License";
             MessageBox.Show(msg);
         }
@@ -686,14 +686,18 @@ namespace waifu2x_ncnn_vulkan_gui
                         param_dst.Append(this.slider_zoom.Value.ToString());
                         param_dst.Append(")");
                     }
+                    if (checkPrecision_fp32.IsChecked == true)
+                    {
+                        param_dst.Append("(FP32)");
+                    }
                     if (File.Exists(param_src[i]))
-                       {
-                          param_dst.Append(".png\"");
-                       }
-                       else if (Directory.Exists(param_src[i]))
-                       {
+                    {
+                        param_dst.Append(".png\"");
+                    }
+                    else if (Directory.Exists(param_src[i]))
+                    {
                         param_dst.Append("\"");
-                       }
+                    }
                 }
                 Commandline.Append("call :waifu2x_run " + "\"" + param_src[i].Replace("%", "%%%%") + "\" " + param_dst + "\r\n");
             }
