@@ -101,6 +101,9 @@
                                     <Label Target="{Binding ElementName=txtDevice}" HorizontalAlignment="Left" Content="load:proc:save"></Label>
                                     <TextBox Name="txtThread" HorizontalAlignment="Right" MinWidth="50" MaxWidth="50"  Margin="1" MaxHeight="20" Text="" ></TextBox>
                                 </StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="1">
+                                    <CheckBox Name="checkTTAmode" Margin="3" Content="TTA mode" ></CheckBox>
+                                </StackPanel>
                             </StackPanel>
                         </GroupBox>
                     </StackPanel>

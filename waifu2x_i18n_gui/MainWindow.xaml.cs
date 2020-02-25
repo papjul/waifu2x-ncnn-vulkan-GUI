@@ -100,7 +100,7 @@ namespace waifu2x_ncnn_vulkan_gui
             { btnUpRGB.IsChecked = true; }
             if (Properties.Settings.Default.model == "models-upconv_7_photo")
             { btnUpPhoto.IsChecked = true; }
-
+            checkTTAmode.IsChecked = Properties.Settings.Default.TTAmode;
             checkSoundBeep.IsChecked = Properties.Settings.Default.SoundBeep;
             checkStore_output_dir.IsChecked = Properties.Settings.Default.store_output_dir;
             checkOutput_no_overwirit.IsChecked = Properties.Settings.Default.output_no_overwirit;
@@ -123,6 +123,7 @@ namespace waifu2x_ncnn_vulkan_gui
         public static StringBuilder param_mode = new StringBuilder("noise_scale");
         public static StringBuilder param_gpu_id = new StringBuilder("");
         public static StringBuilder param_thread = new StringBuilder("1:2:2");
+        public static StringBuilder param_tta = new StringBuilder("");
         public static String[] param_src;
         public static StringBuilder random32 = new StringBuilder("");
         public static StringBuilder binary_path = new StringBuilder("");
@@ -168,6 +169,7 @@ namespace waifu2x_ncnn_vulkan_gui
             Properties.Settings.Default.model = param_model.ToString().Replace("-m ", "");
             // Properties.Settings.Default.mode = param_mode.ToString().Replace("-m ", "");
 
+            Properties.Settings.Default.TTAmode = Convert.ToBoolean(checkTTAmode.IsChecked);
             Properties.Settings.Default.SoundBeep = Convert.ToBoolean(checkSoundBeep.IsChecked);
             Properties.Settings.Default.store_output_dir = Convert.ToBoolean(checkStore_output_dir.IsChecked);
             Properties.Settings.Default.Precision_fp32 = Convert.ToBoolean(checkPrecision_fp32.IsChecked);
@@ -253,8 +255,8 @@ namespace waifu2x_ncnn_vulkan_gui
             string msg =
                 "Multilingual GUI for waifu2x-ncnn-vulkan\n" +
                 "f11894 (2020)\n" +
-                "Version 1.1.1\n" +
-                "BuildDate: 19 Feb,2020\n" +
+                "Version 1.1.2\n" +
+                "BuildDate: 25 Feb,2020\n" +
                 "License: Do What the Fuck You Want License";
             MessageBox.Show(msg);
         }
@@ -496,6 +498,13 @@ namespace waifu2x_ncnn_vulkan_gui
 
             // Sets Source
             // The source must be a file or folder that exists
+
+            param_tta.Clear();
+            if (checkTTAmode.IsChecked == true)
+            {
+                param_tta.Append("-x");
+            }
+
             if (System.Text.RegularExpressions.Regex.IsMatch(
                 txtGPU_ID.Text,
                 @"^(\d+)$",
@@ -590,6 +599,7 @@ namespace waifu2x_ncnn_vulkan_gui
                 "-n %Noise_level%",
                 param_block.ToString(),
                 param_model.ToString(),
+                param_tta.ToString(),
                 param_gpu_id.ToString(),
                 param_thread.ToString());
 
@@ -601,6 +611,7 @@ namespace waifu2x_ncnn_vulkan_gui
                 "-n %Temporary_noise_level%",
                 param_block.ToString(),
                 param_model.ToString(),
+                param_tta.ToString(),
                 param_gpu_id.ToString(),
                 param_thread.ToString());
 
@@ -678,6 +689,10 @@ namespace waifu2x_ncnn_vulkan_gui
                         param_dst.Append("Level");
                         param_dst.Append(param_denoise.ToString());
                         param_dst.Append(")");
+                    }
+                    if (checkTTAmode.IsChecked == true)
+                    {
+                        param_dst.Append("(tta)");
                     }
 
                     if (param_mode.ToString() == "scale" || param_mode.ToString() == "noise_scale")

@@ -178,5 +178,17 @@ namespace waifu2x_ncnn_vulkan_gui.Properties {
                 this["Prevent_double_extensions"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool TTAmode {
+            get {
+                return ((bool)(this["TTAmode"]));
+            }
+            set {
+                this["TTAmode"] = value;
+            }
+        }
     }
 }
