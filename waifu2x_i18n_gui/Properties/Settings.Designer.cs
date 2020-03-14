@@ -49,7 +49,7 @@ namespace waifu2x_ncnn_vulkan_gui.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("200")]
+        [global::System.Configuration.DefaultSettingValueAttribute("100")]
         public string block_size {
             get {
                 return ((string)(this["block_size"]));
@@ -145,7 +145,7 @@ namespace waifu2x_ncnn_vulkan_gui.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1:2:2")]
+        [global::System.Configuration.DefaultSettingValueAttribute("2")]
         public string thread {
             get {
                 return ((string)(this["thread"]));
@@ -164,18 +164,6 @@ namespace waifu2x_ncnn_vulkan_gui.Properties {
             }
             set {
                 this["Precision_fp32"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool Prevent_double_extensions {
-            get {
-                return ((bool)(this["Prevent_double_extensions"]));
-            }
-            set {
-                this["Prevent_double_extensions"] = value;
             }
         }
         

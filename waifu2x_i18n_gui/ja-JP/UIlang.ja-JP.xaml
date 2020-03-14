@@ -23,6 +23,7 @@
     <sys:String x:Key="Main_Mode_Set_NoiseScale">ノイズ除去と拡大</sys:String>
     <sys:String x:Key="Main_Mode_Set_Scale">拡大</sys:String>
     <sys:String x:Key="Main_Mode_Set_Noise">ノイズ除去</sys:String>
+    <sys:String x:Key="Main_Mode_Set_AutoScale">ノイズ除去(jpgのみ)と拡大</sys:String>
     <sys:String x:Key="Main_Mode_Mag">拡大率 (1.0~16.0):</sys:String>
     <sys:String x:Key="Main_Mode_Denoise">ノイズ除去</sys:String>
     <sys:String x:Key="Main_Mode_Denoise_0">レベル0</sys:String>

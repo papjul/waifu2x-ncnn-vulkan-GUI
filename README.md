@@ -1,5 +1,5 @@
 # waifu2x-ncnn-vulkan-GUI
-![ss](https://user-images.githubusercontent.com/16046279/75022645-d405ae80-54d9-11ea-9aa4-2c5518532f46.png)
+![ss](https://user-images.githubusercontent.com/16046279/76680085-1a59b380-6629-11ea-9a80-f6bbb69541fa.png)
 Multilingual GUI for waifu2x-ncnn-vulkan (https://github.com/nihui/waifu2x-ncnn-vulkan). Localization can be done via user-editable xaml file.
 
 This project was forked from https://github.com/MaverickTse/waifu2x_caffe_multilang_gui
@@ -18,6 +18,3 @@ This project was forked from https://github.com/MaverickTse/waifu2x_caffe_multil
   * XY can be found [Here](https://www.iso.org/obp/ui/#search)
   * Essentially _ab_ is the language, _XY_ is the country
   
-## License and Sharing
-* Do what the fuck you want with this soft
-* No warranty attached

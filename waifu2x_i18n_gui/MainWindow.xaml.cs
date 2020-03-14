@@ -20,6 +20,10 @@ using Microsoft.Win32;
 using System.ComponentModel; // CancelEventArgs
 
 using Forms = System.Windows.Forms;
+using System.Threading;
+using System.Windows.Threading;
+using System.Text.RegularExpressions;
+
 namespace waifu2x_ncnn_vulkan_gui
 {
     /// <summary>
@@ -91,6 +95,8 @@ namespace waifu2x_ncnn_vulkan_gui
             { btnModeNoiseScale.IsChecked = true; }
             if (Properties.Settings.Default.mode == "noise")
             { btnModeNoise.IsChecked = true; }
+            if (Properties.Settings.Default.mode == "auto_scale")
+            { btnModeAutoScale.IsChecked = true; }
 
             btnCUnet.IsChecked = true;
 
@@ -105,43 +111,30 @@ namespace waifu2x_ncnn_vulkan_gui
             checkStore_output_dir.IsChecked = Properties.Settings.Default.store_output_dir;
             checkOutput_no_overwirit.IsChecked = Properties.Settings.Default.output_no_overwirit;
             checkPrecision_fp32.IsChecked = Properties.Settings.Default.Precision_fp32;
-            checkPrevent_double_extensions.IsChecked = Properties.Settings.Default.Prevent_double_extensions;
             slider_value.Text = Properties.Settings.Default.scale_ratio;
             slider_zoom.Value = double.Parse(Properties.Settings.Default.scale_ratio);
-
-            //cbTTA.IsChecked = false;
 
         }
         System.Diagnostics.Stopwatch Stopwatch = new System.Diagnostics.Stopwatch();
         // public static StringBuilder param_src= new StringBuilder("");
         public static StringBuilder param_dst = new StringBuilder("");
+        public static StringBuilder param_dst_suffix = new StringBuilder("");
         public static StringBuilder param_mag = new StringBuilder("2");
         public static StringBuilder param_denoise = new StringBuilder("");
         public static StringBuilder param_denoise2 = new StringBuilder("");
         public static StringBuilder param_model = new StringBuilder("models-cunet");
-        public static StringBuilder param_block = new StringBuilder("200");
+        public static StringBuilder param_block = new StringBuilder("100");
         public static StringBuilder param_mode = new StringBuilder("noise_scale");
         public static StringBuilder param_gpu_id = new StringBuilder("");
-        public static StringBuilder param_thread = new StringBuilder("1:2:2");
+        public static StringBuilder param_thread = new StringBuilder("2");
         public static StringBuilder param_tta = new StringBuilder("");
-        public static String[] param_src;
-        public static StringBuilder random32 = new StringBuilder("");
+        public static StringBuilder dast_dir = new StringBuilder("");
         public static StringBuilder binary_path = new StringBuilder("");
-        public static StringBuilder Commandline = new StringBuilder("");
-        public static StringBuilder waifu2x_bat = new StringBuilder("");
-        // public static int FileCount = (0);
-
-        public static bool EventHandler_Flag = false;
-
-        //public static StringBuilder param_tta = new StringBuilder("-t 0");
-        public static Process pHandle = new Process();
-        public static ProcessStartInfo psinfo = new ProcessStartInfo();
-
-        public static StringBuilder console_buffer = new StringBuilder();
-
-        public static bool flagAbort = false;
-
-        public static bool queueFlag = false;
+        public static String[] param_src;
+        public static int scale_ratio;
+        public DateTime starttimea;
+        public static bool Cancel = false;
+        public static bool Output_no_overwirit;
 
         void MainWindow_Closing(object sender, CancelEventArgs e)
         {
@@ -167,13 +160,10 @@ namespace waifu2x_ncnn_vulkan_gui
 
             Properties.Settings.Default.output_no_overwirit = Convert.ToBoolean(checkOutput_no_overwirit.IsChecked);
             Properties.Settings.Default.model = param_model.ToString().Replace("-m ", "");
-            // Properties.Settings.Default.mode = param_mode.ToString().Replace("-m ", "");
-
             Properties.Settings.Default.TTAmode = Convert.ToBoolean(checkTTAmode.IsChecked);
             Properties.Settings.Default.SoundBeep = Convert.ToBoolean(checkSoundBeep.IsChecked);
             Properties.Settings.Default.store_output_dir = Convert.ToBoolean(checkStore_output_dir.IsChecked);
             Properties.Settings.Default.Precision_fp32 = Convert.ToBoolean(checkPrecision_fp32.IsChecked);
-            Properties.Settings.Default.Prevent_double_extensions = Convert.ToBoolean(checkPrevent_double_extensions.IsChecked);
             Properties.Settings.Default.mode = param_mode.ToString();
             Properties.Settings.Default.noise_level = param_denoise.ToString();
 
@@ -197,7 +187,7 @@ namespace waifu2x_ncnn_vulkan_gui
             }
             else
             {
-                Properties.Settings.Default.block_size = "400";
+                Properties.Settings.Default.block_size = "100";
             }
 
             if (System.Text.RegularExpressions.Regex.IsMatch(
@@ -214,23 +204,26 @@ namespace waifu2x_ncnn_vulkan_gui
 
             if (System.Text.RegularExpressions.Regex.IsMatch(
                 txtThread.Text,
-                @"^\d+:\d+:\d+$",
+                @"^\d+$",
                 System.Text.RegularExpressions.RegexOptions.ECMAScript))
             {
                 Properties.Settings.Default.thread = txtThread.Text;
             }
             else
             {
-                Properties.Settings.Default.thread = "1:2:2";
+                Properties.Settings.Default.thread = "2";
             }
 
             Properties.Settings.Default.Save();
 
             try
             {
-                KillProcessTree(pHandle);
+                foreach (var process in Process.GetProcessesByName("waifu2x-ncnn-vulkan"))
+                {
+                    process.Kill();
+                }
             }
-            catch (Exception) { /*Nothing*/ }
+            catch { }
         }
 
         private void OnMenuHelpClick(object sender, RoutedEventArgs e)
@@ -255,9 +248,9 @@ namespace waifu2x_ncnn_vulkan_gui
             string msg =
                 "Multilingual GUI for waifu2x-ncnn-vulkan\n" +
                 "f11894 (2020)\n" +
-                "Version 1.1.2\n" +
-                "BuildDate: 25 Feb,2020\n" +
-                "License: Do What the Fuck You Want License";
+                "Version 2.0.0\n" +
+                "BuildDate: 14 Mar,2020\n" +
+                "License: MIT License";
             MessageBox.Show(msg);
         }
 
@@ -285,12 +278,14 @@ namespace waifu2x_ncnn_vulkan_gui
             if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 this.txtDstPath.Text = dlg.SelectedPath;
+                dast_dir.Clear();
             }
         }
 
         private void OnDstClear(object sender, RoutedEventArgs e)
         {
             this.txtDstPath.Clear();
+            dast_dir.Clear();
         }
 
         private void MenuItem_Style_Click(object sender, RoutedEventArgs e)
@@ -318,14 +313,41 @@ namespace waifu2x_ncnn_vulkan_gui
             e.Handled = true;
         }
 
-        private void On_SrcDrop(object sender, DragEventArgs e)
+        private async void On_SrcDrop(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 string[] fn = (string[])e.Data.GetData(DataFormats.FileDrop);
-                this.txtSrcPath.Text = string.Join("\n", fn);
-                param_src = (string[])e.Data.GetData(DataFormats.FileDrop);
-
+                this.txtSrcPath.Clear();
+                dast_dir.Clear();
+                param_src = null;
+                var reg = new Regex(@".+\.(jpe?g|png|bmp|gif|tiff?|webp)$");
+                var list = new List<string>();
+                foreach (var dropfile in fn)
+                {
+                    if (File.Exists(dropfile))
+                    {
+                        list.Add(dropfile);
+                        txtSrcPath.AppendText(dropfile + "\r\n");
+                    }
+                    if (Directory.Exists(dropfile))
+                    {
+                        await Task.Run(() =>
+                        {
+                            var Directoryfiles = Directory.GetFiles(dropfile).Where(f => reg.IsMatch(f)).ToArray();
+                            foreach (var Directoryimage in Directoryfiles)
+                            {
+                                list.Add(Directoryimage);
+                                txtSrcPath.Dispatcher.Invoke(() => txtSrcPath.AppendText(Directoryimage + "\r\n"));
+                            }
+                        });
+                        dast_dir.Clear();
+                        dast_dir.Append(dropfile);
+                        this.txtDstPath.Clear();
+                        DstDirName();
+                    }
+                }
+                param_src = list.ToArray();
             }
         }
 
@@ -337,7 +359,49 @@ namespace waifu2x_ncnn_vulkan_gui
                 this.txtDstPath.Text = fn[0];
             }
         }
+        private void DstDirNameProxy(object sender, System.EventArgs e)
+        {
+            DstDirName();
+        }
+        private void DstDirName()
+        {
+            if (dast_dir.ToString().Trim() == "")
+            {return;}
 
+            txtDstPath.Clear();
+            txtDstPath.AppendText(dast_dir.ToString());
+            if (param_model.ToString().Replace("-m ", "") == "models-cunet")
+            { txtDstPath.AppendText("(CUnet)"); }
+            if (param_model.ToString().Replace("-m ", "") == "models-upconv_7_anime_style_art_rgb")
+            { txtDstPath.AppendText("(UpRGB)"); }
+            if (param_model.ToString().Replace("-m ", "") == "models-upconv_7_photo")
+            { txtDstPath.AppendText("(UpPhoto)"); }
+            txtDstPath.AppendText("(");
+            txtDstPath.AppendText(param_mode.ToString().Replace("-m ", ""));
+            txtDstPath.AppendText(")");
+            if (param_mode.ToString() == "noise" || param_mode.ToString() == "noise_scale" || param_mode.ToString() == "auto_scale")
+            {
+                txtDstPath.AppendText("(");
+                txtDstPath.AppendText("Level");
+                txtDstPath.AppendText(param_denoise.ToString());
+                txtDstPath.AppendText(")");
+            }
+            if (checkTTAmode.IsChecked == true)
+            {
+                txtDstPath.AppendText("(tta)");
+            }
+
+            if (param_mode.ToString() == "scale" || param_mode.ToString() == "noise_scale" || param_mode.ToString() == "auto_scale")
+            {
+                txtDstPath.AppendText("(x");
+                txtDstPath.AppendText(this.slider_zoom.Value.ToString());
+                txtDstPath.AppendText(")");
+            }
+            if (checkPrecision_fp32.IsChecked == true)
+            {
+                txtDstPath.AppendText("(FP32)");
+            }
+        }
         private void OnSetModeChecked(object sender, RoutedEventArgs e)
         {
             gpDenoise.IsEnabled = true;
@@ -358,12 +422,14 @@ namespace waifu2x_ncnn_vulkan_gui
                 slider_zoom.IsEnabled = false;
                 slider_value.IsEnabled = false;
             }
+            DstDirName();
         }
         private void OnDenoiseChecked(object sender, RoutedEventArgs e)
         {
             param_denoise.Clear();
             RadioButton optsrc= sender as RadioButton;
             param_denoise.Append(optsrc.Tag.ToString());
+            DstDirName();
         }
 
         /*private void OnDeviceChecked(object sender, RoutedEventArgs e)
@@ -380,99 +446,169 @@ namespace waifu2x_ncnn_vulkan_gui
             RadioButton optsrc = sender as RadioButton;
             param_model.Append("-m ");
             param_model.Append(optsrc.Tag.ToString());
+            DstDirName();
         }
-        
-        private void OnConsoleDataRecv(object sender, DataReceivedEventArgs e)
-        {
-            if (!String.IsNullOrEmpty(e.Data))
-            {
-
-                console_buffer.Append(e.Data);
-                console_buffer.Append(Environment.NewLine);
-                // if (queueFlag) return;
-                // queueFlag = true;
-                Dispatcher.BeginInvoke(new Action(delegate
-                {
-                    // queueFlag = false;
-                    CLIOutput.Focus();
-                    this.CLIOutput.AppendText(e.Data);
-                    this.CLIOutput.AppendText(Environment.NewLine);
-                    CLIOutput.Select(CLIOutput.Text.Length, 0);
-                }), System.Windows.Threading.DispatcherPriority.ApplicationIdle, null);
-            }
-            
-        }
-        
-        private void OnProcessExit(object sender, EventArgs e)
-        {
-            try
-            {
-                pHandle.CancelOutputRead();
-                pHandle.CancelErrorRead();
-            }
-            catch (Exception)
-            {
-                //No need to throw
-                //throw;
-            }
-
-            pHandle.Close();
-            Dispatcher.BeginInvoke(new Action(delegate
-            {
-                Stopwatch.Stop();
-                TimeSpan ts = Stopwatch.Elapsed;
-                CLIOutput.Focus();
-                this.CLIOutput.AppendText("\r\nProcessing time: " + ts.ToString(@"hh\:mm\:ss\.fff"));
-                CLIOutput.Select(CLIOutput.Text.Length, 0);
-                Stopwatch.Reset();
-                if (checkSoundBeep.IsChecked == true) if (this.btnRun.IsEnabled == false)
-                { System.Media.SystemSounds.Beep.Play(); }
-                
-                this.btnAbort.IsEnabled = false;
-                this.btnRun.IsEnabled = true;
-                //this.CLIOutput.Text = console_buffer.ToString();
-
-            }), System.Windows.Threading.DispatcherPriority.ApplicationIdle, null);
-            flagAbort = false;
-        }
-
         private async void OnAbort(object sender, RoutedEventArgs e)
         {
+            Cancel = true;
+            this.btnRun.IsEnabled = true;
             this.btnAbort.IsEnabled = false;
             try
             {
-                pHandle.CancelOutputRead();
-                pHandle.CancelErrorRead();
-            }
-            catch (Exception) { /*Nothing*/ }
-
-            if (!pHandle.HasExited)
-            {
-                try
+                foreach (var process in Process.GetProcessesByName("waifu2x-ncnn-vulkan"))
                 {
-                    await Task.Run(() => KillProcessTree(pHandle));
+                    process.Kill();
                 }
-                catch (Exception) { /*Nothing*/ }
-
-                flagAbort = true;
-                this.CLIOutput.Clear();
             }
+            catch { }
         }
-
-        private void KillProcessTree(System.Diagnostics.Process process)
+        public void Encode(int maxConcurrency, int FileCount)
         {
-            string taskkill = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), "taskkill.exe");
-            using (var procKiller = new System.Diagnostics.Process())
+            DateTime starttime = DateTime.Now;
+            starttimea = starttime;
+            string labelstring = FileCount.ToString();
+
+            using (SemaphoreSlim concurrencySemaphore = new SemaphoreSlim(maxConcurrency))
             {
-                procKiller.StartInfo.FileName = taskkill;
-                procKiller.StartInfo.Arguments = string.Format("/PID {0} /T /F", process.Id);
-                procKiller.StartInfo.CreateNoWindow = true;
-                procKiller.StartInfo.UseShellExecute = false;
-                procKiller.Start();
-                procKiller.WaitForExit();
+                
+                string others_param = String.Join(" ",
+                    param_model,
+                    param_block,
+                    param_tta,
+                    param_gpu_id);
+
+                pLabel.Dispatcher.Invoke(() => pLabel.Content = "0 / " + prgbar.Maximum, DispatcherPriority.Background);
+                List<Task> tasks = new List<Task>();
+                foreach (var input in param_src)
+                {
+                    concurrencySemaphore.Wait();
+
+                    var t = Task.Factory.StartNew(() =>
+                    {
+                        try
+                        {
+                            string noise_level_temp = null;
+                            if (Cancel == false)
+                            {
+                                if (Output_no_overwirit == true)
+                                {
+                                    if (param_dst.ToString().Trim() == "")
+                                    {
+                                        if (File.Exists(System.IO.Directory.GetParent(input) + "\\" + System.IO.Path.GetFileNameWithoutExtension(input) + param_dst_suffix))
+                                        {
+                                            prgbar.Dispatcher.Invoke(() => prgbar.Value += 1, DispatcherPriority.Background);
+                                            TimeSpan timespent = DateTime.Now - starttime;
+                                            pLabel.Dispatcher.Invoke(() => pLabel.Content = prgbar.Value + " / " + labelstring + " - Time Left: " + new TimeSpan(0, 0, Convert.ToInt32(Math.Round(((timespent.TotalSeconds / prgbar.Value) * (Int32.Parse(labelstring) - prgbar.Value)), MidpointRounding.ToEven))).ToString(@"hh\:mm\:ss"), DispatcherPriority.Background);
+                                            return;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (File.Exists(param_dst + "\\" + System.IO.Path.GetFileNameWithoutExtension(input) + param_dst_suffix))
+                                        {
+                                            prgbar.Dispatcher.Invoke(() => prgbar.Value += 1, DispatcherPriority.Background);
+                                            TimeSpan timespent = DateTime.Now - starttime;
+                                            pLabel.Dispatcher.Invoke(() => pLabel.Content = prgbar.Value + " / " + labelstring + " - Time Left: " + new TimeSpan(0, 0, Convert.ToInt32(Math.Round(((timespent.TotalSeconds / prgbar.Value) * (Int32.Parse(labelstring) - prgbar.Value)), MidpointRounding.ToEven))).ToString(@"hh\:mm\:ss"), DispatcherPriority.Background);
+                                            return;
+                                        }
+                                    }
+                                }
+                                Guid g = System.Guid.NewGuid();
+                                string random32 = (g.ToString("N").Substring(0, 32));
+                                noise_level_temp = param_denoise2.ToString();
+                                if (!System.Text.RegularExpressions.Regex.IsMatch(System.IO.Path.GetExtension(input), @"\.jpe?g", RegexOptions.IgnoreCase)) if (param_mode.ToString() == "auto_scale")
+                                {
+                                    noise_level_temp = "-n -1";
+                                }
+
+                                string output = null;
+                                Process process = new Process();
+                                ProcessStartInfo startInfo = new ProcessStartInfo();
+                                startInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                                startInfo.UseShellExecute = true;
+                                startInfo.FileName = System.Environment.GetEnvironmentVariable("ComSpec");
+                                startInfo.WorkingDirectory = System.AppDomain.CurrentDomain.BaseDirectory;
+                                if (scale_ratio <= 2)
+                                {
+                                    if (param_dst.ToString().Trim() == "")
+                                    {
+                                        output = System.IO.Directory.GetParent(input) + "\\" + System.IO.Path.GetFileNameWithoutExtension(input) + param_dst_suffix;
+                                    }
+                                    else
+                                    {
+                                        output = param_dst + "\\" + System.IO.Path.GetFileNameWithoutExtension(input) + param_dst_suffix;
+                                    }
+                                    startInfo.Arguments = "/C " + binary_path + "-i \"" + input + "\" -o \"" + output + "\" " + param_mag + " " + noise_level_temp + " " + others_param;
+                                    process.StartInfo = startInfo;
+                                    Console.WriteLine(startInfo.Arguments);
+                                    process.Start();
+                                    process.WaitForExit();
+
+                                    //Progressbar +1
+                                    TimeSpan timespent = DateTime.Now - starttime;
+                                    if (Cancel == false)
+                                    {
+                                        prgbar.Dispatcher.Invoke(() => prgbar.Value += 1, DispatcherPriority.Background);
+                                        pLabel.Dispatcher.Invoke(() => pLabel.Content = prgbar.Value + " / " + labelstring + " - Time Left: " + new TimeSpan(0, 0, Convert.ToInt32(Math.Round(((timespent.TotalSeconds / prgbar.Value) * (Int32.Parse(labelstring) - prgbar.Value)), MidpointRounding.ToEven))).ToString(@"hh\:mm\:ss"), DispatcherPriority.Background);
+                                    }
+                                }
+                                else
+                                {
+                                    int r;
+                                    int r2;
+                                    for (r = 2, r2 = 1; r <= scale_ratio; r = r * 2, r2 = r2 * 2)
+                                    {
+                                        string input_temp = System.IO.Path.GetTempPath() + random32 + "-" + r2 + "x.png";
+                                        if (r == 2)
+                                        {
+                                            output = System.IO.Path.GetTempPath() + random32 + "-" + r + "x.png";
+                                            startInfo.Arguments = "/C " + binary_path + " -i \"" + input + "\" -o \"" + output + "\" -s 2 " + noise_level_temp + " " + others_param;
+                                        }
+                                        else
+                                        {
+                                            output = System.IO.Path.GetTempPath() + random32 + "-" + r + "x.png";
+                                            if (r == scale_ratio)
+                                            {
+                                                if (param_dst.ToString().Trim() == "")
+                                                {
+                                                    output = System.IO.Directory.GetParent(input) + "\\" + System.IO.Path.GetFileNameWithoutExtension(input) + param_dst_suffix;
+                                                }
+                                                else
+                                                {
+                                                    output = param_dst + "\\" + System.IO.Path.GetFileNameWithoutExtension(input) + param_dst_suffix;
+                                                }
+                                            }
+                                            startInfo.Arguments = "/C " + binary_path + " -i \"" + input_temp + "\" -o \"" + output + "\" -s 2 -n -1 " + others_param;
+                                        }
+                                        process.StartInfo = startInfo;
+                                        Console.WriteLine(startInfo.Arguments);
+                                        process.Start();
+                                        process.WaitForExit();
+                                        new FileInfo(input_temp).Delete();
+                                    }
+
+                                    //Progressbar +1
+                                    TimeSpan timespent = DateTime.Now - starttime;
+                                    if (Cancel == false)
+                                    {
+                                        prgbar.Dispatcher.Invoke(() => prgbar.Value += 1, DispatcherPriority.Background);
+                                        pLabel.Dispatcher.Invoke(() => pLabel.Content = prgbar.Value + " / " + labelstring + " - Time Left: " + new TimeSpan(0, 0, Convert.ToInt32(Math.Round(((timespent.TotalSeconds / prgbar.Value) * (Int32.Parse(labelstring) - prgbar.Value)), MidpointRounding.ToEven))).ToString(@"hh\:mm\:ss"), DispatcherPriority.Background);
+                                    }
+                                }
+                            }
+                        }
+
+                        finally
+                        {
+                            concurrencySemaphore.Release();
+                        }
+                    });
+
+                    tasks.Add(t);
+                }
+                Task.WaitAll(tasks.ToArray());
             }
         }
-
         public void Errormessage(string x)
         { 
           System.Media.SystemSounds.Beep.Play();
@@ -482,18 +618,46 @@ namespace waifu2x_ncnn_vulkan_gui
           return; 
         }
 
-        private void OnRun(object sender, RoutedEventArgs e)
+        async private void OnRun(object sender, RoutedEventArgs e)
         {
-            if (!File.Exists("waifu2x-ncnn-vulkan.exe"))
+            Cancel = false;
+            binary_path.Clear();
+            if (checkPrecision_fp32.IsChecked == true)
             {
-                MessageBox.Show(@"waifu2x-ncnn-vulkan.exe is missing!");
-                return;
+                if (!File.Exists("fp32\\waifu2x-ncnn-vulkan.exe"))
+                {
+                    MessageBox.Show(@"fp32\\waifu2x-ncnn-vulkan.exe is missing!");
+                    return;
+                }
+                binary_path.Append(".\\fp32\\waifu2x-ncnn-vulkan.exe ");
+            }
+            else
+            {
+                if (!File.Exists("waifu2x-ncnn-vulkan.exe"))
+                {
+                    MessageBox.Show(@"waifu2x-ncnn-vulkan.exe is missing!");
+                    return;
+                }
+                binary_path.Append(".\\waifu2x-ncnn-vulkan.exe ");
             }
 
             if (param_src == null)
             {
                 MessageBox.Show(@"source images is not found!");
                 return;
+            }
+
+            if (this.txtDstPath.Text.Trim() != "") if (!Directory.Exists(this.txtDstPath.Text))
+            {
+                try
+                {
+                    Directory.CreateDirectory(this.txtDstPath.Text);
+                }
+                catch
+                {
+                    MessageBox.Show(@"Failed to create folder!");
+                    return;
+                }
             }
 
             // Sets Source
@@ -549,11 +713,10 @@ namespace waifu2x_ncnn_vulkan_gui
 
             if (System.Text.RegularExpressions.Regex.IsMatch(
                 txtThread.Text,
-                 @"^(\d+:\d+:\d+)$",
+                 @"^(\d+)$",
                System.Text.RegularExpressions.RegexOptions.ECMAScript))
             {
                 param_thread.Clear();
-                param_thread.Append("-j ");
                 param_thread.Append(txtThread.Text);
             }
             else
@@ -561,21 +724,12 @@ namespace waifu2x_ncnn_vulkan_gui
                 param_thread.Clear();
             }
 
-            binary_path.Clear();
-            if (checkPrecision_fp32.IsChecked == true)
-            {
-                binary_path.Append(".\\fp32\\waifu2x-ncnn-vulkan.exe ");
-            }
-            else
-            {
-                binary_path.Append(".\\waifu2x-ncnn-vulkan.exe ");
-            }
-
             param_mag.Clear();
             param_mag.Append("-s ");
             param_mag.Append(this.slider_value.Text);
 
             param_denoise2.Clear();
+            param_denoise2.Append("-n ");
             param_denoise2.Append(param_denoise.ToString());
 
             // Set mode
@@ -588,273 +742,80 @@ namespace waifu2x_ncnn_vulkan_gui
             if (param_mode.ToString() == "scale")
             {
                 param_denoise2.Clear();
+                param_denoise2.Append("-n ");
                 param_denoise2.Append("-1");
             }
 
-            string full_param = String.Join(" ",
-                "-v ",
-                "-i \"%~1\"",
-                "-o \"%~2\"",
-                param_mag.ToString(),
-                "-n %Noise_level%",
-                param_block.ToString(),
-                param_model.ToString(),
-                param_tta.ToString(),
-                param_gpu_id.ToString(),
-                param_thread.ToString());
+            this.btnRun.IsEnabled = false;
+            this.btnAbort.IsEnabled = true;
 
-            string multiple_full_param = String.Join(" ",
-                "-v ",
-                "-i %Temporary_input%",
-                "-o %Temporary_output%",
-                "-s 2",
-                "-n %Temporary_noise_level%",
-                param_block.ToString(),
-                param_model.ToString(),
-                param_tta.ToString(),
-                param_gpu_id.ToString(),
-                param_thread.ToString());
-
-            // logをクリアする
-            this.CLIOutput.Clear();
-            if (this.txtDstPath.Text.Trim() != "") if (Directory.Exists(this.txtDstPath.Text) == false)
-                {
-                    try
-                    {
-                        Directory.CreateDirectory(this.txtDstPath.Text);
-                    }
-                    catch (Exception)
-                    {
-                        MessageBox.Show(@"Failed to create output destination folder.");
-                        return;
-                    }
-                }
-            Commandline.Clear();
             int FileCount = 0;
             for (int i = 0; i < param_src.Length; i++)
             {
                 FileCount++;
             }
+            param_dst.Clear();
+            param_dst.Append(this.txtDstPath.Text);
 
-            Guid g = System.Guid.NewGuid();
-            random32.Clear();
-            random32.Append(g.ToString("N").Substring(0, 32));
-
-            Commandline.Append("@echo off\r\n");
-            Commandline.Append("chcp 65001 >nul\r\n");
-            Commandline.Append("set \"FileCount=" + FileCount + "\"\r\n");
-            Commandline.Append("set \"ProcessedCount=0\"\r\n");
-            Commandline.Append("set \"mode=" + param_mode.ToString() + "\"\r\n");
-            Commandline.Append("set \"Scale_ratio=" + this.slider_zoom.Value.ToString() + "\"\r\n");
-            Commandline.Append("set \"Noise_level=" + param_denoise2 + "\"\r\n");
-            Commandline.Append("set \"random32=" + random32.ToString() +"\"\r\n");
-            Commandline.Append("if \"%mode%\"==\"noise\" set Scale_ratio=1\r\n");
-            Commandline.Append("set \"Output_no_overwirit=" + checkOutput_no_overwirit.IsChecked.ToString() + "\"\r\n");
-            Commandline.Append("set \"Prevent_double_extensions=" + checkPrevent_double_extensions.IsChecked.ToString() + "\"\r\n");
-            Commandline.Append("if not \"%FileCount%\"==\"1\" echo progress %ProcessedCount%/%FileCount%\r\n");
-            for (int i = 0; i < param_src.Length; i++)
+            param_dst_suffix.Clear();
+            if (this.txtDstPath.Text.Trim() != "")
             {
-                param_dst.Clear();
-                if (this.txtDstPath.Text.Trim() != "") {
-                    param_dst.Append("\"");
-                    param_dst.Append(this.txtDstPath.Text);
-                    param_dst.Append("\\");
-                    param_dst.Append(System.IO.Path.GetFileNameWithoutExtension(param_src[i].Replace("%", "%%%%")));
-                    if (File.Exists(param_src[i]))
-                        {
-                            param_dst.Append(".png\"");
-                        }
-                    else if (Directory.Exists(param_src[i]))
-                        {
-                            param_dst.Append("\"");
-                        }
-                } else {
-                    param_dst.Append("\"");
-                    System.IO.DirectoryInfo hDirInfo = System.IO.Directory.GetParent(param_src[i]);
-                    param_dst.Append(hDirInfo.FullName);
-                    param_dst.Append("\\");
-                    param_dst.Append(System.IO.Path.GetFileNameWithoutExtension(param_src[i].Replace("%", "%%%%")));
-                    if (param_model.ToString().Replace("-m ", "") == "models-cunet")
-                       { param_dst.Append("(CUnet)"); }
-                    if (param_model.ToString().Replace("-m ", "") == "models-upconv_7_anime_style_art_rgb")
-                       { param_dst.Append("(UpRGB)"); }
-                    if (param_model.ToString().Replace("-m ", "") == "models-upconv_7_photo")
-                       { param_dst.Append("(UpPhoto)"); }
-                    param_dst.Append("(");
-                    param_dst.Append(param_mode.ToString().Replace("-m ", ""));
-                    param_dst.Append(")");
-                    if (param_mode.ToString() == "noise" || param_mode.ToString() == "noise_scale")
-                    {
-                        param_dst.Append("(");
-                        param_dst.Append("Level");
-                        param_dst.Append(param_denoise.ToString());
-                        param_dst.Append(")");
-                    }
-                    if (checkTTAmode.IsChecked == true)
-                    {
-                        param_dst.Append("(tta)");
-                    }
-
-                    if (param_mode.ToString() == "scale" || param_mode.ToString() == "noise_scale")
-                    {
-                        param_dst.Append("(x");
-                        param_dst.Append(this.slider_zoom.Value.ToString());
-                        param_dst.Append(")");
-                    }
-                    if (checkPrecision_fp32.IsChecked == true)
-                    {
-                        param_dst.Append("(FP32)");
-                    }
-                    if (File.Exists(param_src[i]))
-                    {
-                        param_dst.Append(".png\"");
-                    }
-                    else if (Directory.Exists(param_src[i]))
-                    {
-                        param_dst.Append("\"");
-                    }
-                }
-                Commandline.Append("call :waifu2x_run " + "\"" + param_src[i].Replace("%", "%%%%") + "\" " + param_dst + "\r\n");
+                param_dst_suffix.Append(".png");
             }
-            Commandline.Append("exit /b\r\n");
-            Commandline.Append("\r\n");
-            Commandline.Append(":waifu2x_run\r\n");
-            Commandline.Append("if \"%Output_no_overwirit%\"==\"True\" if exist \"%~2\" goto waifu2x_run_skip\r\n");
-            Commandline.Append("for %%i in (\"%~1\") do set \"Source_name=%%~ni\"\r\n");
-            Commandline.Append("set Output_path=\"%~2\"\r\n");
-            Commandline.Append("for %%i in (\"%~1\") do set \"Attribute=%%~ai\"\r\n");
-            Commandline.Append("if %Scale_ratio% LEQ 2 if \"%Attribute:~0,1%\"==\"d\" if not exist \"%~2\" (\r\n");
-            Commandline.Append("   echo mkdir \"%~2\"\r\n"); 
-            Commandline.Append("   mkdir \"%~2\"\r\n"); 
-            Commandline.Append(")\r\n");
-            Commandline.Append("set Temporary_input=\"%~1\"\r\n");
-            Commandline.Append("if %Scale_ratio% GTR 2 (\r\n");
-            Commandline.Append("    for %%i in (2,4,8,16,32,64,128,256) do call :sub_multiple_magnify %%i\r\n");
-            Commandline.Append(") else (\r\n");
-            Commandline.Append("    echo " + binary_path + full_param + "\r\n");
-            Commandline.Append("    " + binary_path + full_param + "\r\n");
-            Commandline.Append(")\r\n");
-            Commandline.Append("if %Scale_ratio% GTR 2 rd /s /q \"%TEMP%\\waifu2x_%random32%\\\"\r\n");
-            Commandline.Append("if \"%Attribute:~0,1%\"==\"d\" if \"%Prevent_double_extensions%\"==\"True\" (\r\n");
-            Commandline.Append("    pushd \"%~2\"\r\n");
-            Commandline.Append("    PowerShell \"Get-ChildItem *.png | Move-Item -Force -Destination { $_.Name -replace '(\\.png|\\.jpe?g|\\.bmp|\\.gif|\\.tiff?|\\.webp)(\\.png)+$','.png' }\"\r\n");
-            Commandline.Append("    popd\r\n");
-            Commandline.Append(")\r\n");
-            Commandline.Append(":waifu2x_run_skip\r\n");
-            Commandline.Append("set /a ProcessedCount=%ProcessedCount%+1\r\n");
-            Commandline.Append("if not \"%FileCount%\"==\"1\" echo progress %ProcessedCount%/%FileCount%\r\n");
-            Commandline.Append("exit /b\r\n");
-            Commandline.Append("\r\n");
-            Commandline.Append(":sub_multiple_magnify\r\n");
-            Commandline.Append("if %~1 GTR %Scale_ratio% exit /b\r\n");
-            Commandline.Append("set Temporary_output=\"%TEMP%\\waifu2x_%random32%\\%Source_name%_x%~1.png\"\r\n");
-            Commandline.Append("if \"%Attribute:~0,1%\"==\"d\" set Temporary_output=\"%TEMP%\\waifu2x_%random32%\\%Source_name%_x%~1\"\r\n");
-            Commandline.Append("if \"%Scale_ratio%\"==\"%~1\" set Temporary_output=%Output_path%\r\n");
-            Commandline.Append("if \"%Attribute:~0,1%\"==\"d\" if not exist %Temporary_output% mkdir %Temporary_output%\r\n");
-            Commandline.Append("if not \"%Attribute:~0,1%\"==\"d\" if not exist \"%TEMP%\\waifu2x_%random32%\\\" mkdir \"%TEMP%\\waifu2x_%random32%\\\"\r\n");
-            Commandline.Append("set Temporary_noise_level=-1\r\n");
-            Commandline.Append("if \"%~1\"==\"2\" if not \"%Noise_level%\"==\"-1\" set \"Temporary_noise_level=%Noise_level%\"\r\n");
-            Commandline.Append("echo " + binary_path + multiple_full_param + "\r\n");
-            Commandline.Append(binary_path + multiple_full_param + "\r\n");
-            Commandline.Append("set Temporary_input=%Temporary_output%\r\n");
-            Commandline.Append("exit /b\r\n");
-            waifu2x_bat.Clear();
-            waifu2x_bat.Append(System.IO.Path.GetTempPath() + "waifu2x_" + random32.ToString() + ".bat");
-
-            System.IO.StreamWriter sw = new System.IO.StreamWriter(
-            @waifu2x_bat.ToString(),
-            false
-            // ,
-            // System.Text.Encoding.GetEncoding("utf-8")
-            );
-            sw.Write(Commandline);
-            sw.Close();
-
-            this.btnRun.IsEnabled = false;
-            this.btnAbort.IsEnabled = true;
-
-            // Setup ProcessStartInfo
-            psinfo.FileName = System.Environment.GetEnvironmentVariable("ComSpec");
-            psinfo.StandardErrorEncoding = Encoding.UTF8;
-            psinfo.StandardOutputEncoding = Encoding.UTF8;
-            psinfo.Arguments = "/c \"" + waifu2x_bat.ToString() + "\"";
-            psinfo.RedirectStandardInput = true;
-            psinfo.RedirectStandardError = true;
-            psinfo.RedirectStandardOutput = true;
-            psinfo.UseShellExecute = false;
-            psinfo.WorkingDirectory = System.AppDomain.CurrentDomain.BaseDirectory;
-            psinfo.CreateNoWindow = true;
-            psinfo.WindowStyle = ProcessWindowStyle.Hidden;
-            pHandle.StartInfo = psinfo;
-            pHandle.EnableRaisingEvents = true;
-            if (EventHandler_Flag == false)
+            else
             {
-                 pHandle.OutputDataReceived += new DataReceivedEventHandler(OnConsoleDataRecv);
-                 pHandle.ErrorDataReceived += new DataReceivedEventHandler(OnConsoleDataRecv);
-                 pHandle.Exited += new EventHandler(OnProcessExit);
-                 EventHandler_Flag = true;
-             }
-
-            // Starts working
-            console_buffer.Clear();
-            Stopwatch.Start();
-            try
-            {
-                //MessageBox.Show(full_param);
-                bool pState = pHandle.Start();
-            }
-            catch (Exception)
-            {
-                try
+                if (param_model.ToString().Replace("-m ", "") == "models-cunet")
+                { param_dst_suffix.Append("(CUnet)"); }
+                if (param_model.ToString().Replace("-m ", "") == "models-upconv_7_anime_style_art_rgb")
+                { param_dst_suffix.Append("(UpRGB)"); }
+                if (param_model.ToString().Replace("-m ", "") == "models-upconv_7_photo")
+                { param_dst_suffix.Append("(UpPhoto)"); }
+                param_dst_suffix.Append("(");
+                param_dst_suffix.Append(param_mode.ToString().Replace("-m ", ""));
+                param_dst_suffix.Append(")");
+                if (param_mode.ToString() == "noise" || param_mode.ToString() == "noise_scale" || param_mode.ToString() == "auto_scale")
                 {
-                    pHandle.Kill();
+                    param_dst_suffix.Append("(");
+                    param_dst_suffix.Append("Level");
+                    param_dst_suffix.Append(param_denoise.ToString());
+                    param_dst_suffix.Append(")");
                 }
-                catch (Exception) { /*Nothing*/ }
-                Errormessage("Failed to start waifu2x.exe.");
-                //throw;
+                if (checkTTAmode.IsChecked == true)
+                {
+                    param_dst_suffix.Append("(tta)");
+                }
+
+                if (param_mode.ToString() == "scale" || param_mode.ToString() == "noise_scale" || param_mode.ToString() == "auto_scale")
+                {
+                    param_dst_suffix.Append("(x");
+                    param_dst_suffix.Append(this.slider_zoom.Value.ToString());
+                    param_dst_suffix.Append(")");
+                }
+                if (checkPrecision_fp32.IsChecked == true)
+                {
+                    param_dst_suffix.Append("(FP32)");
+                }
+                param_dst_suffix.Append(".png");
             }
 
-            Dispatcher.BeginInvoke(new Action(delegate
-            {
-                CLIOutput.Focus();
-                // this.CLIOutput.AppendText("waifu2x.exe " + full_param.ToString());
-                // this.CLIOutput.AppendText(Environment.NewLine);
-                // this.CLIOutput.AppendText(Environment.NewLine);
-                CLIOutput.Select(CLIOutput.Text.Length, 0);
-            }), System.Windows.Threading.DispatcherPriority.ApplicationIdle, null);
+            Output_no_overwirit = checkOutput_no_overwirit.IsChecked.Value;
+            scale_ratio = (int)slider_zoom.Value;
+            if (param_mode.ToString() == "noise")
+            { scale_ratio = 1; }
 
-            try
-            {
-                pHandle.BeginOutputReadLine();
-            }
-            catch (Exception)
-            {
-                this.CLIOutput.Clear();
-                this.CLIOutput.Text = "BeginOutputReadLine crashed...\n";
-            }
+            prgbar.Maximum = FileCount;
+            prgbar.Value = 0;
 
-            try
-            {
-                pHandle.BeginErrorReadLine();
-            }
-            catch (Exception)
-            {
-                this.CLIOutput.Clear();
-                this.CLIOutput.Text = "BeginErrorReadLine crashed...\n";
-            }
-
-            //pHandle.BeginErrorReadLine();
-            //MessageBox.Show("Some parameters do not mix well and crashed...");
-
-            //pHandle.WaitForExit();
-            /*
-            pHandle.CancelOutputRead();
-            pHandle.Close();
-            this.btnAbort.IsEnabled = false;
+            await Task.Run(() => Encode(int.Parse(param_thread.ToString()), FileCount));
+            prgbar.Value = 0;
+            pLabel.Dispatcher.Invoke(() => pLabel.Content = "Processing time: " + (DateTime.Now - starttimea).ToString(@"hh\:mm\:ss\.fff"), DispatcherPriority.Background);
             this.btnRun.IsEnabled = true;
-            this.CLIOutput.Text = console_buffer.ToString();
-            */
+            this.btnAbort.IsEnabled = false;
 
+            if (checkSoundBeep.IsChecked == true)
+            { System.Media.SystemSounds.Beep.Play(); }
         }
+
+
     }
 }
