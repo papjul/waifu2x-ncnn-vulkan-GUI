@@ -490,27 +490,23 @@ namespace waifu2x_ncnn_vulkan_gui
                             string noise_level_temp = null;
                             if (Cancel == false)
                             {
+                                string output = null;
                                 if (Output_no_overwirit == true)
                                 {
                                     if (param_dst.ToString().Trim() == "")
                                     {
-                                        if (File.Exists(System.IO.Directory.GetParent(input) + "\\" + System.IO.Path.GetFileNameWithoutExtension(input) + param_dst_suffix))
-                                        {
-                                            prgbar.Dispatcher.Invoke(() => prgbar.Value += 1, DispatcherPriority.Background);
-                                            TimeSpan timespent = DateTime.Now - starttime;
-                                            pLabel.Dispatcher.Invoke(() => pLabel.Content = prgbar.Value + " / " + labelstring + " - Time Left: " + new TimeSpan(0, 0, Convert.ToInt32(Math.Round(((timespent.TotalSeconds / prgbar.Value) * (Int32.Parse(labelstring) - prgbar.Value)), MidpointRounding.ToEven))).ToString(@"hh\:mm\:ss"), DispatcherPriority.Background);
-                                            return;
-                                        }
+                                        output = System.IO.Directory.GetParent(input) + "\\" + System.IO.Path.GetFileNameWithoutExtension(input) + param_dst_suffix;
                                     }
                                     else
                                     {
-                                        if (File.Exists(param_dst + "\\" + System.IO.Path.GetFileNameWithoutExtension(input) + param_dst_suffix))
-                                        {
-                                            prgbar.Dispatcher.Invoke(() => prgbar.Value += 1, DispatcherPriority.Background);
-                                            TimeSpan timespent = DateTime.Now - starttime;
-                                            pLabel.Dispatcher.Invoke(() => pLabel.Content = prgbar.Value + " / " + labelstring + " - Time Left: " + new TimeSpan(0, 0, Convert.ToInt32(Math.Round(((timespent.TotalSeconds / prgbar.Value) * (Int32.Parse(labelstring) - prgbar.Value)), MidpointRounding.ToEven))).ToString(@"hh\:mm\:ss"), DispatcherPriority.Background);
-                                            return;
-                                        }
+                                        output = param_dst + "\\" + System.IO.Path.GetFileNameWithoutExtension(input) + param_dst_suffix;
+                                    }
+                                    if (File.Exists(output))
+                                    {
+                                        prgbar.Dispatcher.Invoke(() => prgbar.Value += 1, DispatcherPriority.Background);
+                                        TimeSpan timespent = DateTime.Now - starttime;
+                                        pLabel.Dispatcher.Invoke(() => pLabel.Content = prgbar.Value + " / " + labelstring + " - Time Left: " + new TimeSpan(0, 0, Convert.ToInt32(Math.Round(((timespent.TotalSeconds / prgbar.Value) * (Int32.Parse(labelstring) - prgbar.Value)), MidpointRounding.ToEven))).ToString(@"hh\:mm\:ss"), DispatcherPriority.Background);
+                                        return;
                                     }
                                 }
                                 Guid g = System.Guid.NewGuid();
@@ -520,8 +516,6 @@ namespace waifu2x_ncnn_vulkan_gui
                                 {
                                     noise_level_temp = "-n -1";
                                 }
-
-                                string output = null;
                                 Process process = new Process();
                                 ProcessStartInfo startInfo = new ProcessStartInfo();
                                 startInfo.WindowStyle = ProcessWindowStyle.Hidden;
