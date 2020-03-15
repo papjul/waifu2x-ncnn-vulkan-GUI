@@ -60,7 +60,7 @@
                     <StackPanel Orientation="Horizontal" Margin="3" HorizontalAlignment="Stretch">
                         <StackPanel Orientation="Horizontal">
                             <Slider Name="slider_zoom" Minimum="1.0" Maximum="16.0" Margin="15" MinWidth="550" Value="2" Ticks="1, 2, 4, 8, 16" TickPlacement="BottomRight" TickFrequency="1" IsSnapToTickEnabled="True"></Slider>
-                            <TextBox Name="slider_value" HorizontalAlignment="Right" MaxHeight="20" MinWidth="50" MaxWidth="50" Margin="1" TextChanged="DstDirNameProxy"  Text="{Binding ElementName=slider_zoom, Path=Value, Mode=TwoWay}" ></TextBox>
+                            <TextBox Name="slider_value" HorizontalAlignment="Right" MaxHeight="20" MinWidth="50" MaxWidth="50" Margin="1" Text="{Binding ElementName=slider_zoom, Path=Value, Mode=TwoWay}" ></TextBox>
                         </StackPanel>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="3">
@@ -103,7 +103,7 @@
                                     <TextBox Name="txtThread" HorizontalAlignment="Right" MinWidth="50" MaxWidth="50"  Margin="1" MaxHeight="20" Text="" ></TextBox>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" Margin="1">
-                                    <CheckBox Name="checkTTAmode" Margin="3" Content="TTA mode" Checked="DstDirNameProxy" Unchecked="DstDirNameProxy" ></CheckBox>
+                                    <CheckBox Name="checkTTAmode" Margin="3" Content="TTA mode" ></CheckBox>
                                 </StackPanel>
                             </StackPanel>
                         </GroupBox>
@@ -117,7 +117,7 @@
                             <CheckBox Name="checkStore_output_dir" Margin="3" Content="{DynamicResource ResourceKey=Main_checkStore_output_dir}" ></CheckBox>
                             <CheckBox Name="checkOutput_no_overwirit" Margin="3" Content="{DynamicResource ResourceKey=Main_checkOutput_no_overwirit}" ></CheckBox>
                             <CheckBox Name="checkSoundBeep" Margin="3" Content="{DynamicResource ResourceKey=Main_checkSoundBeep}" ></CheckBox>
-                            <CheckBox Name="checkPrecision_fp32" Margin="3" Checked="DstDirNameProxy" Unchecked="DstDirNameProxy"  Content="{DynamicResource ResourceKey=Main_checkPrecision_fp32}" ></CheckBox>
+                            <CheckBox Name="checkPrecision_fp32" Margin="3" Content="{DynamicResource ResourceKey=Main_checkPrecision_fp32}" ></CheckBox>
                         </StackPanel>
                     </GroupBox>
                 </StackPanel>

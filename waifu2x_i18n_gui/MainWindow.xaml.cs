@@ -128,10 +128,10 @@ namespace waifu2x_ncnn_vulkan_gui
         public static StringBuilder param_gpu_id = new StringBuilder("");
         public static StringBuilder param_thread = new StringBuilder("2");
         public static StringBuilder param_tta = new StringBuilder("");
-        public static StringBuilder dast_dir = new StringBuilder("");
         public static StringBuilder binary_path = new StringBuilder("");
         public static String[] param_src;
         public static int scale_ratio;
+        public static int FileCount = 0;
         public DateTime starttimea;
         public static bool Cancel = false;
         public static bool Output_no_overwirit;
@@ -264,12 +264,18 @@ namespace waifu2x_ncnn_vulkan_gui
                 this.txtSrcPath.Text = string.Join("\n", fdlg.FileNames);
                 param_src = fdlg.FileNames;
             }
+            FileCount = 0;
+            foreach (var dropfile in param_src)
+            {
+                FileCount += 1;
+            }
         }
 
         private void OnSrcClear(object sender, RoutedEventArgs e)
         {
             this.txtSrcPath.Clear();
             param_src = null;
+            FileCount = 0;
         }
 
         private void OnBtnDst(object sender, RoutedEventArgs e)
@@ -278,14 +284,12 @@ namespace waifu2x_ncnn_vulkan_gui
             if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 this.txtDstPath.Text = dlg.SelectedPath;
-                dast_dir.Clear();
             }
         }
 
         private void OnDstClear(object sender, RoutedEventArgs e)
         {
             this.txtDstPath.Clear();
-            dast_dir.Clear();
         }
 
         private void MenuItem_Style_Click(object sender, RoutedEventArgs e)
@@ -317,37 +321,29 @@ namespace waifu2x_ncnn_vulkan_gui
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
+                FileCount = 0;
                 string[] fn = (string[])e.Data.GetData(DataFormats.FileDrop);
-                this.txtSrcPath.Clear();
-                dast_dir.Clear();
-                param_src = null;
+                this.txtSrcPath.Text = string.Join("\n", fn);
+                param_src = (string[])e.Data.GetData(DataFormats.FileDrop);
                 var reg = new Regex(@".+\.(jpe?g|png|bmp|gif|tiff?|webp)$", RegexOptions.IgnoreCase);
-                var list = new List<string>();
                 foreach (var dropfile in fn)
                 {
                     if (File.Exists(dropfile))
                     {
-                        list.Add(dropfile);
-                        txtSrcPath.AppendText(dropfile + "\r\n");
+                        FileCount += 1;
                     }
                     if (Directory.Exists(dropfile))
                     {
                         await Task.Run(() =>
                         {
-                            var Directoryfiles = Directory.GetFiles(dropfile).Where(f => reg.IsMatch(f)).ToArray();
+                            var Directoryfiles = Directory.GetFiles((dropfile), "*", SearchOption.AllDirectories).Where(f => reg.IsMatch(f)).ToArray();
                             foreach (var Directoryimage in Directoryfiles)
                             {
-                                list.Add(Directoryimage);
-                                txtSrcPath.Dispatcher.Invoke(() => txtSrcPath.AppendText(Directoryimage + "\r\n"));
+                                FileCount += 1;
                             }
                         });
-                        dast_dir.Clear();
-                        dast_dir.Append(dropfile);
-                        this.txtDstPath.Clear();
-                        DstDirName();
                     }
                 }
-                param_src = list.ToArray();
             }
         }
 
@@ -357,49 +353,6 @@ namespace waifu2x_ncnn_vulkan_gui
             {
                 string[] fn = (string[])e.Data.GetData(DataFormats.FileDrop);
                 this.txtDstPath.Text = fn[0];
-            }
-        }
-        private void DstDirNameProxy(object sender, System.EventArgs e)
-        {
-            DstDirName();
-        }
-        private void DstDirName()
-        {
-            if (dast_dir.ToString().Trim() == "")
-            {return;}
-
-            txtDstPath.Clear();
-            txtDstPath.AppendText(dast_dir.ToString());
-            if (param_model.ToString().Replace("-m ", "") == "models-cunet")
-            { txtDstPath.AppendText("(CUnet)"); }
-            if (param_model.ToString().Replace("-m ", "") == "models-upconv_7_anime_style_art_rgb")
-            { txtDstPath.AppendText("(UpRGB)"); }
-            if (param_model.ToString().Replace("-m ", "") == "models-upconv_7_photo")
-            { txtDstPath.AppendText("(UpPhoto)"); }
-            txtDstPath.AppendText("(");
-            txtDstPath.AppendText(param_mode.ToString().Replace("-m ", ""));
-            txtDstPath.AppendText(")");
-            if (param_mode.ToString() == "noise" || param_mode.ToString() == "noise_scale" || param_mode.ToString() == "auto_scale")
-            {
-                txtDstPath.AppendText("(");
-                txtDstPath.AppendText("Level");
-                txtDstPath.AppendText(param_denoise.ToString());
-                txtDstPath.AppendText(")");
-            }
-            if (checkTTAmode.IsChecked == true)
-            {
-                txtDstPath.AppendText("(tta)");
-            }
-
-            if (param_mode.ToString() == "scale" || param_mode.ToString() == "noise_scale" || param_mode.ToString() == "auto_scale")
-            {
-                txtDstPath.AppendText("(x");
-                txtDstPath.AppendText(this.slider_zoom.Value.ToString());
-                txtDstPath.AppendText(")");
-            }
-            if (checkPrecision_fp32.IsChecked == true)
-            {
-                txtDstPath.AppendText("(FP32)");
             }
         }
         private void OnSetModeChecked(object sender, RoutedEventArgs e)
@@ -422,14 +375,12 @@ namespace waifu2x_ncnn_vulkan_gui
                 slider_zoom.IsEnabled = false;
                 slider_value.IsEnabled = false;
             }
-            DstDirName();
         }
         private void OnDenoiseChecked(object sender, RoutedEventArgs e)
         {
             param_denoise.Clear();
             RadioButton optsrc= sender as RadioButton;
             param_denoise.Append(optsrc.Tag.ToString());
-            DstDirName();
         }
 
         /*private void OnDeviceChecked(object sender, RoutedEventArgs e)
@@ -446,7 +397,6 @@ namespace waifu2x_ncnn_vulkan_gui
             RadioButton optsrc = sender as RadioButton;
             param_model.Append("-m ");
             param_model.Append(optsrc.Tag.ToString());
-            DstDirName();
         }
         private async void OnAbort(object sender, RoutedEventArgs e)
         {
@@ -479,127 +429,278 @@ namespace waifu2x_ncnn_vulkan_gui
 
                 pLabel.Dispatcher.Invoke(() => pLabel.Content = "0 / " + prgbar.Maximum, DispatcherPriority.Background);
                 List<Task> tasks = new List<Task>();
+                Task file_t = Task.Factory.StartNew(() => { });
+                Task directory_t = Task.Factory.StartNew(() => { });
                 foreach (var input in param_src)
                 {
-                    concurrencySemaphore.Wait();
-
-                    var t = Task.Factory.StartNew(() =>
+                    
+                    if (File.Exists(input))
                     {
-                        try
+                        concurrencySemaphore.Wait();
+                        file_t = Task.Factory.StartNew(() =>
                         {
-                            string noise_level_temp = null;
-                            if (Cancel == false)
+                            try
                             {
-                                string output = null;
-                                if (Output_no_overwirit == true)
+                                string noise_level_temp = null;
+                                if (Cancel == false)
                                 {
-                                    if (param_dst.ToString().Trim() == "")
+                                    string output = null;
+                                    if (Output_no_overwirit == true)
                                     {
-                                        output = System.IO.Directory.GetParent(input) + "\\" + System.IO.Path.GetFileNameWithoutExtension(input) + param_dst_suffix;
-                                    }
-                                    else
-                                    {
-                                        output = param_dst + "\\" + System.IO.Path.GetFileNameWithoutExtension(input) + param_dst_suffix;
-                                    }
-                                    if (File.Exists(output))
-                                    {
-                                        prgbar.Dispatcher.Invoke(() => prgbar.Value += 1, DispatcherPriority.Background);
-                                        TimeSpan timespent = DateTime.Now - starttime;
-                                        pLabel.Dispatcher.Invoke(() => pLabel.Content = prgbar.Value + " / " + labelstring + " - Time Left: " + new TimeSpan(0, 0, Convert.ToInt32(Math.Round(((timespent.TotalSeconds / prgbar.Value) * (Int32.Parse(labelstring) - prgbar.Value)), MidpointRounding.ToEven))).ToString(@"hh\:mm\:ss"), DispatcherPriority.Background);
-                                        return;
-                                    }
-                                }
-                                Guid g = System.Guid.NewGuid();
-                                string random32 = (g.ToString("N").Substring(0, 32));
-                                noise_level_temp = param_denoise2.ToString();
-                                if (!System.Text.RegularExpressions.Regex.IsMatch(System.IO.Path.GetExtension(input), @"\.jpe?g", RegexOptions.IgnoreCase)) if (param_mode.ToString() == "auto_scale")
-                                {
-                                    noise_level_temp = "-n -1";
-                                }
-                                Process process = new Process();
-                                ProcessStartInfo startInfo = new ProcessStartInfo();
-                                startInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                                startInfo.UseShellExecute = true;
-                                startInfo.FileName = System.Environment.GetEnvironmentVariable("ComSpec");
-                                startInfo.WorkingDirectory = System.AppDomain.CurrentDomain.BaseDirectory;
-                                if (scale_ratio <= 2)
-                                {
-                                    if (param_dst.ToString().Trim() == "")
-                                    {
-                                        output = System.IO.Directory.GetParent(input) + "\\" + System.IO.Path.GetFileNameWithoutExtension(input) + param_dst_suffix;
-                                    }
-                                    else
-                                    {
-                                        output = param_dst + "\\" + System.IO.Path.GetFileNameWithoutExtension(input) + param_dst_suffix;
-                                    }
-                                    startInfo.Arguments = "/C " + binary_path + "-i \"" + input + "\" -o \"" + output + "\" " + param_mag + " " + noise_level_temp + " " + others_param;
-                                    process.StartInfo = startInfo;
-                                    Console.WriteLine(startInfo.Arguments);
-                                    process.Start();
-                                    process.WaitForExit();
-
-                                    //Progressbar +1
-                                    TimeSpan timespent = DateTime.Now - starttime;
-                                    if (Cancel == false)
-                                    {
-                                        prgbar.Dispatcher.Invoke(() => prgbar.Value += 1, DispatcherPriority.Background);
-                                        pLabel.Dispatcher.Invoke(() => pLabel.Content = prgbar.Value + " / " + labelstring + " - Time Left: " + new TimeSpan(0, 0, Convert.ToInt32(Math.Round(((timespent.TotalSeconds / prgbar.Value) * (Int32.Parse(labelstring) - prgbar.Value)), MidpointRounding.ToEven))).ToString(@"hh\:mm\:ss"), DispatcherPriority.Background);
-                                    }
-                                }
-                                else
-                                {
-                                    int r;
-                                    int r2;
-                                    for (r = 2, r2 = 1; r <= scale_ratio; r = r * 2, r2 = r2 * 2)
-                                    {
-                                        string input_temp = System.IO.Path.GetTempPath() + random32 + "-" + r2 + "x.png";
-                                        if (r == 2)
+                                        if (param_dst.ToString().Trim() == "")
                                         {
-                                            output = System.IO.Path.GetTempPath() + random32 + "-" + r + "x.png";
-                                            startInfo.Arguments = "/C " + binary_path + " -i \"" + input + "\" -o \"" + output + "\" -s 2 " + noise_level_temp + " " + others_param;
+                                            output = System.IO.Directory.GetParent(input) + "\\" + System.IO.Path.GetFileNameWithoutExtension(input) + param_dst_suffix + ".png";
                                         }
                                         else
                                         {
-                                            output = System.IO.Path.GetTempPath() + random32 + "-" + r + "x.png";
-                                            if (r == scale_ratio)
-                                            {
-                                                if (param_dst.ToString().Trim() == "")
-                                                {
-                                                    output = System.IO.Directory.GetParent(input) + "\\" + System.IO.Path.GetFileNameWithoutExtension(input) + param_dst_suffix;
-                                                }
-                                                else
-                                                {
-                                                    output = param_dst + "\\" + System.IO.Path.GetFileNameWithoutExtension(input) + param_dst_suffix;
-                                                }
-                                            }
-                                            startInfo.Arguments = "/C " + binary_path + " -i \"" + input_temp + "\" -o \"" + output + "\" -s 2 -n -1 " + others_param;
+                                            output = param_dst + "\\" + System.IO.Path.GetFileNameWithoutExtension(input) + param_dst_suffix + ".png";
                                         }
+                                        if (File.Exists(output))
+                                        {
+                                            prgbar.Dispatcher.Invoke(() => prgbar.Value += 1, DispatcherPriority.Background);
+                                            TimeSpan timespent = DateTime.Now - starttime;
+                                            pLabel.Dispatcher.Invoke(() => pLabel.Content = prgbar.Value + " / " + labelstring + " - Time Left: " + new TimeSpan(0, 0, Convert.ToInt32(Math.Round(((timespent.TotalSeconds / prgbar.Value) * (Int32.Parse(labelstring) - prgbar.Value)), MidpointRounding.ToEven))).ToString(@"hh\:mm\:ss"), DispatcherPriority.Background);
+                                            return;
+                                        }
+                                    }
+                                    Guid g = System.Guid.NewGuid();
+                                    string random32 = (g.ToString("N").Substring(0, 32));
+                                    noise_level_temp = param_denoise2.ToString();
+                                    if (!System.Text.RegularExpressions.Regex.IsMatch(System.IO.Path.GetExtension(input), @"\.jpe?g", RegexOptions.IgnoreCase)) if (param_mode.ToString() == "auto_scale")
+                                        {
+                                            noise_level_temp = "-n -1";
+                                        }
+                                    Process process = new Process();
+                                    ProcessStartInfo startInfo = new ProcessStartInfo();
+                                    startInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                                    startInfo.UseShellExecute = true;
+                                    startInfo.FileName = System.Environment.GetEnvironmentVariable("ComSpec");
+                                    startInfo.WorkingDirectory = System.AppDomain.CurrentDomain.BaseDirectory;
+                                    if (scale_ratio <= 2)
+                                    {
+                                        if (param_dst.ToString().Trim() == "")
+                                        {
+                                            output = System.IO.Directory.GetParent(input) + "\\" + System.IO.Path.GetFileNameWithoutExtension(input) + param_dst_suffix + ".png";
+                                        }
+                                        else
+                                        {
+                                            output = param_dst + "\\" + System.IO.Path.GetFileNameWithoutExtension(input) + param_dst_suffix + ".png";
+                                        }
+                                        startInfo.Arguments = "/C " + binary_path + "-i \"" + input + "\" -o \"" + output + "\" " + param_mag + " " + noise_level_temp + " " + others_param;
                                         process.StartInfo = startInfo;
                                         Console.WriteLine(startInfo.Arguments);
                                         process.Start();
                                         process.WaitForExit();
-                                        new FileInfo(input_temp).Delete();
-                                    }
 
                                     //Progressbar +1
                                     TimeSpan timespent = DateTime.Now - starttime;
-                                    if (Cancel == false)
+                                        if (Cancel == false)
+                                        {
+                                            prgbar.Dispatcher.Invoke(() => prgbar.Value += 1, DispatcherPriority.Background);
+                                            pLabel.Dispatcher.Invoke(() => pLabel.Content = prgbar.Value + " / " + labelstring + " - Time Left: " + new TimeSpan(0, 0, Convert.ToInt32(Math.Round(((timespent.TotalSeconds / prgbar.Value) * (Int32.Parse(labelstring) - prgbar.Value)), MidpointRounding.ToEven))).ToString(@"hh\:mm\:ss"), DispatcherPriority.Background);
+                                        }
+                                    }
+                                    else
                                     {
-                                        prgbar.Dispatcher.Invoke(() => prgbar.Value += 1, DispatcherPriority.Background);
-                                        pLabel.Dispatcher.Invoke(() => pLabel.Content = prgbar.Value + " / " + labelstring + " - Time Left: " + new TimeSpan(0, 0, Convert.ToInt32(Math.Round(((timespent.TotalSeconds / prgbar.Value) * (Int32.Parse(labelstring) - prgbar.Value)), MidpointRounding.ToEven))).ToString(@"hh\:mm\:ss"), DispatcherPriority.Background);
+                                        int r;
+                                        int r2;
+                                        for (r = 2, r2 = 1; r <= scale_ratio; r = r * 2, r2 = r2 * 2)
+                                        {
+                                            string input_temp = System.IO.Path.GetTempPath() + random32 + "-" + r2 + "x.png";
+                                            if (r == 2)
+                                            {
+                                                output = System.IO.Path.GetTempPath() + random32 + "-" + r + "x.png";
+                                                startInfo.Arguments = "/C " + binary_path + " -i \"" + input + "\" -o \"" + output + "\" -s 2 " + noise_level_temp + " " + others_param;
+                                            }
+                                            else
+                                            {
+                                                output = System.IO.Path.GetTempPath() + random32 + "-" + r + "x.png";
+                                                if (r == scale_ratio)
+                                                {
+                                                    if (param_dst.ToString().Trim() == "")
+                                                    {
+                                                        output = System.IO.Directory.GetParent(input) + "\\" + System.IO.Path.GetFileNameWithoutExtension(input) + param_dst_suffix + ".png";
+                                                    }
+                                                    else
+                                                    {
+                                                        output = param_dst + "\\" + System.IO.Path.GetFileNameWithoutExtension(input) + param_dst_suffix + ".png";
+                                                    }
+                                                }
+                                                startInfo.Arguments = "/C " + binary_path + " -i \"" + input_temp + "\" -o \"" + output + "\" -s 2 -n -1 " + others_param;
+                                            }
+                                            process.StartInfo = startInfo;
+                                            Console.WriteLine(startInfo.Arguments);
+                                            process.Start();
+                                            process.WaitForExit();
+                                            new FileInfo(input_temp).Delete();
+                                        }
+
+                                    //Progressbar +1
+                                    TimeSpan timespent = DateTime.Now - starttime;
+                                        if (Cancel == false)
+                                        {
+                                            prgbar.Dispatcher.Invoke(() => prgbar.Value += 1, DispatcherPriority.Background);
+                                            pLabel.Dispatcher.Invoke(() => pLabel.Content = prgbar.Value + " / " + labelstring + " - Time Left: " + new TimeSpan(0, 0, Convert.ToInt32(Math.Round(((timespent.TotalSeconds / prgbar.Value) * (Int32.Parse(labelstring) - prgbar.Value)), MidpointRounding.ToEven))).ToString(@"hh\:mm\:ss"), DispatcherPriority.Background);
+                                        }
                                     }
                                 }
                             }
-                        }
 
-                        finally
+                            finally
+                            {
+                                concurrencySemaphore.Release();
+                            }
+                        });
+                    }
+                    if (Directory.Exists(input))
+                    {
+                        var reg = new Regex(@".+\.(jpe?g|png|bmp|gif|tiff?|webp)$", RegexOptions.IgnoreCase);
+                        var Directoryfiles = Directory.GetFiles((input),"*", SearchOption.AllDirectories).Where(f => reg.IsMatch(f)).ToArray();
+                        foreach (var Directoryimage in Directoryfiles)
                         {
-                            concurrencySemaphore.Release();
-                        }
-                    });
+                            string relative_path = System.IO.Path.GetDirectoryName(Directoryimage).Replace(input, "");
+                            string output_dir = null;
+                            concurrencySemaphore.Wait();
+                            directory_t = Task.Factory.StartNew(() =>
+                            {
+                                try
+                                {
+                                    string noise_level_temp = null;
+                                    if (Cancel == false)
+                                    {
+                                        string output = null;
+                                        if (Output_no_overwirit == true)
+                                        {
+                                            if (param_dst.ToString().Trim() == "")
+                                            {
+                                                output_dir = input + param_dst_suffix + relative_path;
+                                            }
+                                            else
+                                            {
+                                                output_dir = param_dst + relative_path;
+                                            }
+                                            output = output_dir + "\\" + System.IO.Path.GetFileNameWithoutExtension(Directoryimage) + ".png";
+                                            if (File.Exists(output))
+                                            {
+                                                prgbar.Dispatcher.Invoke(() => prgbar.Value += 1, DispatcherPriority.Background);
+                                                TimeSpan timespent = DateTime.Now - starttime;
+                                                pLabel.Dispatcher.Invoke(() => pLabel.Content = prgbar.Value + " / " + labelstring + " - Time Left: " + new TimeSpan(0, 0, Convert.ToInt32(Math.Round(((timespent.TotalSeconds / prgbar.Value) * (Int32.Parse(labelstring) - prgbar.Value)), MidpointRounding.ToEven))).ToString(@"hh\:mm\:ss"), DispatcherPriority.Background);
+                                                return;
+                                            }
+                                        }
+                                        Guid g = System.Guid.NewGuid();
+                                        string random32 = (g.ToString("N").Substring(0, 32));
+                                        noise_level_temp = param_denoise2.ToString();
+                                        if (!System.Text.RegularExpressions.Regex.IsMatch(System.IO.Path.GetExtension(Directoryimage), @"\.jpe?g", RegexOptions.IgnoreCase)) if (param_mode.ToString() == "auto_scale")
+                                            {
+                                                noise_level_temp = "-n -1";
+                                            }
+                                        Process process = new Process();
+                                        ProcessStartInfo startInfo = new ProcessStartInfo();
+                                        startInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                                        startInfo.UseShellExecute = true;
+                                        startInfo.FileName = System.Environment.GetEnvironmentVariable("ComSpec");
+                                        startInfo.WorkingDirectory = System.AppDomain.CurrentDomain.BaseDirectory;
+                                        if (scale_ratio <= 2)
+                                        {
+                                            if (param_dst.ToString().Trim() == "")
+                                            {
+                                                output_dir = input + param_dst_suffix + relative_path;
+                                            }
+                                            else
+                                            {
+                                                output_dir = param_dst + relative_path;
+                                            }
+                                            output = output_dir + "\\" + System.IO.Path.GetFileNameWithoutExtension(Directoryimage) + ".png";
+                                            try
+                                            {
+                                                Directory.CreateDirectory(output_dir);
+                                            }
+                                            catch
+                                            {
+                                                MessageBox.Show(@"Failed to create folder!");
+                                                return;
+                                            }
+                                            startInfo.Arguments = "/C " + binary_path + "-i \"" + Directoryimage + "\" -o \"" + output + "\" " + param_mag + " " + noise_level_temp + " " + others_param;
+                                            process.StartInfo = startInfo;
+                                            Console.WriteLine(startInfo.Arguments);
+                                            process.Start();
+                                            process.WaitForExit();
 
-                    tasks.Add(t);
+                                            //Progressbar +1
+                                            TimeSpan timespent = DateTime.Now - starttime;
+                                            if (Cancel == false)
+                                            {
+                                                prgbar.Dispatcher.Invoke(() => prgbar.Value += 1, DispatcherPriority.Background);
+                                                pLabel.Dispatcher.Invoke(() => pLabel.Content = prgbar.Value + " / " + labelstring + " - Time Left: " + new TimeSpan(0, 0, Convert.ToInt32(Math.Round(((timespent.TotalSeconds / prgbar.Value) * (Int32.Parse(labelstring) - prgbar.Value)), MidpointRounding.ToEven))).ToString(@"hh\:mm\:ss"), DispatcherPriority.Background);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            int r;
+                                            int r2;
+                                            for (r = 2, r2 = 1; r <= scale_ratio; r = r * 2, r2 = r2 * 2)
+                                            {
+                                                string Directoryimage_temp = System.IO.Path.GetTempPath() + random32 + "-" + r2 + "x.png";
+                                                if (r == 2)
+                                                {
+                                                    output = System.IO.Path.GetTempPath() + random32 + "-" + r + "x.png";
+                                                    startInfo.Arguments = "/C " + binary_path + " -i \"" + Directoryimage + "\" -o \"" + output + "\" -s 2 " + noise_level_temp + " " + others_param;
+                                                }
+                                                else
+                                                {
+                                                    output = System.IO.Path.GetTempPath() + random32 + "-" + r + "x.png";
+                                                    if (r == scale_ratio)
+                                                    {
+                                                        if (param_dst.ToString().Trim() == "")
+                                                        {
+                                                            output_dir = input + param_dst_suffix + relative_path;
+                                                        }
+                                                        else
+                                                        {
+                                                            output_dir = param_dst + relative_path;
+                                                        }
+                                                        output = output_dir + "\\" + System.IO.Path.GetFileNameWithoutExtension(Directoryimage) + ".png";
+                                                        try
+                                                        {
+                                                            Directory.CreateDirectory(output_dir);
+                                                        }
+                                                        catch
+                                                        {
+                                                            MessageBox.Show(@"Failed to create folder!");
+                                                            return;
+                                                        }
+                                                    }
+                                                    startInfo.Arguments = "/C " + binary_path + " -i \"" + Directoryimage_temp + "\" -o \"" + output + "\" -s 2 -n -1 " + others_param;
+                                                }
+                                                process.StartInfo = startInfo;
+                                                Console.WriteLine(startInfo.Arguments);
+                                                process.Start();
+                                                process.WaitForExit();
+                                                new FileInfo(Directoryimage_temp).Delete();
+                                            }
+
+                                        //Progressbar +1
+                                        TimeSpan timespent = DateTime.Now - starttime;
+                                            if (Cancel == false)
+                                            {
+                                                prgbar.Dispatcher.Invoke(() => prgbar.Value += 1, DispatcherPriority.Background);
+                                                pLabel.Dispatcher.Invoke(() => pLabel.Content = prgbar.Value + " / " + labelstring + " - Time Left: " + new TimeSpan(0, 0, Convert.ToInt32(Math.Round(((timespent.TotalSeconds / prgbar.Value) * (Int32.Parse(labelstring) - prgbar.Value)), MidpointRounding.ToEven))).ToString(@"hh\:mm\:ss"), DispatcherPriority.Background);
+                                            }
+                                        }
+                                    }
+                                }
+
+                                finally
+                                {
+                                    concurrencySemaphore.Release();
+                                }
+                            });
+                        }
+                    }
                 }
+                tasks.Add(file_t);
+                tasks.Add(directory_t);
                 Task.WaitAll(tasks.ToArray());
             }
         }
@@ -743,20 +844,11 @@ namespace waifu2x_ncnn_vulkan_gui
             this.btnRun.IsEnabled = false;
             this.btnAbort.IsEnabled = true;
 
-            int FileCount = 0;
-            for (int i = 0; i < param_src.Length; i++)
-            {
-                FileCount++;
-            }
             param_dst.Clear();
             param_dst.Append(this.txtDstPath.Text);
 
             param_dst_suffix.Clear();
-            if (this.txtDstPath.Text.Trim() != "")
-            {
-                param_dst_suffix.Append(".png");
-            }
-            else
+            if (this.txtDstPath.Text.Trim() == "")
             {
                 if (param_model.ToString().Replace("-m ", "") == "models-cunet")
                 { param_dst_suffix.Append("(CUnet)"); }
@@ -789,7 +881,6 @@ namespace waifu2x_ncnn_vulkan_gui
                 {
                     param_dst_suffix.Append("(FP32)");
                 }
-                param_dst_suffix.Append(".png");
             }
 
             Output_no_overwirit = checkOutput_no_overwirit.IsChecked.Value;
