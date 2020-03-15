@@ -321,7 +321,7 @@ namespace waifu2x_ncnn_vulkan_gui
                 this.txtSrcPath.Clear();
                 dast_dir.Clear();
                 param_src = null;
-                var reg = new Regex(@".+\.(jpe?g|png|bmp|gif|tiff?|webp)$");
+                var reg = new Regex(@".+\.(jpe?g|png|bmp|gif|tiff?|webp)$", RegexOptions.IgnoreCase);
                 var list = new List<string>();
                 foreach (var dropfile in fn)
                 {
