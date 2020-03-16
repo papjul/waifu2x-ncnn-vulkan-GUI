@@ -751,6 +751,12 @@ namespace waifu2x_ncnn_vulkan_gui
                 return;
             }
 
+            if (param_mode.ToString() == "noise") if (param_model.ToString().Replace("-m ", "") != "models-cunet")
+            {
+                MessageBox.Show("\"Denoise only\" is available only for CUnet models.");
+                return;
+            }
+
             if (System.Text.RegularExpressions.Regex.IsMatch(
                 txtThread.Text,
                  @"^(\d+)$",
