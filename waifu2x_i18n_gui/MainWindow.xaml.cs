@@ -427,6 +427,14 @@ namespace waifu2x_ncnn_vulkan_gui
                     param_tta,
                     param_gpu_id);
 
+                Process process = new Process();
+                ProcessStartInfo startInfo = new ProcessStartInfo();
+                startInfo.UseShellExecute = false;
+                startInfo.CreateNoWindow = true;
+                startInfo.RedirectStandardError = true;
+                startInfo.RedirectStandardOutput = true;
+                startInfo.FileName = System.Environment.GetEnvironmentVariable("ComSpec");
+                startInfo.WorkingDirectory = System.AppDomain.CurrentDomain.BaseDirectory;
                 pLabel.Dispatcher.Invoke(() => pLabel.Content = "0 / " + prgbar.Maximum, DispatcherPriority.Background);
                 List<Task> tasks = new List<Task>();
                 Task file_t = Task.Factory.StartNew(() => { });
@@ -446,6 +454,8 @@ namespace waifu2x_ncnn_vulkan_gui
                                 if (Cancel == false)
                                 {
                                     string output = null;
+                                    string output_rgb = null;
+                                    string output_alpha = null;
                                     if (Output_no_overwirit == true)
                                     {
                                         if (param_dst.ToString().Trim() == "")
@@ -471,13 +481,15 @@ namespace waifu2x_ncnn_vulkan_gui
                                     {
                                         noise_level_temp = "-n -1";
                                     }
-                                    Process process = new Process();
-                                    ProcessStartInfo startInfo = new ProcessStartInfo();
-                                    startInfo.UseShellExecute = false;
-                                    startInfo.CreateNoWindow = true;
-                                    startInfo.RedirectStandardError = true;
-                                    startInfo.FileName = System.Environment.GetEnvironmentVariable("ComSpec");
-                                    startInfo.WorkingDirectory = System.AppDomain.CurrentDomain.BaseDirectory;
+                                    string AlphaHas = "";
+                                    if (String.Compare(System.IO.Path.GetExtension(input), ".png", true) == 0)
+                                    {
+                                        startInfo.Arguments = "/C .\\ImageMagick\\magick.exe identify -format %A \"" + input + "\"";
+                                        process.StartInfo = startInfo;
+                                        process.Start();
+                                        AlphaHas = process.StandardOutput.ReadToEnd();
+                                        process.WaitForExit();
+                                    }
                                     int r = 2;
                                     int r2 = 1;
                                     string mag_value = "2";
@@ -489,6 +501,8 @@ namespace waifu2x_ncnn_vulkan_gui
                                     for (; r <= scale_ratio; r = r * 2, r2 = r2 * 2)
                                     {
                                         output = System.IO.Path.GetTempPath() + random32 + "-" + r + "x.png";
+                                        output_rgb = System.IO.Path.GetTempPath() + random32 + "-RGB" + r + "x.png";
+                                        output_alpha = System.IO.Path.GetTempPath() + random32 + "-Alpha" + r + "x.png";
                                         if (r >= scale_ratio)
                                         {
                                             if (param_dst.ToString().Trim() == "")
@@ -501,13 +515,42 @@ namespace waifu2x_ncnn_vulkan_gui
                                             }
                                         }
                                         string input_temp = System.IO.Path.GetTempPath() + random32 + "-" + r2 + "x.png";
+                                        string input_rgb_temp = System.IO.Path.GetTempPath() + random32 + "-RGB" + r2 + "x.png";
+                                        string input_alpha_temp = System.IO.Path.GetTempPath() + random32 + "-Alpha" + r2 + "x.png";
+                                        if (AlphaHas == "Blend")
+                                        {
+                                            startInfo.Arguments = 
+                                               "/C .\\ImageMagick\\magick.exe convert \"" + input + "\" -channel RGB -separate -combine png24:\"" + input_rgb_temp + "\" && " +
+                                                  ".\\ImageMagick\\magick.exe convert \"" + input + "\" -channel matte -separate +matte png24:\"" + input_alpha_temp + "\""
+                                            ;
+                                            process.StartInfo = startInfo;
+                                            process.Start();
+                                            process.WaitForExit();
+                                        }
                                         if (r <= 2)
                                         {
-                                            startInfo.Arguments = "/C " + binary_path + " -i \"" + input + "\" -o \"" + output + "\" -s " + mag_value + " " + noise_level_temp + " " + others_param;
+                                            if (AlphaHas == "Blend")
+                                            {
+                                                startInfo.Arguments = "/C " + binary_path + " -i \"" + input_rgb_temp + "\" -o \"" + output_rgb + "\" -s " + mag_value + " " + noise_level_temp + " " + others_param + "&& " +
+                                                                              binary_path + " -i \"" + input_alpha_temp + "\" -o \"" + output_alpha + "\" -s " + mag_value + " -n -1 " + others_param;
+                                            }
+                                            else
+                                            {
+                                                startInfo.Arguments = "/C " + binary_path + " -i \"" + input + "\" -o \"" + output + "\" -s " + mag_value + " " + noise_level_temp + " " + others_param;
+                                            }
                                         }
                                         else
                                         {
-                                            startInfo.Arguments = "/C " + binary_path + " -i \"" + input_temp + "\" -o \"" + output + "\" -s 2 -n -1 " + others_param;
+                                            if (AlphaHas == "Blend")
+                                            {
+                                                startInfo.Arguments = "/C " + binary_path + " -i \"" + input_rgb_temp + "\" -o \"" + output_rgb + "\" -s 2 -n -1 " + others_param + "&& " +
+                                                                              binary_path + " -i \"" + input_alpha_temp + "\" -o \"" + output_alpha + "\" -s 2 -n -1 " + others_param;
+                                            }
+                                            else
+                                            {
+                                                startInfo.Arguments = "/C " + binary_path + " -i \"" + input_temp + "\" -o \"" + output + "\" -s 2 -n -1 " + others_param;
+                                            }
+
                                         }
                                         process.StartInfo = startInfo;
                                         process.Start();
@@ -519,6 +562,17 @@ namespace waifu2x_ncnn_vulkan_gui
                                             MessageBox.Show("cmd.exe " + startInfo.Arguments + "\n\n" + stderr, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                                         }
                                         new FileInfo(input_temp).Delete();
+                                        new FileInfo(input_rgb_temp).Delete();
+                                        new FileInfo(input_alpha_temp).Delete();
+                                    }
+                                    if (AlphaHas == "Blend")
+                                    {
+                                        startInfo.Arguments = "/C .\\ImageMagick\\magick.exe convert " + "\"" + output_rgb + "\" " + "\"" + output_alpha + "\" -compose CopyOpacity -composite \"" + output + "\"";
+                                        process.StartInfo = startInfo;
+                                        process.Start();
+                                        process.WaitForExit();
+                                        new FileInfo(output_rgb).Delete();
+                                        new FileInfo(output_alpha).Delete();
                                     }
                                     timespent = DateTime.Now - starttime;
                                     if (Cancel == false)
@@ -553,6 +607,8 @@ namespace waifu2x_ncnn_vulkan_gui
                                     if (Cancel == false)
                                     {
                                         string output = null;
+                                        string output_rgb = null;
+                                        string output_alpha = null;
                                         if (Output_no_overwirit == true)
                                         {
                                             if (param_dst.ToString().Trim() == "")
@@ -579,13 +635,15 @@ namespace waifu2x_ncnn_vulkan_gui
                                         {
                                             noise_level_temp = "-n -1";
                                         }
-                                        Process process = new Process();
-                                        ProcessStartInfo startInfo = new ProcessStartInfo();
-                                        startInfo.UseShellExecute = false;
-                                        startInfo.CreateNoWindow = true;
-                                        startInfo.RedirectStandardError = true;
-                                        startInfo.FileName = System.Environment.GetEnvironmentVariable("ComSpec");
-                                        startInfo.WorkingDirectory = System.AppDomain.CurrentDomain.BaseDirectory;
+                                        string AlphaHas = "";
+                                        if (String.Compare(System.IO.Path.GetExtension(Directoryimage), ".png", true) == 0)
+                                        {
+                                            startInfo.Arguments = "/C .\\ImageMagick\\magick.exe identify -format %A \"" + Directoryimage + "\"";
+                                            process.StartInfo = startInfo;
+                                            process.Start();
+                                            AlphaHas = process.StandardOutput.ReadToEnd();
+                                            process.WaitForExit();
+                                        }
                                         int r = 2;
                                         int r2 = 1;
                                         string mag_value = "2";
@@ -597,6 +655,8 @@ namespace waifu2x_ncnn_vulkan_gui
                                         for (; r <= scale_ratio; r = r * 2, r2 = r2 * 2)
                                         {
                                             output = System.IO.Path.GetTempPath() + random32 + "-" + r + "x.png";
+                                            output_rgb = System.IO.Path.GetTempPath() + random32 + "-RGB" + r + "x.png";
+                                            output_alpha = System.IO.Path.GetTempPath() + random32 + "-Alpha" + r + "x.png";
                                             if (r >= scale_ratio)
                                             {
                                                 if (param_dst.ToString().Trim() == "")
@@ -619,13 +679,41 @@ namespace waifu2x_ncnn_vulkan_gui
                                                 }
                                             }
                                             string Directoryimage_temp = System.IO.Path.GetTempPath() + random32 + "-" + r2 + "x.png";
+                                            string input_rgb_temp = System.IO.Path.GetTempPath() + random32 + "-RGB" + r2 + "x.png";
+                                            string input_alpha_temp = System.IO.Path.GetTempPath() + random32 + "-Alpha" + r2 + "x.png";
+                                            if (AlphaHas == "Blend")
+                                            {
+                                                startInfo.Arguments =
+                                                   "/C .\\ImageMagick\\magick.exe convert \"" + Directoryimage + "\" -channel RGB -separate -combine png24:\"" + input_rgb_temp + "\" && " +
+                                                      ".\\ImageMagick\\magick.exe convert \"" + Directoryimage + "\" -channel matte -separate +matte png24:\"" + input_alpha_temp + "\""
+                                                ;
+                                                process.StartInfo = startInfo;
+                                                process.Start();
+                                                process.WaitForExit();
+                                            }
                                             if (r <= 2)
                                             {
-                                                startInfo.Arguments = "/C " + binary_path + " -i \"" + Directoryimage + "\" -o \"" + output + "\" -s " + mag_value + " " + noise_level_temp + " " + others_param;
+                                                if (AlphaHas == "Blend")
+                                                {
+                                                    startInfo.Arguments = "/C " + binary_path + " -i \"" + input_rgb_temp + "\" -o \"" + output_rgb + "\" -s " + mag_value + " " + noise_level_temp + " " + others_param + "&& " +
+                                                                                  binary_path + " -i \"" + input_alpha_temp + "\" -o \"" + output_alpha + "\" -s " + mag_value + " -n -1 " + others_param;
+                                                }
+                                                else
+                                                {
+                                                    startInfo.Arguments = "/C " + binary_path + " -i \"" + Directoryimage + "\" -o \"" + output + "\" -s " + mag_value + " " + noise_level_temp + " " + others_param;
+                                                }
                                             }
                                             else
                                             {
-                                                startInfo.Arguments = "/C " + binary_path + " -i \"" + Directoryimage_temp + "\" -o \"" + output + "\" -s 2 -n -1 " + others_param;
+                                                if (AlphaHas == "Blend")
+                                                {
+                                                    startInfo.Arguments = "/C " + binary_path + " -i \"" + input_rgb_temp + "\" -o \"" + output_rgb + "\" -s 2 -n -1 " + others_param + "&& " +
+                                                                                  binary_path + " -i \"" + input_alpha_temp + "\" -o \"" + output_alpha + "\" -s 2 -n -1 " + others_param;
+                                                }
+                                                else
+                                                {
+                                                    startInfo.Arguments = "/C " + binary_path + " -i \"" + Directoryimage_temp + "\" -o \"" + output + "\" -s 2 -n -1 " + others_param;
+                                                }
                                             }
                                             process.StartInfo = startInfo;
                                             process.Start();
@@ -637,6 +725,17 @@ namespace waifu2x_ncnn_vulkan_gui
                                                 MessageBox.Show("cmd.exe " + startInfo.Arguments + "\n\n" + stderr, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                                             }
                                             new FileInfo(Directoryimage_temp).Delete();
+                                            new FileInfo(input_rgb_temp).Delete();
+                                            new FileInfo(input_alpha_temp).Delete();
+                                        }
+                                        if (AlphaHas == "Blend")
+                                        {
+                                            startInfo.Arguments = "/C .\\ImageMagick\\magick.exe convert " + "\"" + output_rgb + "\" " + "\"" + output_alpha + "\" -compose CopyOpacity -composite \"" + output + "\"";
+                                            process.StartInfo = startInfo;
+                                            process.Start();
+                                            process.WaitForExit();
+                                            new FileInfo(output_rgb).Delete();
+                                            new FileInfo(output_alpha).Delete();
                                         }
                                         //Progressbar +1
                                         timespent = DateTime.Now - starttime;
@@ -691,6 +790,12 @@ namespace waifu2x_ncnn_vulkan_gui
                     return;
                 }
                 binary_path.Append(".\\waifu2x-ncnn-vulkan.exe ");
+            }
+
+            if (!File.Exists("ImageMagick\\Magick.exe"))
+            {
+                MessageBox.Show(@"ImageMagick is missing!");
+                return;
             }
 
             if (param_src == null)
