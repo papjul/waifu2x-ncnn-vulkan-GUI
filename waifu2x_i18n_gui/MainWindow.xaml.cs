@@ -473,8 +473,9 @@ namespace waifu2x_ncnn_vulkan_gui
                                     }
                                     Process process = new Process();
                                     ProcessStartInfo startInfo = new ProcessStartInfo();
-                                    startInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                                    startInfo.UseShellExecute = true;
+                                    startInfo.UseShellExecute = false;
+                                    startInfo.CreateNoWindow = true;
+                                    startInfo.RedirectStandardError = true;
                                     startInfo.FileName = System.Environment.GetEnvironmentVariable("ComSpec");
                                     startInfo.WorkingDirectory = System.AppDomain.CurrentDomain.BaseDirectory;
                                     int r = 2;
@@ -509,9 +510,14 @@ namespace waifu2x_ncnn_vulkan_gui
                                             startInfo.Arguments = "/C " + binary_path + " -i \"" + input_temp + "\" -o \"" + output + "\" -s 2 -n -1 " + others_param;
                                         }
                                         process.StartInfo = startInfo;
-                                        Console.WriteLine(startInfo.Arguments);
                                         process.Start();
+                                        string stderr = process.StandardError.ReadToEnd();
                                         process.WaitForExit();
+                                        if (process.ExitCode != 0) if (Cancel == false)
+                                        {
+                                            System.Media.SystemSounds.Beep.Play();
+                                            MessageBox.Show("cmd.exe " + startInfo.Arguments + "\n\n" + stderr, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                                        }
                                         new FileInfo(input_temp).Delete();
                                     }
                                     timespent = DateTime.Now - starttime;
@@ -575,8 +581,9 @@ namespace waifu2x_ncnn_vulkan_gui
                                         }
                                         Process process = new Process();
                                         ProcessStartInfo startInfo = new ProcessStartInfo();
-                                        startInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                                        startInfo.UseShellExecute = true;
+                                        startInfo.UseShellExecute = false;
+                                        startInfo.CreateNoWindow = true;
+                                        startInfo.RedirectStandardError = true;
                                         startInfo.FileName = System.Environment.GetEnvironmentVariable("ComSpec");
                                         startInfo.WorkingDirectory = System.AppDomain.CurrentDomain.BaseDirectory;
                                         int r = 2;
@@ -621,9 +628,14 @@ namespace waifu2x_ncnn_vulkan_gui
                                                 startInfo.Arguments = "/C " + binary_path + " -i \"" + Directoryimage_temp + "\" -o \"" + output + "\" -s 2 -n -1 " + others_param;
                                             }
                                             process.StartInfo = startInfo;
-                                            Console.WriteLine(startInfo.Arguments);
                                             process.Start();
+                                            string stderr = process.StandardError.ReadToEnd();
                                             process.WaitForExit();
+                                            if (process.ExitCode != 0) if (Cancel == false)
+                                            {
+                                                System.Media.SystemSounds.Beep.Play();
+                                                MessageBox.Show("cmd.exe " + startInfo.Arguments + "\n\n" + stderr, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                                            }
                                             new FileInfo(Directoryimage_temp).Delete();
                                         }
                                         //Progressbar +1
