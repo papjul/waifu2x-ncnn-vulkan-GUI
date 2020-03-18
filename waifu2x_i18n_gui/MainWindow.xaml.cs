@@ -23,6 +23,7 @@ using Forms = System.Windows.Forms;
 using System.Threading;
 using System.Windows.Threading;
 using System.Text.RegularExpressions;
+using System.Drawing;
 
 namespace waifu2x_ncnn_vulkan_gui
 {
@@ -481,14 +482,23 @@ namespace waifu2x_ncnn_vulkan_gui
                                     {
                                         noise_level_temp = "-n -1";
                                     }
-                                    string AlphaHas = "";
-                                    if (String.Compare(System.IO.Path.GetExtension(input), ".png", true) == 0)
+                                    bool AlphaHas = false;
+                                    int Width = 0;
+                                    int Height = 0;
+                                    try
                                     {
-                                        startInfo.Arguments = "/C .\\ImageMagick\\magick.exe identify -format %A \"" + input + "\"";
-                                        process.StartInfo = startInfo;
-                                        process.Start();
-                                        AlphaHas = process.StandardOutput.ReadToEnd();
-                                        process.WaitForExit();
+                                        System.Drawing.Image Imageinfo = System.Drawing.Image.FromFile(input);
+                                        Width = Imageinfo.Width;
+                                        Height = Imageinfo.Height;
+                                        if (System.Drawing.Image.IsAlphaPixelFormat(Imageinfo.PixelFormat))
+                                        {
+                                            AlphaHas = true;
+                                        }
+                                        Imageinfo.Dispose();
+                                    }
+                                    catch
+                                    {
+                                        // 画像の情報を調べるのに失敗
                                     }
                                     int r = 2;
                                     int r2 = 1;
@@ -517,7 +527,7 @@ namespace waifu2x_ncnn_vulkan_gui
                                         string input_temp = System.IO.Path.GetTempPath() + random32 + "-" + r2 + "x.png";
                                         string input_rgb_temp = System.IO.Path.GetTempPath() + random32 + "-RGB" + r2 + "x.png";
                                         string input_alpha_temp = System.IO.Path.GetTempPath() + random32 + "-Alpha" + r2 + "x.png";
-                                        if (AlphaHas == "Blend")
+                                        if (AlphaHas == true)
                                         {
                                             startInfo.Arguments = 
                                                "/C .\\ImageMagick\\magick.exe convert \"" + input + "\" -channel RGB -separate -combine png24:\"" + input_rgb_temp + "\" && " +
@@ -529,7 +539,7 @@ namespace waifu2x_ncnn_vulkan_gui
                                         }
                                         if (r <= 2)
                                         {
-                                            if (AlphaHas == "Blend")
+                                            if (AlphaHas == true)
                                             {
                                                 startInfo.Arguments = "/C " + binary_path + " -i \"" + input_rgb_temp + "\" -o \"" + output_rgb + "\" -s " + mag_value + " " + noise_level_temp + " " + others_param + "&& " +
                                                                               binary_path + " -i \"" + input_alpha_temp + "\" -o \"" + output_alpha + "\" -s " + mag_value + " -n -1 " + others_param;
@@ -541,7 +551,7 @@ namespace waifu2x_ncnn_vulkan_gui
                                         }
                                         else
                                         {
-                                            if (AlphaHas == "Blend")
+                                            if (AlphaHas == true)
                                             {
                                                 startInfo.Arguments = "/C " + binary_path + " -i \"" + input_rgb_temp + "\" -o \"" + output_rgb + "\" -s 2 -n -1 " + others_param + "&& " +
                                                                               binary_path + " -i \"" + input_alpha_temp + "\" -o \"" + output_alpha + "\" -s 2 -n -1 " + others_param;
@@ -565,7 +575,7 @@ namespace waifu2x_ncnn_vulkan_gui
                                         new FileInfo(input_rgb_temp).Delete();
                                         new FileInfo(input_alpha_temp).Delete();
                                     }
-                                    if (AlphaHas == "Blend")
+                                    if (AlphaHas == true)
                                     {
                                         startInfo.Arguments = "/C .\\ImageMagick\\magick.exe convert " + "\"" + output_rgb + "\" " + "\"" + output_alpha + "\" -compose CopyOpacity -composite \"" + output + "\"";
                                         process.StartInfo = startInfo;
@@ -635,14 +645,23 @@ namespace waifu2x_ncnn_vulkan_gui
                                         {
                                             noise_level_temp = "-n -1";
                                         }
-                                        string AlphaHas = "";
-                                        if (String.Compare(System.IO.Path.GetExtension(Directoryimage), ".png", true) == 0)
+                                        bool AlphaHas = false;
+                                        int Width = 0;
+                                        int Height = 0;
+                                        try
                                         {
-                                            startInfo.Arguments = "/C .\\ImageMagick\\magick.exe identify -format %A \"" + Directoryimage + "\"";
-                                            process.StartInfo = startInfo;
-                                            process.Start();
-                                            AlphaHas = process.StandardOutput.ReadToEnd();
-                                            process.WaitForExit();
+                                            System.Drawing.Image Imageinfo = System.Drawing.Image.FromFile(Directoryimage);
+                                            Width = Imageinfo.Width;
+                                            Height = Imageinfo.Height;
+                                            if (System.Drawing.Image.IsAlphaPixelFormat(Imageinfo.PixelFormat))
+                                            {
+                                                AlphaHas = true;
+                                            }
+                                            Imageinfo.Dispose();
+                                        }
+                                        catch
+                                        {
+                                            // 画像の情報を調べるのに失敗
                                         }
                                         int r = 2;
                                         int r2 = 1;
@@ -681,7 +700,7 @@ namespace waifu2x_ncnn_vulkan_gui
                                             string Directoryimage_temp = System.IO.Path.GetTempPath() + random32 + "-" + r2 + "x.png";
                                             string input_rgb_temp = System.IO.Path.GetTempPath() + random32 + "-RGB" + r2 + "x.png";
                                             string input_alpha_temp = System.IO.Path.GetTempPath() + random32 + "-Alpha" + r2 + "x.png";
-                                            if (AlphaHas == "Blend")
+                                            if (AlphaHas == true)
                                             {
                                                 startInfo.Arguments =
                                                    "/C .\\ImageMagick\\magick.exe convert \"" + Directoryimage + "\" -channel RGB -separate -combine png24:\"" + input_rgb_temp + "\" && " +
@@ -693,7 +712,7 @@ namespace waifu2x_ncnn_vulkan_gui
                                             }
                                             if (r <= 2)
                                             {
-                                                if (AlphaHas == "Blend")
+                                                if (AlphaHas == true)
                                                 {
                                                     startInfo.Arguments = "/C " + binary_path + " -i \"" + input_rgb_temp + "\" -o \"" + output_rgb + "\" -s " + mag_value + " " + noise_level_temp + " " + others_param + "&& " +
                                                                                   binary_path + " -i \"" + input_alpha_temp + "\" -o \"" + output_alpha + "\" -s " + mag_value + " -n -1 " + others_param;
@@ -705,7 +724,7 @@ namespace waifu2x_ncnn_vulkan_gui
                                             }
                                             else
                                             {
-                                                if (AlphaHas == "Blend")
+                                                if (AlphaHas == true)
                                                 {
                                                     startInfo.Arguments = "/C " + binary_path + " -i \"" + input_rgb_temp + "\" -o \"" + output_rgb + "\" -s 2 -n -1 " + others_param + "&& " +
                                                                                   binary_path + " -i \"" + input_alpha_temp + "\" -o \"" + output_alpha + "\" -s 2 -n -1 " + others_param;
@@ -728,7 +747,7 @@ namespace waifu2x_ncnn_vulkan_gui
                                             new FileInfo(input_rgb_temp).Delete();
                                             new FileInfo(input_alpha_temp).Delete();
                                         }
-                                        if (AlphaHas == "Blend")
+                                        if (AlphaHas == true)
                                         {
                                             startInfo.Arguments = "/C .\\ImageMagick\\magick.exe convert " + "\"" + output_rgb + "\" " + "\"" + output_alpha + "\" -compose CopyOpacity -composite \"" + output + "\"";
                                             process.StartInfo = startInfo;
