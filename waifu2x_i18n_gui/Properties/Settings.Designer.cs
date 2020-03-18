@@ -178,5 +178,17 @@ namespace waifu2x_ncnn_vulkan_gui.Properties {
                 this["TTAmode"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool Alphachannel_ImageMagick {
+            get {
+                return ((bool)(this["Alphachannel_ImageMagick"]));
+            }
+            set {
+                this["Alphachannel_ImageMagick"] = value;
+            }
+        }
     }
 }

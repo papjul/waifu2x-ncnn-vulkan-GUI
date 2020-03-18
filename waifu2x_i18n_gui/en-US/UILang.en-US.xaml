@@ -45,6 +45,7 @@
     <sys:String x:Key="Main_checkSoundBeep">Play beep after processing</sys:String>
     <sys:String x:Key="Main_checkPrecision_fp32">Execute high precision processing(fp32 mode)</sys:String>
     <sys:String x:Key="Main_checkPrevent_double_extensions">Prevent double extensions</sys:String>
+    <sys:String x:Key="Main_checkAlphachannel_ImageMagick">Separate alpha channels with ImageMagick</sys:String>
     <!-- Run button -->
     <sys:String x:Key="Main_btnRun">Run!</sys:String>
     <!-- Abort button -->

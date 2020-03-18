@@ -112,6 +112,7 @@ namespace waifu2x_ncnn_vulkan_gui
             checkStore_output_dir.IsChecked = Properties.Settings.Default.store_output_dir;
             checkOutput_no_overwirit.IsChecked = Properties.Settings.Default.output_no_overwirit;
             checkPrecision_fp32.IsChecked = Properties.Settings.Default.Precision_fp32;
+            checkAlphachannel_ImageMagick.IsChecked = Properties.Settings.Default.Alphachannel_ImageMagick;
             slider_value.Text = Properties.Settings.Default.scale_ratio;
             slider_zoom.Value = double.Parse(Properties.Settings.Default.scale_ratio);
 
@@ -136,6 +137,7 @@ namespace waifu2x_ncnn_vulkan_gui
         public DateTime starttimea;
         public static bool Cancel = false;
         public static bool Output_no_overwirit;
+        public static bool Alphachannel_ImageMagick;
 
         void MainWindow_Closing(object sender, CancelEventArgs e)
         {
@@ -165,6 +167,7 @@ namespace waifu2x_ncnn_vulkan_gui
             Properties.Settings.Default.SoundBeep = Convert.ToBoolean(checkSoundBeep.IsChecked);
             Properties.Settings.Default.store_output_dir = Convert.ToBoolean(checkStore_output_dir.IsChecked);
             Properties.Settings.Default.Precision_fp32 = Convert.ToBoolean(checkPrecision_fp32.IsChecked);
+            Properties.Settings.Default.Alphachannel_ImageMagick = Convert.ToBoolean(checkAlphachannel_ImageMagick.IsChecked);
             Properties.Settings.Default.mode = param_mode.ToString();
             Properties.Settings.Default.noise_level = param_denoise.ToString();
 
@@ -490,7 +493,7 @@ namespace waifu2x_ncnn_vulkan_gui
                                         System.Drawing.Image Imageinfo = System.Drawing.Image.FromFile(input);
                                         Width = Imageinfo.Width;
                                         Height = Imageinfo.Height;
-                                        if (System.Drawing.Image.IsAlphaPixelFormat(Imageinfo.PixelFormat))
+                                        if (Alphachannel_ImageMagick == true) if (System.Drawing.Image.IsAlphaPixelFormat(Imageinfo.PixelFormat))
                                         {
                                             AlphaHas = true;
                                         }
@@ -653,7 +656,7 @@ namespace waifu2x_ncnn_vulkan_gui
                                             System.Drawing.Image Imageinfo = System.Drawing.Image.FromFile(Directoryimage);
                                             Width = Imageinfo.Width;
                                             Height = Imageinfo.Height;
-                                            if (System.Drawing.Image.IsAlphaPixelFormat(Imageinfo.PixelFormat))
+                                            if (Alphachannel_ImageMagick == true) if (System.Drawing.Image.IsAlphaPixelFormat(Imageinfo.PixelFormat))
                                             {
                                                 AlphaHas = true;
                                             }
@@ -971,6 +974,7 @@ namespace waifu2x_ncnn_vulkan_gui
             }
 
             Output_no_overwirit = checkOutput_no_overwirit.IsChecked.Value;
+            Alphachannel_ImageMagick = checkAlphachannel_ImageMagick.IsChecked.Value;
             scale_ratio = (int)slider_zoom.Value;
             if (param_mode.ToString() == "noise")
             { scale_ratio = 1; }
