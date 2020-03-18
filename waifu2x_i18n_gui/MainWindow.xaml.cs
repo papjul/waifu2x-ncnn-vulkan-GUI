@@ -252,8 +252,8 @@ namespace waifu2x_ncnn_vulkan_gui
             string msg =
                 "Multilingual GUI for waifu2x-ncnn-vulkan\n" +
                 "f11894 (2020)\n" +
-                "Version 2.0.0\n" +
-                "BuildDate: 14 Mar,2020\n" +
+                "Version 2.0.1\n" +
+                "BuildDate: 18 Mar,2020\n" +
                 "License: MIT License";
             MessageBox.Show(msg);
         }
