@@ -511,6 +511,17 @@ namespace waifu2x_ncnn_vulkan_gui
                                         r = 1;
                                         mag_value = "1"; 
                                     }
+
+                                    if (AlphaHas == true)
+                                    {
+                                        startInfo.Arguments =
+                                           "/C .\\ImageMagick\\magick.exe convert \"" + input + "\" -channel RGB -separate -combine png24:\"" + System.IO.Path.GetTempPath() + random32 + "-RGB" + r2 + "x.png" + "\" && " +
+                                              ".\\ImageMagick\\magick.exe convert \"" + input + "\" -channel matte -separate +matte png24:\"" + System.IO.Path.GetTempPath() + random32 + "-Alpha" + r2 + "x.png" + "\""
+                                        ;
+                                        process.StartInfo = startInfo;
+                                        process.Start();
+                                        process.WaitForExit();
+                                    }
                                     for (; r <= scale_ratio; r = r * 2, r2 = r2 * 2)
                                     {
                                         output = System.IO.Path.GetTempPath() + random32 + "-" + r + "x.png";
@@ -530,16 +541,6 @@ namespace waifu2x_ncnn_vulkan_gui
                                         string input_temp = System.IO.Path.GetTempPath() + random32 + "-" + r2 + "x.png";
                                         string input_rgb_temp = System.IO.Path.GetTempPath() + random32 + "-RGB" + r2 + "x.png";
                                         string input_alpha_temp = System.IO.Path.GetTempPath() + random32 + "-Alpha" + r2 + "x.png";
-                                        if (AlphaHas == true)
-                                        {
-                                            startInfo.Arguments = 
-                                               "/C .\\ImageMagick\\magick.exe convert \"" + input + "\" -channel RGB -separate -combine png24:\"" + input_rgb_temp + "\" && " +
-                                                  ".\\ImageMagick\\magick.exe convert \"" + input + "\" -channel matte -separate +matte png24:\"" + input_alpha_temp + "\""
-                                            ;
-                                            process.StartInfo = startInfo;
-                                            process.Start();
-                                            process.WaitForExit();
-                                        }
                                         if (r <= 2)
                                         {
                                             if (AlphaHas == true)
@@ -674,6 +675,17 @@ namespace waifu2x_ncnn_vulkan_gui
                                             r = 1;
                                             mag_value = "1";
                                         }
+
+                                        if (AlphaHas == true)
+                                        {
+                                            startInfo.Arguments =
+                                               "/C .\\ImageMagick\\magick.exe convert \"" + Directoryimage + "\" -channel RGB -separate -combine png24:\"" + System.IO.Path.GetTempPath() + random32 + "-RGB" + r2 + "x.png" + "\" && " +
+                                                  ".\\ImageMagick\\magick.exe convert \"" + Directoryimage + "\" -channel matte -separate +matte png24:\"" + System.IO.Path.GetTempPath() + random32 + "-Alpha" + r2 + "x.png" + "\""
+                                            ;
+                                            process.StartInfo = startInfo;
+                                            process.Start();
+                                            process.WaitForExit();
+                                        }
                                         for (; r <= scale_ratio; r = r * 2, r2 = r2 * 2)
                                         {
                                             output = System.IO.Path.GetTempPath() + random32 + "-" + r + "x.png";
@@ -703,16 +715,6 @@ namespace waifu2x_ncnn_vulkan_gui
                                             string Directoryimage_temp = System.IO.Path.GetTempPath() + random32 + "-" + r2 + "x.png";
                                             string input_rgb_temp = System.IO.Path.GetTempPath() + random32 + "-RGB" + r2 + "x.png";
                                             string input_alpha_temp = System.IO.Path.GetTempPath() + random32 + "-Alpha" + r2 + "x.png";
-                                            if (AlphaHas == true)
-                                            {
-                                                startInfo.Arguments =
-                                                   "/C .\\ImageMagick\\magick.exe convert \"" + Directoryimage + "\" -channel RGB -separate -combine png24:\"" + input_rgb_temp + "\" && " +
-                                                      ".\\ImageMagick\\magick.exe convert \"" + Directoryimage + "\" -channel matte -separate +matte png24:\"" + input_alpha_temp + "\""
-                                                ;
-                                                process.StartInfo = startInfo;
-                                                process.Start();
-                                                process.WaitForExit();
-                                            }
                                             if (r <= 2)
                                             {
                                                 if (AlphaHas == true)
