@@ -252,8 +252,8 @@ namespace waifu2x_ncnn_vulkan_gui
             string msg =
                 "Multilingual GUI for waifu2x-ncnn-vulkan\n" +
                 "f11894 (2020)\n" +
-                "Version 2.0.1\n" +
-                "BuildDate: 18 Mar,2020\n" +
+                "Version 2.0.2\n" +
+                "BuildDate: 21 Mar,2020\n" +
                 "License: MIT License";
             MessageBox.Show(msg);
         }
@@ -545,8 +545,15 @@ namespace waifu2x_ncnn_vulkan_gui
                                         {
                                             if (AlphaHas == true)
                                             {
-                                                startInfo.Arguments = "/C " + binary_path + " -i \"" + input_rgb_temp + "\" -o \"" + output_rgb + "\" -s " + mag_value + " " + noise_level_temp + " " + others_param + "&& " +
+                                                if (scale_ratio == 1)
+                                                {
+                                                    startInfo.Arguments = "/C " + binary_path + " -i \"" + input_rgb_temp + "\" -o \"" + output_rgb + "\" -s " + mag_value + " " + noise_level_temp + " " + others_param;
+                                                }
+                                                else
+                                                {
+                                                    startInfo.Arguments = "/C " + binary_path + " -i \"" + input_rgb_temp + "\" -o \"" + output_rgb + "\" -s " + mag_value + " " + noise_level_temp + " " + others_param + "&& " +
                                                                               binary_path + " -i \"" + input_alpha_temp + "\" -o \"" + output_alpha + "\" -s " + mag_value + " -n -1 " + others_param;
+                                                }
                                             }
                                             else
                                             {
@@ -576,8 +583,11 @@ namespace waifu2x_ncnn_vulkan_gui
                                             MessageBox.Show("cmd.exe " + startInfo.Arguments + "\n\n" + stderr, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                                         }
                                         new FileInfo(input_temp).Delete();
-                                        new FileInfo(input_rgb_temp).Delete();
-                                        new FileInfo(input_alpha_temp).Delete();
+                                        if (scale_ratio != 1) 
+                                        {
+                                            new FileInfo(input_rgb_temp).Delete();
+                                            new FileInfo(input_alpha_temp).Delete();
+                                        }
                                     }
                                     if (AlphaHas == true)
                                     {
@@ -719,8 +729,15 @@ namespace waifu2x_ncnn_vulkan_gui
                                             {
                                                 if (AlphaHas == true)
                                                 {
-                                                    startInfo.Arguments = "/C " + binary_path + " -i \"" + input_rgb_temp + "\" -o \"" + output_rgb + "\" -s " + mag_value + " " + noise_level_temp + " " + others_param + "&& " +
+                                                    if (scale_ratio == 1)
+                                                    {
+                                                        startInfo.Arguments = "/C " + binary_path + " -i \"" + input_rgb_temp + "\" -o \"" + output_rgb + "\" -s " + mag_value + " " + noise_level_temp + " " + others_param;
+                                                    }
+                                                    else
+                                                    {
+                                                        startInfo.Arguments = "/C " + binary_path + " -i \"" + input_rgb_temp + "\" -o \"" + output_rgb + "\" -s " + mag_value + " " + noise_level_temp + " " + others_param + "&& " +
                                                                                   binary_path + " -i \"" + input_alpha_temp + "\" -o \"" + output_alpha + "\" -s " + mag_value + " -n -1 " + others_param;
+                                                    }
                                                 }
                                                 else
                                                 {
@@ -749,8 +766,11 @@ namespace waifu2x_ncnn_vulkan_gui
                                                 MessageBox.Show("cmd.exe " + startInfo.Arguments + "\n\n" + stderr, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                                             }
                                             new FileInfo(Directoryimage_temp).Delete();
-                                            new FileInfo(input_rgb_temp).Delete();
-                                            new FileInfo(input_alpha_temp).Delete();
+                                            if (scale_ratio != 1) 
+                                            {
+                                                new FileInfo(input_rgb_temp).Delete();
+                                                new FileInfo(input_alpha_temp).Delete();
+                                            }
                                         }
                                         if (AlphaHas == true)
                                         {
