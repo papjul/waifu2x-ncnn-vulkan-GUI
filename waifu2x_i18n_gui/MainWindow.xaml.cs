@@ -619,8 +619,6 @@ namespace waifu2x_ncnn_vulkan_gui
                         var Directoryfiles = Directory.GetFiles((input),"*", SearchOption.AllDirectories).Where(f => reg.IsMatch(f)).ToArray();
                         foreach (var Directoryimage in Directoryfiles)
                         {
-                            string relative_path = System.IO.Path.GetDirectoryName(Directoryimage).Replace(input, "");
-                            string output_dir = null;
                             concurrencySemaphore.Wait();
                             directory_t = Task.Factory.StartNew(() =>
                             {
@@ -630,6 +628,8 @@ namespace waifu2x_ncnn_vulkan_gui
                                     string noise_level_temp = null;
                                     if (Cancel == false)
                                     {
+                                        string relative_path = System.IO.Path.GetDirectoryName(Directoryimage).Replace(input, "");
+                                        string output_dir = null;
                                         string output = null;
                                         string output_rgb = null;
                                         string output_alpha = null;
