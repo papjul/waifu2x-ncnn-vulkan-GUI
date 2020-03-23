@@ -252,8 +252,8 @@ namespace waifu2x_ncnn_vulkan_gui
             string msg =
                 "Multilingual GUI for waifu2x-ncnn-vulkan\n" +
                 "f11894 (2020)\n" +
-                "Version 2.0.2\n" +
-                "BuildDate: 21 Mar,2020\n" +
+                "Version 2.0.3\n" +
+                "BuildDate: 23 Mar,2020\n" +
                 "License: MIT License";
             MessageBox.Show(msg);
         }
@@ -1059,8 +1059,11 @@ namespace waifu2x_ncnn_vulkan_gui
             prgbar.Value = 0;
 
             await Task.Run(() => Encode(int.Parse(param_thread.ToString()), FileCount));
+            TimeSpan Processing_time;
+            Processing_time = DateTime.Now - starttimea;
             prgbar.Value = 0;
-            pLabel.Dispatcher.Invoke(() => pLabel.Content = "Processing time: " + (DateTime.Now - starttimea).ToString(@"hh\:mm\:ss\.fff"), DispatcherPriority.Background);
+            await Task.Delay(1000);
+            pLabel.Dispatcher.Invoke(() => pLabel.Content = "Processing time: " + (Processing_time).ToString(@"hh\:mm\:ss\.fff"), DispatcherPriority.Background);
             this.btnRun.IsEnabled = true;
             this.btnAbort.IsEnabled = false;
 
