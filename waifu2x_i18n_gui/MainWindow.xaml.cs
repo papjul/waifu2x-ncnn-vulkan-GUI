@@ -478,125 +478,152 @@ namespace waifu2x_ncnn_vulkan_gui
                                             return;
                                         }
                                     }
-                                    Guid g = System.Guid.NewGuid();
-                                    string random32 = (g.ToString("N").Substring(0, 32));
-                                    noise_level_temp = param_denoise2.ToString();
-                                    if (!System.Text.RegularExpressions.Regex.IsMatch(System.IO.Path.GetExtension(input), @"\.jpe?g", RegexOptions.IgnoreCase)) if (param_mode.ToString() == "auto_scale")
+                                    for (int retryCount = 0; retryCount <= 5; retryCount++)
                                     {
-                                        noise_level_temp = "-n -1";
-                                    }
-                                    bool AlphaHas = false;
-                                    int Width = 0;
-                                    int Height = 0;
-                                    try
-                                    {
-                                        System.Drawing.Image Imageinfo = System.Drawing.Image.FromFile(input);
-                                        Width = Imageinfo.Width;
-                                        Height = Imageinfo.Height;
-                                        if (Alphachannel_ImageMagick == true) if (System.Drawing.Image.IsAlphaPixelFormat(Imageinfo.PixelFormat))
-                                        {
-                                            AlphaHas = true;
-                                        }
-                                        Imageinfo.Dispose();
-                                    }
-                                    catch
-                                    {
-                                        // 画像の情報を調べるのに失敗
-                                    }
-                                    int r = 2;
-                                    int r2 = 1;
-                                    string mag_value = "2";
-                                    if (scale_ratio == 1)
-                                    {
-                                        r = 1;
-                                        mag_value = "1"; 
-                                    }
-
-                                    if (AlphaHas == true)
-                                    {
-                                        startInfo.Arguments =
-                                           "/C .\\ImageMagick\\magick.exe convert \"" + input + "\" -channel RGB -separate -combine png24:\"" + System.IO.Path.GetTempPath() + random32 + "-RGB" + r2 + "x.png" + "\" && " +
-                                              ".\\ImageMagick\\magick.exe convert \"" + input + "\" -channel matte -separate +matte png24:\"" + System.IO.Path.GetTempPath() + random32 + "-Alpha" + r2 + "x.png" + "\""
-                                        ;
-                                        process.StartInfo = startInfo;
-                                        process.Start();
-                                        process.WaitForExit();
-                                    }
-                                    for (; r <= scale_ratio; r = r * 2, r2 = r2 * 2)
-                                    {
-                                        output = System.IO.Path.GetTempPath() + random32 + "-" + r + "x.png";
-                                        output_rgb = System.IO.Path.GetTempPath() + random32 + "-RGB" + r + "x.png";
-                                        output_alpha = System.IO.Path.GetTempPath() + random32 + "-Alpha" + r + "x.png";
-                                        if (r >= scale_ratio)
-                                        {
-                                            if (param_dst.ToString().Trim() == "")
+                                        Guid g = System.Guid.NewGuid();
+                                        string random32 = (g.ToString("N").Substring(0, 32));
+                                        noise_level_temp = param_denoise2.ToString();
+                                        if (!System.Text.RegularExpressions.Regex.IsMatch(System.IO.Path.GetExtension(input), @"\.jpe?g", RegexOptions.IgnoreCase)) if (param_mode.ToString() == "auto_scale")
                                             {
-                                                output = System.IO.Directory.GetParent(input) + "\\" + System.IO.Path.GetFileNameWithoutExtension(input) + param_dst_suffix + ".png";
+                                                noise_level_temp = "-n -1";
                                             }
-                                            else
-                                            {
-                                                output = param_dst + "\\" + System.IO.Path.GetFileNameWithoutExtension(input) + param_dst_suffix + ".png";
-                                            }
-                                        }
-                                        string input_temp = System.IO.Path.GetTempPath() + random32 + "-" + r2 + "x.png";
-                                        string input_rgb_temp = System.IO.Path.GetTempPath() + random32 + "-RGB" + r2 + "x.png";
-                                        string input_alpha_temp = System.IO.Path.GetTempPath() + random32 + "-Alpha" + r2 + "x.png";
-                                        if (r <= 2)
+                                        bool AlphaHas = false;
+                                        int Width = 0;
+                                        int Height = 0;
+                                        try
                                         {
-                                            if (AlphaHas == true)
-                                            {
-                                                if (scale_ratio == 1)
+                                            System.Drawing.Image Imageinfo = System.Drawing.Image.FromFile(input);
+                                            Width = Imageinfo.Width;
+                                            Height = Imageinfo.Height;
+                                            if (Alphachannel_ImageMagick == true) if (System.Drawing.Image.IsAlphaPixelFormat(Imageinfo.PixelFormat))
                                                 {
-                                                    startInfo.Arguments = "/C " + binary_path + " -i \"" + input_rgb_temp + "\" -o \"" + output_rgb + "\" -s " + mag_value + " " + noise_level_temp + " " + others_param;
+                                                    AlphaHas = true;
+                                                }
+                                            Imageinfo.Dispose();
+                                        }
+                                        catch
+                                        {
+                                            // 画像の情報を調べるのに失敗
+                                        }
+                                        int r = 2;
+                                        int r2 = 1;
+                                        string mag_value = "2";
+                                        if (scale_ratio == 1)
+                                        {
+                                            r = 1;
+                                            mag_value = "1";
+                                        }
+
+                                        if (AlphaHas == true)
+                                        {
+                                            startInfo.Arguments =
+                                               "/C .\\ImageMagick\\magick.exe convert \"" + input + "\" -channel RGB -separate -combine png24:\"" + System.IO.Path.GetTempPath() + random32 + "-RGB" + r2 + "x.png" + "\" && " +
+                                                  ".\\ImageMagick\\magick.exe convert \"" + input + "\" -channel matte -separate +matte png24:\"" + System.IO.Path.GetTempPath() + random32 + "-Alpha" + r2 + "x.png" + "\""
+                                            ;
+                                            process.StartInfo = startInfo;
+                                            process.Start();
+                                            process.WaitForExit();
+                                        }
+                                        for (; r <= scale_ratio; r = r * 2, r2 = r2 * 2)
+                                        {
+                                            output = System.IO.Path.GetTempPath() + random32 + "-" + r + "x.png";
+                                            output_rgb = System.IO.Path.GetTempPath() + random32 + "-RGB" + r + "x.png";
+                                            output_alpha = System.IO.Path.GetTempPath() + random32 + "-Alpha" + r + "x.png";
+                                            if (r >= scale_ratio)
+                                            {
+                                                if (param_dst.ToString().Trim() == "")
+                                                {
+                                                    output = System.IO.Directory.GetParent(input) + "\\" + System.IO.Path.GetFileNameWithoutExtension(input) + param_dst_suffix + ".png";
                                                 }
                                                 else
                                                 {
-                                                    startInfo.Arguments = "/C " + binary_path + " -i \"" + input_rgb_temp + "\" -o \"" + output_rgb + "\" -s " + mag_value + " " + noise_level_temp + " " + others_param + "&& " +
-                                                                              binary_path + " -i \"" + input_alpha_temp + "\" -o \"" + output_alpha + "\" -s " + mag_value + " -n -1 " + others_param;
+                                                    output = param_dst + "\\" + System.IO.Path.GetFileNameWithoutExtension(input) + param_dst_suffix + ".png";
+                                                }
+                                            }
+                                            string input_temp = System.IO.Path.GetTempPath() + random32 + "-" + r2 + "x.png";
+                                            string input_rgb_temp = System.IO.Path.GetTempPath() + random32 + "-RGB" + r2 + "x.png";
+                                            string input_alpha_temp = System.IO.Path.GetTempPath() + random32 + "-Alpha" + r2 + "x.png";
+                                            if (r <= 2)
+                                            {
+                                                if (AlphaHas == true)
+                                                {
+                                                    if (scale_ratio == 1)
+                                                    {
+                                                        startInfo.Arguments = "/C " + binary_path + " -i \"" + input_rgb_temp + "\" -o \"" + output_rgb + "\" -s " + mag_value + " " + noise_level_temp + " " + others_param;
+                                                    }
+                                                    else
+                                                    {
+                                                        startInfo.Arguments = "/C " + binary_path + " -i \"" + input_rgb_temp + "\" -o \"" + output_rgb + "\" -s " + mag_value + " " + noise_level_temp + " " + others_param + "&& " +
+                                                                                  binary_path + " -i \"" + input_alpha_temp + "\" -o \"" + output_alpha + "\" -s " + mag_value + " -n -1 " + others_param;
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    startInfo.Arguments = "/C " + binary_path + " -i \"" + input + "\" -o \"" + output + "\" -s " + mag_value + " " + noise_level_temp + " " + others_param;
                                                 }
                                             }
                                             else
                                             {
-                                                startInfo.Arguments = "/C " + binary_path + " -i \"" + input + "\" -o \"" + output + "\" -s " + mag_value + " " + noise_level_temp + " " + others_param;
+                                                if (AlphaHas == true)
+                                                {
+                                                    startInfo.Arguments = "/C " + binary_path + " -i \"" + input_rgb_temp + "\" -o \"" + output_rgb + "\" -s 2 -n -1 " + others_param + "&& " +
+                                                                                  binary_path + " -i \"" + input_alpha_temp + "\" -o \"" + output_alpha + "\" -s 2 -n -1 " + others_param;
+                                                }
+                                                else
+                                                {
+                                                    startInfo.Arguments = "/C " + binary_path + " -i \"" + input_temp + "\" -o \"" + output + "\" -s 2 -n -1 " + others_param;
+                                                }
+
+                                            }
+                                            process.StartInfo = startInfo;
+                                            process.Start();
+                                            string stderr = process.StandardError.ReadToEnd();
+                                            process.WaitForExit();
+                                            if (process.ExitCode != 0) if (Cancel == false)
+                                                {
+                                                    System.Media.SystemSounds.Beep.Play();
+                                                    MessageBox.Show("cmd.exe " + startInfo.Arguments + "\n\n" + stderr, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                                                }
+                                            new FileInfo(input_temp).Delete();
+                                            if (scale_ratio != 1)
+                                            {
+                                                new FileInfo(input_rgb_temp).Delete();
+                                                new FileInfo(input_alpha_temp).Delete();
+                                            }
+                                        }
+                                        if (AlphaHas == true)
+                                        {
+                                            startInfo.Arguments = "/C .\\ImageMagick\\magick.exe convert " + "\"" + output_rgb + "\" " + "\"" + output_alpha + "\" -compose CopyOpacity -composite \"" + output + "\"";
+                                            process.StartInfo = startInfo;
+                                            process.Start();
+                                            process.WaitForExit();
+                                            new FileInfo(output_rgb).Delete();
+                                            new FileInfo(output_alpha).Delete();
+                                        }
+                                        if (!File.Exists(output))
+                                        {
+                                            if (retryCount == 5)
+                                            {
+                                                System.Media.SystemSounds.Beep.Play();
+                                                MessageBox.Show("Output file could not be found.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                                                try
+                                                {
+                                                    Encoding enc = Encoding.UTF8;
+                                                    StreamWriter writer = new StreamWriter("error_log.txt", true, enc);
+                                                    writer.WriteLine(System.DateTime.Now.ToString());
+                                                    writer.WriteLine("ERROR: Output file could not be found.");
+                                                    writer.WriteLine("input  " + input);
+                                                    writer.WriteLine("output " + output + "\r\n");
+                                                    writer.Close();
+                                                }
+                                                catch
+                                                { }
                                             }
                                         }
                                         else
                                         {
-                                            if (AlphaHas == true)
-                                            {
-                                                startInfo.Arguments = "/C " + binary_path + " -i \"" + input_rgb_temp + "\" -o \"" + output_rgb + "\" -s 2 -n -1 " + others_param + "&& " +
-                                                                              binary_path + " -i \"" + input_alpha_temp + "\" -o \"" + output_alpha + "\" -s 2 -n -1 " + others_param;
-                                            }
-                                            else
-                                            {
-                                                startInfo.Arguments = "/C " + binary_path + " -i \"" + input_temp + "\" -o \"" + output + "\" -s 2 -n -1 " + others_param;
-                                            }
-
+                                            break;
                                         }
-                                        process.StartInfo = startInfo;
-                                        process.Start();
-                                        string stderr = process.StandardError.ReadToEnd();
-                                        process.WaitForExit();
-                                        if (process.ExitCode != 0) if (Cancel == false)
-                                        {
-                                            System.Media.SystemSounds.Beep.Play();
-                                            MessageBox.Show("cmd.exe " + startInfo.Arguments + "\n\n" + stderr, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                                        }
-                                        new FileInfo(input_temp).Delete();
-                                        if (scale_ratio != 1) 
-                                        {
-                                            new FileInfo(input_rgb_temp).Delete();
-                                            new FileInfo(input_alpha_temp).Delete();
-                                        }
-                                    }
-                                    if (AlphaHas == true)
-                                    {
-                                        startInfo.Arguments = "/C .\\ImageMagick\\magick.exe convert " + "\"" + output_rgb + "\" " + "\"" + output_alpha + "\" -compose CopyOpacity -composite \"" + output + "\"";
-                                        process.StartInfo = startInfo;
-                                        process.Start();
-                                        process.WaitForExit();
-                                        new FileInfo(output_rgb).Delete();
-                                        new FileInfo(output_alpha).Delete();
                                     }
                                     timespent = DateTime.Now - starttime;
                                     if (Cancel == false)
@@ -652,135 +679,162 @@ namespace waifu2x_ncnn_vulkan_gui
                                                 return;
                                             }
                                         }
-                                        Guid g = System.Guid.NewGuid();
-                                        string random32 = (g.ToString("N").Substring(0, 32));
-                                        noise_level_temp = param_denoise2.ToString();
-                                        if (!System.Text.RegularExpressions.Regex.IsMatch(System.IO.Path.GetExtension(Directoryimage), @"\.jpe?g", RegexOptions.IgnoreCase)) if (param_mode.ToString() == "auto_scale")
+                                        for (int retryCount = 0; retryCount <= 5; retryCount++)
                                         {
-                                            noise_level_temp = "-n -1";
-                                        }
-                                        bool AlphaHas = false;
-                                        int Width = 0;
-                                        int Height = 0;
-                                        try
-                                        {
-                                            System.Drawing.Image Imageinfo = System.Drawing.Image.FromFile(Directoryimage);
-                                            Width = Imageinfo.Width;
-                                            Height = Imageinfo.Height;
-                                            if (Alphachannel_ImageMagick == true) if (System.Drawing.Image.IsAlphaPixelFormat(Imageinfo.PixelFormat))
+                                            Guid g = System.Guid.NewGuid();
+                                            string random32 = (g.ToString("N").Substring(0, 32));
+                                            noise_level_temp = param_denoise2.ToString();
+                                            if (!System.Text.RegularExpressions.Regex.IsMatch(System.IO.Path.GetExtension(Directoryimage), @"\.jpe?g", RegexOptions.IgnoreCase)) if (param_mode.ToString() == "auto_scale")
+                                                {
+                                                    noise_level_temp = "-n -1";
+                                                }
+                                            bool AlphaHas = false;
+                                            int Width = 0;
+                                            int Height = 0;
+                                            try
                                             {
-                                                AlphaHas = true;
-                                            }
-                                            Imageinfo.Dispose();
-                                        }
-                                        catch
-                                        {
-                                            // 画像の情報を調べるのに失敗
-                                        }
-                                        int r = 2;
-                                        int r2 = 1;
-                                        string mag_value = "2";
-                                        if (scale_ratio == 1)
-                                        {
-                                            r = 1;
-                                            mag_value = "1";
-                                        }
-
-                                        if (AlphaHas == true)
-                                        {
-                                            startInfo.Arguments =
-                                               "/C .\\ImageMagick\\magick.exe convert \"" + Directoryimage + "\" -channel RGB -separate -combine png24:\"" + System.IO.Path.GetTempPath() + random32 + "-RGB" + r2 + "x.png" + "\" && " +
-                                                  ".\\ImageMagick\\magick.exe convert \"" + Directoryimage + "\" -channel matte -separate +matte png24:\"" + System.IO.Path.GetTempPath() + random32 + "-Alpha" + r2 + "x.png" + "\""
-                                            ;
-                                            process.StartInfo = startInfo;
-                                            process.Start();
-                                            process.WaitForExit();
-                                        }
-                                        for (; r <= scale_ratio; r = r * 2, r2 = r2 * 2)
-                                        {
-                                            output = System.IO.Path.GetTempPath() + random32 + "-" + r + "x.png";
-                                            output_rgb = System.IO.Path.GetTempPath() + random32 + "-RGB" + r + "x.png";
-                                            output_alpha = System.IO.Path.GetTempPath() + random32 + "-Alpha" + r + "x.png";
-                                            if (r >= scale_ratio)
-                                            {
-                                                if (param_dst.ToString().Trim() == "")
-                                                {
-                                                    output_dir = input + param_dst_suffix + relative_path;
-                                                }
-                                                else
-                                                {
-                                                    output_dir = param_dst + relative_path;
-                                                }
-                                                output = output_dir + "\\" + System.IO.Path.GetFileNameWithoutExtension(Directoryimage) + ".png";
-                                                try
-                                                {
-                                                    Directory.CreateDirectory(output_dir);
-                                                }
-                                                catch
-                                                {
-                                                    MessageBox.Show(@"Failed to create folder!");
-                                                    return;
-                                                }
-                                            }
-                                            string Directoryimage_temp = System.IO.Path.GetTempPath() + random32 + "-" + r2 + "x.png";
-                                            string input_rgb_temp = System.IO.Path.GetTempPath() + random32 + "-RGB" + r2 + "x.png";
-                                            string input_alpha_temp = System.IO.Path.GetTempPath() + random32 + "-Alpha" + r2 + "x.png";
-                                            if (r <= 2)
-                                            {
-                                                if (AlphaHas == true)
-                                                {
-                                                    if (scale_ratio == 1)
+                                                System.Drawing.Image Imageinfo = System.Drawing.Image.FromFile(Directoryimage);
+                                                Width = Imageinfo.Width;
+                                                Height = Imageinfo.Height;
+                                                if (Alphachannel_ImageMagick == true) if (System.Drawing.Image.IsAlphaPixelFormat(Imageinfo.PixelFormat))
                                                     {
-                                                        startInfo.Arguments = "/C " + binary_path + " -i \"" + input_rgb_temp + "\" -o \"" + output_rgb + "\" -s " + mag_value + " " + noise_level_temp + " " + others_param;
+                                                        AlphaHas = true;
+                                                    }
+                                                Imageinfo.Dispose();
+                                            }
+                                            catch
+                                            {
+                                                // 画像の情報を調べるのに失敗
+                                            }
+                                            int r = 2;
+                                            int r2 = 1;
+                                            string mag_value = "2";
+                                            if (scale_ratio == 1)
+                                            {
+                                                r = 1;
+                                                mag_value = "1";
+                                            }
+
+                                            if (AlphaHas == true)
+                                            {
+                                                startInfo.Arguments =
+                                                   "/C .\\ImageMagick\\magick.exe convert \"" + Directoryimage + "\" -channel RGB -separate -combine png24:\"" + System.IO.Path.GetTempPath() + random32 + "-RGB" + r2 + "x.png" + "\" && " +
+                                                      ".\\ImageMagick\\magick.exe convert \"" + Directoryimage + "\" -channel matte -separate +matte png24:\"" + System.IO.Path.GetTempPath() + random32 + "-Alpha" + r2 + "x.png" + "\""
+                                                ;
+                                                process.StartInfo = startInfo;
+                                                process.Start();
+                                                process.WaitForExit();
+                                            }
+                                            for (; r <= scale_ratio; r = r * 2, r2 = r2 * 2)
+                                            {
+                                                output = System.IO.Path.GetTempPath() + random32 + "-" + r + "x.png";
+                                                output_rgb = System.IO.Path.GetTempPath() + random32 + "-RGB" + r + "x.png";
+                                                output_alpha = System.IO.Path.GetTempPath() + random32 + "-Alpha" + r + "x.png";
+                                                if (r >= scale_ratio)
+                                                {
+                                                    if (param_dst.ToString().Trim() == "")
+                                                    {
+                                                        output_dir = input + param_dst_suffix + relative_path;
                                                     }
                                                     else
                                                     {
-                                                        startInfo.Arguments = "/C " + binary_path + " -i \"" + input_rgb_temp + "\" -o \"" + output_rgb + "\" -s " + mag_value + " " + noise_level_temp + " " + others_param + "&& " +
-                                                                                  binary_path + " -i \"" + input_alpha_temp + "\" -o \"" + output_alpha + "\" -s " + mag_value + " -n -1 " + others_param;
+                                                        output_dir = param_dst + relative_path;
+                                                    }
+                                                    output = output_dir + "\\" + System.IO.Path.GetFileNameWithoutExtension(Directoryimage) + ".png";
+                                                    try
+                                                    {
+                                                        Directory.CreateDirectory(output_dir);
+                                                    }
+                                                    catch
+                                                    {
+                                                        MessageBox.Show(@"Failed to create folder!");
+                                                        return;
+                                                    }
+                                                }
+                                                string Directoryimage_temp = System.IO.Path.GetTempPath() + random32 + "-" + r2 + "x.png";
+                                                string input_rgb_temp = System.IO.Path.GetTempPath() + random32 + "-RGB" + r2 + "x.png";
+                                                string input_alpha_temp = System.IO.Path.GetTempPath() + random32 + "-Alpha" + r2 + "x.png";
+                                                if (r <= 2)
+                                                {
+                                                    if (AlphaHas == true)
+                                                    {
+                                                        if (scale_ratio == 1)
+                                                        {
+                                                            startInfo.Arguments = "/C " + binary_path + " -i \"" + input_rgb_temp + "\" -o \"" + output_rgb + "\" -s " + mag_value + " " + noise_level_temp + " " + others_param;
+                                                        }
+                                                        else
+                                                        {
+                                                            startInfo.Arguments = "/C " + binary_path + " -i \"" + input_rgb_temp + "\" -o \"" + output_rgb + "\" -s " + mag_value + " " + noise_level_temp + " " + others_param + "&& " +
+                                                                                      binary_path + " -i \"" + input_alpha_temp + "\" -o \"" + output_alpha + "\" -s " + mag_value + " -n -1 " + others_param;
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        startInfo.Arguments = "/C " + binary_path + " -i \"" + Directoryimage + "\" -o \"" + output + "\" -s " + mag_value + " " + noise_level_temp + " " + others_param;
                                                     }
                                                 }
                                                 else
                                                 {
-                                                    startInfo.Arguments = "/C " + binary_path + " -i \"" + Directoryimage + "\" -o \"" + output + "\" -s " + mag_value + " " + noise_level_temp + " " + others_param;
+                                                    if (AlphaHas == true)
+                                                    {
+                                                        startInfo.Arguments = "/C " + binary_path + " -i \"" + input_rgb_temp + "\" -o \"" + output_rgb + "\" -s 2 -n -1 " + others_param + "&& " +
+                                                                                      binary_path + " -i \"" + input_alpha_temp + "\" -o \"" + output_alpha + "\" -s 2 -n -1 " + others_param;
+                                                    }
+                                                    else
+                                                    {
+                                                        startInfo.Arguments = "/C " + binary_path + " -i \"" + Directoryimage_temp + "\" -o \"" + output + "\" -s 2 -n -1 " + others_param;
+                                                    }
+                                                }
+                                                process.StartInfo = startInfo;
+                                                process.Start();
+                                                string stderr = process.StandardError.ReadToEnd();
+                                                process.WaitForExit();
+                                                if (process.ExitCode != 0) if (Cancel == false)
+                                                    {
+                                                        System.Media.SystemSounds.Beep.Play();
+                                                        MessageBox.Show("cmd.exe " + startInfo.Arguments + "\n\n" + stderr, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                                                    }
+                                                new FileInfo(Directoryimage_temp).Delete();
+                                                if (scale_ratio != 1)
+                                                {
+                                                    new FileInfo(input_rgb_temp).Delete();
+                                                    new FileInfo(input_alpha_temp).Delete();
+                                                }
+                                            }
+                                            if (AlphaHas == true)
+                                            {
+                                                startInfo.Arguments = "/C .\\ImageMagick\\magick.exe convert " + "\"" + output_rgb + "\" " + "\"" + output_alpha + "\" -compose CopyOpacity -composite \"" + output + "\"";
+                                                process.StartInfo = startInfo;
+                                                process.Start();
+                                                process.WaitForExit();
+                                                new FileInfo(output_rgb).Delete();
+                                                new FileInfo(output_alpha).Delete();
+                                            }
+                                            if (!File.Exists(output))
+                                            {
+                                                if (retryCount == 5)
+                                                {
+                                                    System.Media.SystemSounds.Beep.Play();
+                                                    MessageBox.Show("Output file could not be found.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                                                    try
+                                                    {
+                                                        Encoding enc = Encoding.UTF8;
+                                                        StreamWriter writer = new StreamWriter("error_log.txt", true, enc);
+                                                        writer.WriteLine(System.DateTime.Now.ToString());
+                                                        writer.WriteLine("ERROR: Output file could not be found.");
+                                                        writer.WriteLine("input  " + Directoryimage);
+                                                        writer.WriteLine("output " + output + "\r\n");
+                                                        writer.Close();
+                                                    }
+                                                    catch
+                                                    { }
                                                 }
                                             }
                                             else
                                             {
-                                                if (AlphaHas == true)
-                                                {
-                                                    startInfo.Arguments = "/C " + binary_path + " -i \"" + input_rgb_temp + "\" -o \"" + output_rgb + "\" -s 2 -n -1 " + others_param + "&& " +
-                                                                                  binary_path + " -i \"" + input_alpha_temp + "\" -o \"" + output_alpha + "\" -s 2 -n -1 " + others_param;
-                                                }
-                                                else
-                                                {
-                                                    startInfo.Arguments = "/C " + binary_path + " -i \"" + Directoryimage_temp + "\" -o \"" + output + "\" -s 2 -n -1 " + others_param;
-                                                }
+                                                break;
                                             }
-                                            process.StartInfo = startInfo;
-                                            process.Start();
-                                            string stderr = process.StandardError.ReadToEnd();
-                                            process.WaitForExit();
-                                            if (process.ExitCode != 0) if (Cancel == false)
-                                            {
-                                                System.Media.SystemSounds.Beep.Play();
-                                                MessageBox.Show("cmd.exe " + startInfo.Arguments + "\n\n" + stderr, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                                            }
-                                            new FileInfo(Directoryimage_temp).Delete();
-                                            if (scale_ratio != 1) 
-                                            {
-                                                new FileInfo(input_rgb_temp).Delete();
-                                                new FileInfo(input_alpha_temp).Delete();
-                                            }
-                                        }
-                                        if (AlphaHas == true)
-                                        {
-                                            startInfo.Arguments = "/C .\\ImageMagick\\magick.exe convert " + "\"" + output_rgb + "\" " + "\"" + output_alpha + "\" -compose CopyOpacity -composite \"" + output + "\"";
-                                            process.StartInfo = startInfo;
-                                            process.Start();
-                                            process.WaitForExit();
-                                            new FileInfo(output_rgb).Delete();
-                                            new FileInfo(output_alpha).Delete();
-                                        }
+                                        } 
                                         //Progressbar +1
                                         timespent = DateTime.Now - starttime;
                                         if (Cancel == false)
