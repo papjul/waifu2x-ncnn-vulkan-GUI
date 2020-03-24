@@ -220,6 +220,7 @@ namespace waifu2x_ncnn_vulkan_gui
 
             Properties.Settings.Default.Save();
 
+            Cancel = true;
             try
             {
                 foreach (var process in Process.GetProcessesByName("waifu2x-ncnn-vulkan"))
@@ -252,8 +253,8 @@ namespace waifu2x_ncnn_vulkan_gui
             string msg =
                 "Multilingual GUI for waifu2x-ncnn-vulkan\n" +
                 "f11894 (2020)\n" +
-                "Version 2.0.3\n" +
-                "BuildDate: 23 Mar,2020\n" +
+                "Version 2.0.3.1\n" +
+                "BuildDate: 24 Mar,2020\n" +
                 "License: MIT License";
             MessageBox.Show(msg);
         }
@@ -480,6 +481,7 @@ namespace waifu2x_ncnn_vulkan_gui
                                     }
                                     for (int retryCount = 0; retryCount <= 5; retryCount++)
                                     {
+                                        if (Cancel == true) return;
                                         Guid g = System.Guid.NewGuid();
                                         string random32 = (g.ToString("N").Substring(0, 32));
                                         noise_level_temp = param_denoise2.ToString();
@@ -526,6 +528,7 @@ namespace waifu2x_ncnn_vulkan_gui
                                         }
                                         for (; r <= scale_ratio; r = r * 2, r2 = r2 * 2)
                                         {
+                                            if (Cancel == true) return;
                                             output = System.IO.Path.GetTempPath() + random32 + "-" + r + "x.png";
                                             output_rgb = System.IO.Path.GetTempPath() + random32 + "-RGB" + r + "x.png";
                                             output_alpha = System.IO.Path.GetTempPath() + random32 + "-Alpha" + r + "x.png";
@@ -681,6 +684,7 @@ namespace waifu2x_ncnn_vulkan_gui
                                         }
                                         for (int retryCount = 0; retryCount <= 5; retryCount++)
                                         {
+                                            if (Cancel == true) return;
                                             Guid g = System.Guid.NewGuid();
                                             string random32 = (g.ToString("N").Substring(0, 32));
                                             noise_level_temp = param_denoise2.ToString();
@@ -727,6 +731,7 @@ namespace waifu2x_ncnn_vulkan_gui
                                             }
                                             for (; r <= scale_ratio; r = r * 2, r2 = r2 * 2)
                                             {
+                                                if (Cancel == true) return;
                                                 output = System.IO.Path.GetTempPath() + random32 + "-" + r + "x.png";
                                                 output_rgb = System.IO.Path.GetTempPath() + random32 + "-RGB" + r + "x.png";
                                                 output_alpha = System.IO.Path.GetTempPath() + random32 + "-Alpha" + r + "x.png";
