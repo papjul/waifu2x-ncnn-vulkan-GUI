@@ -18,6 +18,8 @@
     <sys:String x:Key="Main_IO_DstClear">清除</sys:String>
     <sys:String x:Key="Main_IO_Src_Tooltip">輸入檔案名或資料夾（必須）</sys:String>
     <sys:String x:Key="Main_IO_Dst_Tooltip">输出資料夾路徑，若未填入將保存在來源資料夾下</sys:String>
+    <sys:String x:Key="Main_IO_OutFiletype">輸出副檔名</sys:String>
+    <sys:String x:Key="Main_IO_OutFilequality">輸出品質設定</sys:String>
     <!-- Tab:Mode -->
     <sys:String x:Key="Main_Mode_Set">轉換模式</sys:String>
     <sys:String x:Key="Main_Mode_Set_NoiseScale">降噪 &amp; 放大</sys:String>

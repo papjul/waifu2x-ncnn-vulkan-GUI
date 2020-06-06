@@ -18,6 +18,8 @@
     <sys:String x:Key="Main_IO_DstClear">清除</sys:String>
     <sys:String x:Key="Main_IO_Src_Tooltip">输入文件名或文件夹（必须）</sys:String>
     <sys:String x:Key="Main_IO_Dst_Tooltip">输出文件名或文件夹，若留空将在输入路径下自动生成对应文件</sys:String>
+    <sys:String x:Key="Main_IO_OutFiletype">输出文件格式</sys:String>
+    <sys:String x:Key="Main_IO_OutFilequality">输出图像质量</sys:String>
     <!-- Tab:Mode -->
     <sys:String x:Key="Main_Mode_Set">转换模式</sys:String>
     <sys:String x:Key="Main_Mode_Set_NoiseScale">降噪 &amp; 放大</sys:String>
