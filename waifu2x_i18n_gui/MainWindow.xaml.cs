@@ -681,7 +681,6 @@ namespace waifu2x_ncnn_vulkan_gui
                     process.WaitForExit();
                     if (process.ExitCode != 0) if (Cancel == false)
                         {
-                            retryCount = retryCount + 5;
                             System.Media.SystemSounds.Beep.Play();
                             MessageBox.Show("cmd.exe " + startInfo.Arguments + "\n\n" + stderr, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                         }
