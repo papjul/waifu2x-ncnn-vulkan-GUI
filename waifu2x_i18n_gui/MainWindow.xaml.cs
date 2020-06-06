@@ -684,9 +684,9 @@ namespace waifu2x_ncnn_vulkan_gui
                             System.Media.SystemSounds.Beep.Play();
                             MessageBox.Show("cmd.exe " + startInfo.Arguments + "\n\n" + stderr, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                         }
-                    new FileInfo(input_temp).Delete();
                     if (scale_ratio != 1)
                     {
+                        new FileInfo(input_temp).Delete();
                         new FileInfo(input_rgb_temp).Delete();
                         new FileInfo(input_alpha_temp).Delete();
                     }
