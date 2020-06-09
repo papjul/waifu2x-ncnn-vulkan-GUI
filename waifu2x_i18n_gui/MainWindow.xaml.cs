@@ -269,8 +269,8 @@ namespace waifu2x_ncnn_vulkan_gui
             string msg =
                 "Multilingual GUI for waifu2x-ncnn-vulkan\n" +
                 "f11894 (2020)\n" +
-                "Version 2.0.4\n" +
-                "BuildDate: 6 Jun,2020\n" +
+                "Version 2.0.4.2\n" +
+                "BuildDate: 9 Jun,2020\n" +
                 "License: MIT License";
             MessageBox.Show(msg);
         }
@@ -827,6 +827,13 @@ namespace waifu2x_ncnn_vulkan_gui
             param_outformat.Append(txtOutExt.Text);
 
             param_output_quality.Clear();
+            if (!System.Text.RegularExpressions.Regex.IsMatch(
+                txtOutQuality.Text,
+                @"^(\d+)$",
+                System.Text.RegularExpressions.RegexOptions.ECMAScript))
+            {
+                txtOutQuality.Text = "100";
+            }
             if (param_outformat.ToString() == "webp")
             {
                 if (txtOutQuality.Text == "100")
@@ -837,7 +844,6 @@ namespace waifu2x_ncnn_vulkan_gui
                 {
                     param_output_quality.Append("-quality " + txtOutQuality.Text);
                 }
-                
             }
 
             if (param_outformat.ToString() == "jpg")
