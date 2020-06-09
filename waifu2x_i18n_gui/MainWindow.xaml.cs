@@ -972,9 +972,21 @@ namespace waifu2x_ncnn_vulkan_gui
             await Task.Run(() => tasks_waifu2x(int.Parse(param_thread.ToString()), FileCount));
             TimeSpan Processing_time;
             Processing_time = DateTime.Now - starttimea;
+            while (true)
+            {
+                await Task.Delay(100);
+                if (prgbar.Value == FileCount)
+                {
+                    pLabel.Dispatcher.Invoke(() => pLabel.Content = "Processing time: " + (Processing_time).ToString(@"hh\:mm\:ss\.fff"), DispatcherPriority.Background);
+                    break;
+                }
+                if (Cancel == true)
+                {
+                    pLabel.Dispatcher.Invoke(() => pLabel.Content = "has cancelled", DispatcherPriority.Background);
+                    break;
+                }
+            }
             prgbar.Value = 0;
-            await Task.Delay(1000);
-            pLabel.Dispatcher.Invoke(() => pLabel.Content = "Processing time: " + (Processing_time).ToString(@"hh\:mm\:ss\.fff"), DispatcherPriority.Background);
             this.btnRun.IsEnabled = true;
             this.btnAbort.IsEnabled = false;
 
