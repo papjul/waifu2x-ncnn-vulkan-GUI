@@ -285,18 +285,12 @@ namespace waifu2x_ncnn_vulkan_gui
                 this.txtSrcPath.Text = string.Join("\n", fdlg.FileNames);
                 param_src = fdlg.FileNames;
             }
-            FileCount = 0;
-            foreach (var dropfile in param_src)
-            {
-                FileCount += 1;
-            }
         }
 
         private void OnSrcClear(object sender, RoutedEventArgs e)
         {
             this.txtSrcPath.Clear();
             param_src = null;
-            FileCount = 0;
         }
 
         private void OnBtnDst(object sender, RoutedEventArgs e)
@@ -338,33 +332,13 @@ namespace waifu2x_ncnn_vulkan_gui
             e.Handled = true;
         }
 
-        private async void On_SrcDrop(object sender, DragEventArgs e)
+        private void On_SrcDrop(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
-                FileCount = 0;
                 string[] fn = (string[])e.Data.GetData(DataFormats.FileDrop);
                 this.txtSrcPath.Text = string.Join("\n", fn);
                 param_src = (string[])e.Data.GetData(DataFormats.FileDrop);
-                var reg = new Regex(@".+\.(jpe?g|png|bmp|gif|tiff?|webp)$", RegexOptions.IgnoreCase);
-                foreach (var dropfile in fn)
-                {
-                    if (File.Exists(dropfile))
-                    {
-                        FileCount += 1;
-                    }
-                    if (Directory.Exists(dropfile))
-                    {
-                        await Task.Run(() =>
-                        {
-                            var Directoryfiles = Directory.GetFiles((dropfile), "*", SearchOption.AllDirectories).Where(f => reg.IsMatch(f)).ToArray();
-                            foreach (var Directoryimage in Directoryfiles)
-                            {
-                                FileCount += 1;
-                            }
-                        });
-                    }
-                }
             }
         }
 
@@ -965,6 +939,27 @@ namespace waifu2x_ncnn_vulkan_gui
             scale_ratio = (int)slider_zoom.Value;
             if (param_mode.ToString() == "noise")
             { scale_ratio = 1; }
+
+            FileCount = 0;
+            var reg = new Regex(@".+\.(jpe?g|png|bmp|gif|tiff?|webp)$", RegexOptions.IgnoreCase);
+            foreach (var dropfile in param_src)
+            {
+                if (File.Exists(dropfile))
+                {
+                    FileCount += 1;
+                }
+                if (Directory.Exists(dropfile))
+                {
+                    await Task.Run(() =>
+                    {
+                        var Directoryfiles = Directory.GetFiles((dropfile), "*", SearchOption.AllDirectories).Where(f => reg.IsMatch(f)).ToArray();
+                        foreach (var Directoryimage in Directoryfiles)
+                        {
+                            FileCount += 1;
+                        }
+                    });
+                }
+            }
 
             prgbar.Maximum = FileCount;
             prgbar.Value = 0;
