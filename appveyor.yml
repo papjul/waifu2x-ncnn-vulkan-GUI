@@ -11,3 +11,4 @@ artifacts:
 - path: waifu2x_i18n_gui\en-US\UILang.en-US.xaml
 - path: waifu2x_i18n_gui\zh-CN\UIlang.zh-CN.xaml
 - path: waifu2x_i18n_gui\zh-TW\UIlang.zh-TW.xaml
+- path: waifu2x_i18n_gui\pt-BR\UIlang.pt-BR.xaml
