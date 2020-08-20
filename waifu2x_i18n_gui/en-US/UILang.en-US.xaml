@@ -12,9 +12,9 @@
     <!-- Tab:IO -->
     <sys:String x:Key="Main_IO_SrcPath">Source:</sys:String>
     <sys:String x:Key="Main_IO_DstPath">Destination:</sys:String>
-    <sys:String x:Key="Main_IO_btnSrc">Choose Src</sys:String>
+    <sys:String x:Key="Main_IO_btnSrc">Source</sys:String>
     <sys:String x:Key="Main_IO_SrcClear">Clear</sys:String>
-    <sys:String x:Key="Main_IO_btnDst">Choose Dst</sys:String>
+    <sys:String x:Key="Main_IO_btnDst">Destination</sys:String>
     <sys:String x:Key="Main_IO_DstClear">Clear</sys:String>
     <sys:String x:Key="Main_IO_Src_Tooltip">Filename or folder path. REQUIRED field</sys:String>
     <sys:String x:Key="Main_IO_Dst_Tooltip">Output destination path. If empty, generate a new file in the source folder</sys:String>
@@ -27,14 +27,14 @@
     <sys:String x:Key="Main_Mode_Set_Noise">Denoise only</sys:String>
     <sys:String x:Key="Main_Mode_Mag">_Magnification (2.0~16.0):</sys:String>  
     <sys:String x:Key="Main_Mode_Denoise">Denoise</sys:String>
-    <sys:String x:Key="Main_Mode_Set_AutoScale">Magnify &amp; Denoise(jpg only)</sys:String>
+    <sys:String x:Key="Main_Mode_Set_AutoScale">Magnify &amp; Denoise (jpg only)</sys:String>
     <sys:String x:Key="Main_Mode_Denoise_0">Level 0</sys:String>
     <sys:String x:Key="Main_Mode_Denoise_1">Level 1</sys:String>
     <sys:String x:Key="Main_Mode_Denoise_2">Level 2</sys:String>
     <sys:String x:Key="Main_Mode_Denoise_3">Level 3</sys:String>
     <sys:String x:Key="Main_Mode_Model">Model</sys:String>
-    <sys:String x:Key="Main_Mode_Model_CUnet">2-D illust (CUnet Model)</sys:String>
-    <sys:String x:Key="Main_Mode_Model_UpRGB">2-D illust (UpRGB Model)</sys:String> 
+    <sys:String x:Key="Main_Mode_Model_CUnet">2D illustration (CUnet Model)</sys:String>
+    <sys:String x:Key="Main_Mode_Model_UpRGB">2D illustration (UpRGB Model)</sys:String> 
     <sys:String x:Key="Main_Mode_Model_UpPhoto">Photo (UpPhoto Model)</sys:String> 
     <sys:String x:Key="Main_Device_Block">Block Size</sys:String>
     <sys:String x:Key="Main_Device_gp">Device</sys:String>
@@ -42,10 +42,10 @@
     <!-- Tabs -->
     <sys:String x:Key="MainTab_Preferences">Preferences</sys:String>
     <!-- Tab:Preferences -->
-    <sys:String x:Key="Main_checkStore_output_dir">store the last output path</sys:String>
+    <sys:String x:Key="Main_checkStore_output_dir">Store the last output path</sys:String>
     <sys:String x:Key="Main_checkOutput_no_overwirit">Output files No overwrite</sys:String>
     <sys:String x:Key="Main_checkSoundBeep">Play beep after processing</sys:String>
-    <sys:String x:Key="Main_checkPrecision_fp32">Execute high precision processing(fp32 mode)</sys:String>
+    <sys:String x:Key="Main_checkPrecision_fp32">Execute high precision processing (fp32 mode)</sys:String>
     <sys:String x:Key="Main_checkAlphachannel_ImageMagick">Separate alpha channels with ImageMagick</sys:String>
     <!-- Run button -->
     <sys:String x:Key="Main_btnRun">Run!</sys:String>
