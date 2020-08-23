@@ -133,7 +133,7 @@ namespace waifu2x_ncnn_vulkan_gui.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
         public string gpu_id {
             get {
                 return ((string)(this["gpu_id"]));

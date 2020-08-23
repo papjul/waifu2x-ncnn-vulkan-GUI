@@ -131,7 +131,7 @@ namespace waifu2x_ncnn_vulkan_gui
         public static StringBuilder param_model = new StringBuilder("models-cunet");
         public static StringBuilder param_block = new StringBuilder("100");
         public static StringBuilder param_mode = new StringBuilder("noise_scale");
-        public static StringBuilder param_gpu_id = new StringBuilder("");
+        public static StringBuilder param_gpu_id = new StringBuilder("0");
         public static StringBuilder param_thread = new StringBuilder("2");
         public static StringBuilder param_tta = new StringBuilder("");
         public static StringBuilder binary_path = new StringBuilder("");
@@ -219,7 +219,7 @@ namespace waifu2x_ncnn_vulkan_gui
             }
             else
             {
-                Properties.Settings.Default.gpu_id = "Unspecified";
+                Properties.Settings.Default.gpu_id = "0";
             }
 
             if (System.Text.RegularExpressions.Regex.IsMatch(
