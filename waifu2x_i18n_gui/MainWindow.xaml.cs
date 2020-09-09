@@ -219,7 +219,7 @@ namespace waifu2x_ncnn_vulkan_gui
             }
             else
             {
-                Properties.Settings.Default.gpu_id = "0";
+                Properties.Settings.Default.gpu_id = "Unspecified";
             }
 
             if (System.Text.RegularExpressions.Regex.IsMatch(
@@ -269,8 +269,8 @@ namespace waifu2x_ncnn_vulkan_gui
             string msg =
                 "Multilingual GUI for waifu2x-ncnn-vulkan\n" +
                 "f11894 (2020)\n" +
-                "Version 2.0.4.3\n" +
-                "BuildDate: 20 Aug,2020\n" +
+                "Version 2.0.4.4\n" +
+                "BuildDate: 9 Sep,2020\n" +
                 "License: MIT License";
             MessageBox.Show(msg);
         }
