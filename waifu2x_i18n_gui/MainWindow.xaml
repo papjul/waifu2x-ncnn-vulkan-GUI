@@ -62,6 +62,7 @@
                             <ComboBoxItem Tag="0" Content="png" IsSelected="True"/>
                             <ComboBoxItem Tag="1" Content="jpg"/>
                             <ComboBoxItem Tag="2" Content="webp"/>
+                            <ComboBoxItem Tag="3" Content="avif"/>
                         </ComboBox>
                         <Label Target="{Binding ElementName=txtOutQuality}" HorizontalAlignment="Left" Content="{DynamicResource ResourceKey=Main_IO_OutFilequality}"></Label>
                         <TextBox Name="txtOutQuality" MinWidth="50" MaxWidth="50"  HorizontalAlignment="Stretch" Text=""></TextBox>

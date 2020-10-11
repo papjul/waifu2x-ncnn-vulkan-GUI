@@ -270,7 +270,7 @@ namespace waifu2x_ncnn_vulkan_gui
                 "Multilingual GUI for waifu2x-ncnn-vulkan\n" +
                 "f11894 (2020)\n" +
                 "Version 2.0.4.4\n" +
-                "BuildDate: 9 Sep,2020\n" +
+                "BuildDate: 11 Oct,2020\n" +
                 "License: MIT License";
             MessageBox.Show(msg);
         }
@@ -845,10 +845,13 @@ namespace waifu2x_ncnn_vulkan_gui
                     param_output_quality.Append("-quality " + txtOutQuality.Text);
                 }
             }
-
             if (param_outformat.ToString() == "jpg")
             {
                 param_output_quality.Append("( +clone -alpha opaque -fill white -colorize 100% ) +swap -geometry +0+0 -compose Over -composite -alpha off -quality " + txtOutQuality.Text);
+            }
+            if (param_outformat.ToString() == "avif")
+            {
+                param_output_quality.Append("-quality " + txtOutQuality.Text);
             }
 
             if (((int)slider_zoom.Value & ((int)slider_zoom.Value - 1)) != 0)
