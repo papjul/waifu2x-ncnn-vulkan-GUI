@@ -268,9 +268,9 @@ namespace waifu2x_ncnn_vulkan_gui
         {
             string msg =
                 "Multilingual GUI for waifu2x-ncnn-vulkan\n" +
-                "f11894 (2020)\n" +
-                "Version 2.0.4.4\n" +
-                "BuildDate: 11 Oct,2020\n" +
+                "f11894\n" +
+                "Version 2.0.4.6\n" +
+                "BuildDate: 2 Jan,2021\n" +
                 "License: MIT License";
             MessageBox.Show(msg);
         }
@@ -576,12 +576,15 @@ namespace waifu2x_ncnn_vulkan_gui
                 bool AlphaHas = false;
                 try
                 {
-                    System.Drawing.Image Imageinfo = System.Drawing.Image.FromFile(input_image);
-                    if (Alphachannel_ImageMagick == true) if (System.Drawing.Image.IsAlphaPixelFormat(Imageinfo.PixelFormat))
+                    startInfo.Arguments = "/C .\\ImageMagick\\magick.exe identify -format %A \"" + input_image + "\"";
+                    process.StartInfo = startInfo;
+                    process.Start();
+                    string IsAlphaPixelFormat = process.StandardOutput.ReadToEnd();
+                    process.WaitForExit();
+                    if (Alphachannel_ImageMagick == true) if (IsAlphaPixelFormat == "Blend")
                         {
                             AlphaHas = true;
                         }
-                    Imageinfo.Dispose();
                 }
                 catch
                 {
