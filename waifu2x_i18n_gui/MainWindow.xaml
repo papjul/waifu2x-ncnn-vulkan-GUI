@@ -9,6 +9,7 @@
         Height="630" Width="828"
         MinHeight="570" MinWidth="828"
         MaxHeight="570" MaxWidth="828"
+        FontSize="12"
         ResizeMode="CanMinimize"
         Title="{DynamicResource ResourceKey=MainWnd_Title}" SizeToContent="WidthAndHeight" Background="LightGray">
     <Grid>
