@@ -269,8 +269,8 @@ namespace waifu2x_ncnn_vulkan_gui
             string msg =
                 "Multilingual GUI for waifu2x-ncnn-vulkan\n" +
                 "f11894\n" +
-                "Version 2.0.4.6\n" +
-                "BuildDate: 2 Jan,2021\n" +
+                "Version 2.0.4.7\n" +
+                "BuildDate: 22 Aug,2021\n" +
                 "License: MIT License";
             MessageBox.Show(msg);
         }
@@ -574,23 +574,25 @@ namespace waifu2x_ncnn_vulkan_gui
                     }
 
                 bool AlphaHas = false;
-                try
-                {
-                    startInfo.Arguments = "/C .\\ImageMagick\\magick.exe identify -format %A \"" + input_image + "\"";
-                    process.StartInfo = startInfo;
-                    process.Start();
-                    string IsAlphaPixelFormat = process.StandardOutput.ReadToEnd();
-                    process.WaitForExit();
-                    if (Alphachannel_ImageMagick == true) if (IsAlphaPixelFormat == "Blend")
-                        {
-                            AlphaHas = true;
-                        }
+                if (Alphachannel_ImageMagick == true) if (!System.Text.RegularExpressions.Regex.IsMatch(System.IO.Path.GetExtension(input_image), @"\.jpe?g", RegexOptions.IgnoreCase))
+                    {
+                    try
+                    {
+                        startInfo.Arguments = "/C .\\ImageMagick\\magick.exe identify -format %A \"" + input_image + "\"";
+                        process.StartInfo = startInfo;
+                        process.Start();
+                        string IsAlphaPixelFormat = process.StandardOutput.ReadToEnd();
+                        process.WaitForExit();
+                        if (IsAlphaPixelFormat == "Blend")
+                            {
+                                AlphaHas = true;
+                            }
+                    }
+                    catch
+                    {
+                        // 画像の情報を調べるのに失敗
+                    }
                 }
-                catch
-                {
-                    // 画像の情報を調べるのに失敗
-                }
-
 
                 int r = 2;
                 int r2 = 1;
