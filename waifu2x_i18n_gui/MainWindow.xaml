@@ -6,10 +6,9 @@
         xmlns:local="clr-namespace:waifu2x_ncnn_vulkan_gui"
         mc:Ignorable="d"
         Closing="MainWindow_Closing"  
-        Height="630" Width="828"
-        MinHeight="570" MinWidth="828"
-        MaxHeight="570" MaxWidth="828"
-        FontSize="12"
+        Height="590" Width="10007"
+        MinHeight="485" MinWidth="1110"
+        MaxHeight="485" MaxWidth="1110"
         ResizeMode="CanMinimize"
         Title="{DynamicResource ResourceKey=MainWnd_Title}" SizeToContent="WidthAndHeight" Background="LightGray">
     <Grid>
@@ -44,18 +43,18 @@
         </Menu>
         <TabControl Grid.Row="1" Grid.RowSpan="3" Grid.ColumnSpan="4" >
             <TabItem Header="{DynamicResource ResourceKey=MainTab_IO}">
-                <StackPanel Orientation="Vertical" Margin="3" MinWidth="800" MinHeight="250">
+                <StackPanel Orientation="Vertical" Margin="3" MinWidth="1083" MinHeight="250">
                     <StackPanel Orientation="Horizontal" Margin="3" HorizontalAlignment="Right">
                         <Label Target="{Binding ElementName=txtSrcPath}" HorizontalAlignment="Right" Content="{DynamicResource ResourceKey=Main_IO_SrcPath}"></Label>
-                        <TextBox Name="txtSrcPath" MinWidth="600" MaxWidth="600" AllowDrop="True" PreviewDragOver="On_DragOver" PreviewDragEnter="On_DragOver" PreviewDrop="On_SrcDrop" ToolTip="{DynamicResource ResourceKey=Main_IO_Src_Tooltip}" Height="100" MaxHeight="100" VerticalScrollBarVisibility="Visible"></TextBox>
-                        <Button Name="btnOpenSrc" HorizontalAlignment="Right" Content="{DynamicResource ResourceKey=Main_IO_btnSrc}" Click="OnBtnSrc"></Button>
-                        <Button Name="btnSrcClear" HorizontalAlignment="Right" Content="{DynamicResource ResourceKey=Main_IO_SrcClear}" Click="OnSrcClear"></Button>
+                        <TextBox Name="txtSrcPath" MinWidth="820" MaxWidth="820" MaxHeight="100" MinHeight="100" AllowDrop="True" PreviewDragOver="On_DragOver" PreviewDragEnter="On_DragOver" PreviewDrop="On_SrcDrop" ToolTip="{DynamicResource ResourceKey=Main_IO_Src_Tooltip}" VerticalScrollBarVisibility="Visible"></TextBox>
+                        <Button Name="btnOpenSrc" MinWidth="90" MaxWidth="90" HorizontalAlignment="Right" Content="{DynamicResource ResourceKey=Main_IO_btnSrc}" Click="OnBtnSrc"></Button>
+                        <Button Name="btnSrcClear" MinWidth="90" MaxWidth="90" HorizontalAlignment="Right" Content="{DynamicResource ResourceKey=Main_IO_SrcClear}" Click="OnSrcClear"></Button>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="3" HorizontalAlignment="Right">
                         <Label Target="{Binding ElementName=txtDstPath}" HorizontalAlignment="Right" Content="{DynamicResource ResourceKey=Main_IO_DstPath}"></Label>
-                        <TextBox Name="txtDstPath" MinWidth="600" MaxWidth="600" AllowDrop="True" PreviewDragEnter="On_DragOver" PreviewDragOver="On_DragOver" PreviewDrop="On_DstDrop" ToolTip="{DynamicResource ResourceKey=Main_IO_Dst_Tooltip}"></TextBox>
-                        <Button Name="btnOpenDst" HorizontalAlignment="Right" Content="{DynamicResource ResourceKey=Main_IO_btnDst}" Click="OnBtnDst"></Button>
-                        <Button Name="btnDstClear" HorizontalAlignment="Right" Content="{DynamicResource ResourceKey=Main_IO_DstClear}" Click="OnDstClear"></Button>
+                        <TextBox Name="txtDstPath" MinWidth="820" MaxWidth="820" AllowDrop="True" PreviewDragEnter="On_DragOver" PreviewDragOver="On_DragOver" PreviewDrop="On_DstDrop" ToolTip="{DynamicResource ResourceKey=Main_IO_Dst_Tooltip}"></TextBox>
+                        <Button Name="btnOpenDst" MinWidth="90" MaxWidth="90" HorizontalAlignment="Right" Content="{DynamicResource ResourceKey=Main_IO_btnDst}" Click="OnBtnDst"></Button>
+                        <Button Name="btnDstClear" MinWidth="90" MaxWidth="90" HorizontalAlignment="Right" Content="{DynamicResource ResourceKey=Main_IO_DstClear}" Click="OnDstClear"></Button>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="3" HorizontalAlignment="Stretch">
                         <Label Target="{Binding ElementName=txtOutExt}" HorizontalAlignment="Left" Content="{DynamicResource ResourceKey=Main_IO_OutFiletype}"></Label>
@@ -67,13 +66,6 @@
                         </ComboBox>
                         <Label Target="{Binding ElementName=txtOutQuality}" HorizontalAlignment="Left" Content="{DynamicResource ResourceKey=Main_IO_OutFilequality}"></Label>
                         <TextBox Name="txtOutQuality" MinWidth="50" MaxWidth="50"  HorizontalAlignment="Stretch" Text=""></TextBox>
-                    </StackPanel>
-                    <Label Target="{Binding ElementName=slider_zoom}" Content="{DynamicResource ResourceKey=Main_Mode_Mag}"></Label>
-                    <StackPanel Orientation="Horizontal" Margin="3" HorizontalAlignment="Stretch">
-                        <StackPanel Orientation="Horizontal">
-                            <Slider Name="slider_zoom" Minimum="2.0" Maximum="16.0" Margin="15" MinWidth="550" Value="2" Ticks="1, 2, 4, 8, 16" TickPlacement="BottomRight" TickFrequency="1" IsSnapToTickEnabled="True"></Slider>
-                            <TextBox Name="slider_value" HorizontalAlignment="Right" MaxHeight="20" MinWidth="50" MaxWidth="50" Margin="1" Text="{Binding ElementName=slider_zoom, Path=Value, Mode=TwoWay}" ></TextBox>
-                        </StackPanel>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="3">
                         <GroupBox Name="gpMode" Header="{DynamicResource ResourceKey=Main_Mode_Set}" Padding="3" Margin="3" Height="130">
@@ -90,6 +82,22 @@
                                 <RadioButton Tag="1" Name="btnDenoise1" Margin="2" Content="{DynamicResource ResourceKey=Main_Mode_Denoise_1}" Checked="OnDenoiseChecked"></RadioButton>
                                 <RadioButton Tag="2" Name="btnDenoise2" Margin="2" Content="{DynamicResource ResourceKey=Main_Mode_Denoise_2}" Checked="OnDenoiseChecked"></RadioButton>
                                 <RadioButton Tag="3" Name="btnDenoise3" Margin="2" Content="{DynamicResource ResourceKey=Main_Mode_Denoise_3}" Checked="OnDenoiseChecked"></RadioButton>
+                            </StackPanel>
+                        </GroupBox>
+                        <GroupBox Name="gpScale" Header="{DynamicResource ResourceKey=Main_Mode_Scale_rate}" Padding="3" Margin="3" Height="130">
+                            <StackPanel Orientation="vertical">
+                                <RadioButton Tag="Scale_ratio_mode" Name="btnScale_ratio" Margin="2" Checked="OnScaleModeChecked" Content="{DynamicResource ResourceKey=Main_Mode_Scale_ratio}"></RadioButton>
+                                <RadioButton Tag="Width_mode" Name="btnOutput_width" Margin="2" Checked="OnScaleModeChecked" Content="{DynamicResource ResourceKey=Main_Mode_Output_width}"></RadioButton>
+                                <RadioButton Tag="Height_mode" Name="btnOutput_height" Margin="2" Checked="OnScaleModeChecked" Content="{DynamicResource ResourceKey=Main_Mode_Output_height}"></RadioButton>
+                                <RadioButton Tag="Width_height_mode" Name="btnOutput_width_height" Margin="2" Checked="OnScaleModeChecked" Content="{DynamicResource ResourceKey=Main_Mode_Output_width_height}"></RadioButton>
+                            </StackPanel>
+                        </GroupBox>
+                        <GroupBox Name="gpScale2" Header="" Padding="3" Margin="3" Height="130">
+                            <StackPanel Orientation="vertical">
+                                <TextBox Name="txtScale_ratio" MaxWidth="70" MinWidth="70" MaxHeight="20" Margin="1" Text="" ></TextBox>
+                                <TextBox Name="txtOutput_width" MinWidth="70" MaxWidth="70" MaxHeight="20" Margin="1" Text="" ></TextBox>
+                                <TextBox Name="txtOutput_height" MinWidth="70" MaxWidth="70" MaxHeight="20" Margin="1" Text="" ></TextBox>
+                                <TextBox Name="txtOutput_width_height" MinWidth="70" MaxWidth="70" MaxHeight="20" Margin="1" Text="" ></TextBox>
                             </StackPanel>
                         </GroupBox>
                         <GroupBox Name="gpModel" Header="{DynamicResource ResourceKey=Main_Mode_Model}" Padding="3" Margin="3">
@@ -123,7 +131,7 @@
                 </StackPanel>
             </TabItem>
             <TabItem Header="{DynamicResource ResourceKey=MainTab_Preferences}">
-                <StackPanel Orientation="Vertical" Margin="3" MinWidth="800" MinHeight="398">
+                <StackPanel Orientation="Vertical" Margin="3" MinWidth="1083" MinHeight="312">
                     <GroupBox Name="gpDandD" Padding="3" Margin="3">
                         <StackPanel Orientation="Vertical" Margin="3">
                             <CheckBox Name="checkStore_output_dir" Margin="3" Content="{DynamicResource ResourceKey=Main_checkStore_output_dir}" ></CheckBox>
@@ -131,6 +139,7 @@
                             <CheckBox Name="checkSoundBeep" Margin="3" Content="{DynamicResource ResourceKey=Main_checkSoundBeep}" ></CheckBox>
                             <CheckBox Name="checkPrecision_fp32" Margin="3" Content="{DynamicResource ResourceKey=Main_checkPrecision_fp32}" ></CheckBox>
                             <CheckBox Name="checkAlphachannel_ImageMagick" Margin="3" Content="{DynamicResource ResourceKey=Main_checkAlphachannel_ImageMagick}" ></CheckBox>
+                            <CheckBox Name="checkKeep_aspect_ratio" Margin="3" Content="{DynamicResource ResourceKey=Main_checkKeep_aspect_ratio}" ></CheckBox>
                         </StackPanel>
                     </GroupBox>
                 </StackPanel>
@@ -138,8 +147,8 @@
         </TabControl>
         <Button Name="btnRun" Grid.Column="3" Grid.Row="4" MaxHeight="240" Padding="5" Content="{DynamicResource ResourceKey=Main_btnRun}" Click="OnRun"></Button>
         <Button Name="btnAbort" Grid.Column="2" Grid.Row="4" MaxHeight="240" Padding="5" IsEnabled="False" Content="{DynamicResource ResourceKey=Main_btnAbort}" Click="OnAbort"></Button>
-        <ProgressBar x:Name="prgbar" HorizontalAlignment="Left" Height="40" Margin="3" VerticalAlignment="Top" Width="811" Background="#7F000000" Foreground="#4CF3F3F3" Grid.ColumnSpan="3" Grid.Row="5" Grid.Column="1" />
-        <Label x:Name="pLabel" Content="" HorizontalAlignment="Left" Margin="10" VerticalAlignment="Top" Foreground="White" HorizontalContentAlignment="Center" Grid.ColumnSpan="2" Width="811" Grid.Column="1" Grid.Row="5" />
+        <ProgressBar x:Name="prgbar" HorizontalAlignment="Left" Height="40" Margin="3" VerticalAlignment="Top" Width="1089" Background="#7F000000" Foreground="#4CF3F3F3" Grid.ColumnSpan="3" Grid.Row="5" Grid.Column="1" />
+        <Label x:Name="pLabel" Content="" HorizontalAlignment="Left" Margin="10" VerticalAlignment="Top" Foreground="White" HorizontalContentAlignment="Center" Grid.ColumnSpan="2" Width="1089" Grid.Column="1" Grid.Row="5" />
 
 
     </Grid>

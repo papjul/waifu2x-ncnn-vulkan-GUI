@@ -26,7 +26,11 @@
     <sys:String x:Key="Main_Mode_Set_Scale">확대</sys:String>
     <sys:String x:Key="Main_Mode_Set_Noise">노이즈 제거</sys:String>
     <sys:String x:Key="Main_Mode_Set_AutoScale">노이즈 제거 및 확대(JPG한정)</sys:String>
-    <sys:String x:Key="Main_Mode_Mag">확대율 (2.0~16.0):</sys:String>
+    <sys:String x:Key="Main_Mode_Scale_rate">확대 설정</sys:String>
+    <sys:String x:Key="Main_Mode_Scale_ratio">확대율로 설정</sys:String>
+    <sys:String x:Key="Main_Mode_Output_width">변환 후의 가로 길이</sys:String>
+    <sys:String x:Key="Main_Mode_Output_height">변환 후의 세로 길이</sys:String>
+    <sys:String x:Key="Main_Mode_Output_width_height">가로x세로로 확대</sys:String>
     <sys:String x:Key="Main_Mode_Denoise">노이즈 제거</sys:String>
     <sys:String x:Key="Main_Mode_Denoise_0">레벨0</sys:String>
     <sys:String x:Key="Main_Mode_Denoise_1">레벨1</sys:String>
@@ -47,6 +51,7 @@
     <sys:String x:Key="Main_checkSoundBeep">처리가 끝나면 소리로 알립니다.</sys:String>
     <sys:String x:Key="Main_checkPrecision_fp32">고정밀도 처리(fp32 모드)</sys:String>
     <sys:String x:Key="Main_checkAlphachannel_ImageMagick">알파 채널을 Image Magick으로 분리하여 처리합니다.</sys:String>
+    <sys:String x:Key="Main_checkKeep_aspect_ratio">종횡비 유지</sys:String>
     <!-- Run button -->
     <sys:String x:Key="Main_btnRun">실행</sys:String>
     <!-- Abort button -->

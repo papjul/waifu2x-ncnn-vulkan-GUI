@@ -76,6 +76,11 @@ namespace waifu2x_ncnn_vulkan_gui
             }
 
             txtBlocksize.Text = Properties.Settings.Default.block_size;
+            txtScale_ratio.Text = Properties.Settings.Default.scale_ratio;
+            txtOutput_width.Text = Properties.Settings.Default.Output_width;
+            txtOutput_height.Text = Properties.Settings.Default.Output_heigh;
+            txtOutput_width_height.Text = Properties.Settings.Default.Output_width_height;
+            txtBlocksize.Text = Properties.Settings.Default.block_size;
             txtThread.Text = Properties.Settings.Default.thread;
 
             //btnCUDA.IsChecked = true;
@@ -109,14 +114,24 @@ namespace waifu2x_ncnn_vulkan_gui
             { btnUpRGB.IsChecked = true; }
             if (Properties.Settings.Default.model == "models-upconv_7_photo")
             { btnUpPhoto.IsChecked = true; }
+
+            if (Properties.Settings.Default.mag_mode == "Scale_ratio_mode")
+            { btnScale_ratio.IsChecked = true; }
+            if (Properties.Settings.Default.mag_mode == "Width_mode")
+            { btnOutput_width.IsChecked = true; }
+            if (Properties.Settings.Default.mag_mode == "Height_mode")
+            { btnOutput_height.IsChecked = true; }
+            if (Properties.Settings.Default.mag_mode == "Width_height_mode")
+            { btnOutput_width_height.IsChecked = true; }
+
             checkTTAmode.IsChecked = Properties.Settings.Default.TTAmode;
             checkSoundBeep.IsChecked = Properties.Settings.Default.SoundBeep;
             checkStore_output_dir.IsChecked = Properties.Settings.Default.store_output_dir;
             checkOutput_no_overwirit.IsChecked = Properties.Settings.Default.output_no_overwirit;
             checkPrecision_fp32.IsChecked = Properties.Settings.Default.Precision_fp32;
             checkAlphachannel_ImageMagick.IsChecked = Properties.Settings.Default.Alphachannel_ImageMagick;
-            slider_value.Text = Properties.Settings.Default.scale_ratio;
-            slider_zoom.Value = double.Parse(Properties.Settings.Default.scale_ratio);
+            checkKeep_aspect_ratio.IsChecked = Properties.Settings.Default.Keep_aspect_ratio;
+            txtScale_ratio.Text = Properties.Settings.Default.scale_ratio;
 
         }
         System.Diagnostics.Stopwatch Stopwatch = new System.Diagnostics.Stopwatch();
@@ -125,7 +140,7 @@ namespace waifu2x_ncnn_vulkan_gui
         public static StringBuilder param_dst_suffix = new StringBuilder("");
         public static StringBuilder param_outformat = new StringBuilder("png");
         public static StringBuilder param_output_quality = new StringBuilder("-quality 100");
-        public static StringBuilder param_mag = new StringBuilder("2");
+        public static StringBuilder param_mag_mode = new StringBuilder("Scale_ratio_mode");
         public static StringBuilder param_denoise = new StringBuilder("");
         public static StringBuilder param_denoise2 = new StringBuilder("");
         public static StringBuilder param_model = new StringBuilder("models-cunet");
@@ -136,12 +151,17 @@ namespace waifu2x_ncnn_vulkan_gui
         public static StringBuilder param_tta = new StringBuilder("");
         public static StringBuilder binary_path = new StringBuilder("");
         public static String[] param_src;
-        public static int scale_ratio;
+        // public static int scale_ratio;
+        public static float scale_ratio_public;
         public static int FileCount = 0;
+        public static int output_width_public = 0;
+        public static int output_height_public = 0;
         public DateTime starttimea;
         public static bool Cancel = false;
         public static bool Output_no_overwirit;
+        public static bool Keep_aspect_ratio = false;
         public static bool Alphachannel_ImageMagick;
+        public static bool txtScale_ratio_power_of_two = false;
 
         void MainWindow_Closing(object sender, CancelEventArgs e)
         {
@@ -172,8 +192,58 @@ namespace waifu2x_ncnn_vulkan_gui
             Properties.Settings.Default.store_output_dir = Convert.ToBoolean(checkStore_output_dir.IsChecked);
             Properties.Settings.Default.Precision_fp32 = Convert.ToBoolean(checkPrecision_fp32.IsChecked);
             Properties.Settings.Default.Alphachannel_ImageMagick = Convert.ToBoolean(checkAlphachannel_ImageMagick.IsChecked);
+            Properties.Settings.Default.Keep_aspect_ratio = Convert.ToBoolean(checkKeep_aspect_ratio.IsChecked);
             Properties.Settings.Default.mode = param_mode.ToString();
-            Properties.Settings.Default.noise_level = param_denoise.ToString();
+            Properties.Settings.Default.mag_mode = param_mag_mode.ToString();
+
+            if (System.Text.RegularExpressions.Regex.IsMatch(
+                txtScale_ratio.Text,
+                @"^\d+(\.\d+)?$",
+                System.Text.RegularExpressions.RegexOptions.ECMAScript))
+            {
+                Properties.Settings.Default.scale_ratio = txtScale_ratio.Text;
+            }
+            else
+            {
+                Properties.Settings.Default.scale_ratio = "2";
+            }
+
+            if (System.Text.RegularExpressions.Regex.IsMatch(
+                txtOutput_width.Text,
+                @"^\d+$",
+                System.Text.RegularExpressions.RegexOptions.ECMAScript))
+            {
+                Properties.Settings.Default.Output_width = txtOutput_width.Text;
+            }
+            else
+            {
+                Properties.Settings.Default.Output_width = "0";
+            }
+
+
+            if (System.Text.RegularExpressions.Regex.IsMatch(
+                txtOutput_height.Text,
+                @"^\d+$",
+                System.Text.RegularExpressions.RegexOptions.ECMAScript))
+            {
+                Properties.Settings.Default.Output_heigh = txtOutput_height.Text;
+            }
+            else
+            {
+                Properties.Settings.Default.Output_heigh = "0";
+            }
+
+            if (System.Text.RegularExpressions.Regex.IsMatch(
+                txtOutput_width_height.Text,
+                @"^\d+x\d+$",
+                System.Text.RegularExpressions.RegexOptions.ECMAScript))
+            {
+                Properties.Settings.Default.Output_width_height = txtOutput_width_height.Text;
+            }
+            else
+            {
+                Properties.Settings.Default.Output_width_height = "1920x1080";
+            }
 
             if (System.Text.RegularExpressions.Regex.IsMatch(
             txtOutQuality.Text,
@@ -185,17 +255,6 @@ namespace waifu2x_ncnn_vulkan_gui
             else
             {
                 Properties.Settings.Default.output_quality = 100;
-            }
-
-            if (System.Text.RegularExpressions.Regex.IsMatch(
-                slider_value.Text,
-                @"^\d+(\.\d+)?$",
-                System.Text.RegularExpressions.RegexOptions.ECMAScript))
-            {
-               Properties.Settings.Default.scale_ratio = slider_value.Text;
-            } else 
-            {
-               Properties.Settings.Default.scale_ratio = "2";
             }
 
             if (System.Text.RegularExpressions.Regex.IsMatch(
@@ -350,13 +409,14 @@ namespace waifu2x_ncnn_vulkan_gui
                 this.txtDstPath.Text = fn[0];
             }
         }
+        
         private void OnSetModeChecked(object sender, RoutedEventArgs e)
         {
             gpDenoise.IsEnabled = true;
             if (btnModeNoise.IsChecked == false)
             {
-                slider_zoom.IsEnabled = true;
-                slider_value.IsEnabled = true;
+                gpScale.IsEnabled = true;
+                gpScale2.IsEnabled = true;
             }
 
             param_mode.Clear();
@@ -367,9 +427,28 @@ namespace waifu2x_ncnn_vulkan_gui
 
             if (btnModeNoise.IsChecked == true)
             {
-                slider_zoom.IsEnabled = false;
-                slider_value.IsEnabled = false;
+                gpScale.IsEnabled = false;
+                gpScale2.IsEnabled = false;
             }
+        }
+
+        private void OnScaleModeChecked(object sender, RoutedEventArgs e)
+        {
+            param_mag_mode.Clear();
+            RadioButton optsrc = sender as RadioButton;
+            param_mag_mode.Append(optsrc.Tag.ToString());
+            txtOutput_width.IsEnabled = false;
+            txtOutput_height.IsEnabled = false;
+            txtOutput_width_height.IsEnabled = false;
+            txtScale_ratio.IsEnabled = false;
+            if (btnScale_ratio.IsChecked == true)
+            { txtScale_ratio.IsEnabled = true; }
+            if (btnOutput_width.IsChecked == true)
+            { txtOutput_width.IsEnabled = true; }
+            if (btnOutput_height.IsChecked == true)
+            { txtOutput_height.IsEnabled = true; }
+            if (btnOutput_width_height.IsChecked == true)
+            { txtOutput_width_height.IsEnabled = true; }
         }
         private void OnDenoiseChecked(object sender, RoutedEventArgs e)
         {
@@ -377,7 +456,7 @@ namespace waifu2x_ncnn_vulkan_gui
             RadioButton optsrc= sender as RadioButton;
             param_denoise.Append(optsrc.Tag.ToString());
         }
-
+        
         /*private void OnDeviceChecked(object sender, RoutedEventArgs e)
         {
             param_gpu_id.Clear();
@@ -407,7 +486,7 @@ namespace waifu2x_ncnn_vulkan_gui
             }
             catch { }
         }
-        public void tasks_waifu2x(int maxConcurrency, int FileCount)
+        public void tasks_waifu2x(int maxConcurrency, int FileCount, string mag_mode_local, string mode_local)
         {
             DateTime starttime = DateTime.Now;
             starttimea = starttime;
@@ -451,7 +530,7 @@ namespace waifu2x_ncnn_vulkan_gui
                                             return;
                                         }
                                     }
-                                    run_waifu2x(input_image, output_final);
+                                    run_waifu2x(input_image, output_final, mag_mode_local, mode_local);
                                     timespent = DateTime.Now - starttime;
                                     if (Cancel == false)
                                     {
@@ -515,7 +594,7 @@ namespace waifu2x_ncnn_vulkan_gui
                                             MessageBox.Show(@"Failed to create folder!");
                                             return;
                                         }
-                                        run_waifu2x(input_image, output_final);
+                                        run_waifu2x(input_image, output_final, mag_mode_local, mode_local);
                                         timespent = DateTime.Now - starttime;
                                         if (Cancel == false)
                                         {
@@ -539,7 +618,7 @@ namespace waifu2x_ncnn_vulkan_gui
             }
         }
 
-        private void run_waifu2x(string input_image, string output_final)
+        private void run_waifu2x(string input_image, string output_final, string mag_mode_local, string mode_local)
         {
             string others_param = String.Join(" ",
                 param_model,
@@ -556,7 +635,8 @@ namespace waifu2x_ncnn_vulkan_gui
             startInfo.FileName = System.Environment.GetEnvironmentVariable("ComSpec");
             startInfo.WorkingDirectory = System.AppDomain.CurrentDomain.BaseDirectory;
 
-            string noise_level_temp = null;;
+            string noise_level_temp = null;
+            string Magick_resize_option = "";
             string output_temp = null;
             string output_rgb_temp = null;
             string output_alpha_temp = null;
@@ -574,8 +654,10 @@ namespace waifu2x_ncnn_vulkan_gui
                     }
 
                 bool AlphaHas = false;
+                int Image_Width = 0;
+                int Image_Height = 0;
                 if (Alphachannel_ImageMagick == true) if (!System.Text.RegularExpressions.Regex.IsMatch(System.IO.Path.GetExtension(input_image), @"\.jpe?g", RegexOptions.IgnoreCase))
-                    {
+                {
                     try
                     {
                         startInfo.Arguments = "/C .\\ImageMagick\\magick.exe identify -format %A \"" + input_image + "\"";
@@ -593,15 +675,119 @@ namespace waifu2x_ncnn_vulkan_gui
                         // 画像の情報を調べるのに失敗
                     }
                 }
+                try
+                {
+                        startInfo.Arguments = "/C .\\ImageMagick\\magick.exe identify -format %Wx%H \"" + input_image + "\"";
+                        process.StartInfo = startInfo;
+                        process.Start();
+                        string identify_WxH = process.StandardOutput.ReadToEnd();
+                        process.WaitForExit();
+                        if (System.Text.RegularExpressions.Regex.IsMatch(
+                            identify_WxH,
+                            @"^(\d+x\d+)$",
+                            System.Text.RegularExpressions.RegexOptions.ECMAScript))
+                        {
+                             string[] width_height = identify_WxH.Split('x');
+                             Image_Width = int.Parse(width_height[0]);
+                             Image_Height = int.Parse(width_height[1]);
+                        }
+                        else
+                        {
+                            break;
+                        }
+                        
+                }
+                catch
+                {
+                        // 画像の情報を調べるのに失敗
+                }
+                int scale_ratio_local = (int)Math.Round(scale_ratio_public);
+                int output_width_local = output_width_public;
+                int output_height_local = output_height_public;
+                if (mag_mode_local == "Scale_ratio_mode" &&  txtScale_ratio_power_of_two == false)
+                {
+                    output_width_local = (int)Math.Round(Image_Width * scale_ratio_public, MidpointRounding.AwayFromZero);
+                    output_height_local = (int)Math.Round(Image_Height * scale_ratio_public, MidpointRounding.AwayFromZero);
+                    Magick_resize_option = " -resize " + output_width_local + "x" + output_height_local + "! ";
+                }
+                
+                if (mode_local != "noise" && output_width_local + output_height_local != 0)
+                {
+                    scale_ratio_local = 2;
+                    if (Keep_aspect_ratio == true && mag_mode_local == "Width_height_mode")
+                    {
+                        while (true)
+                        {
+                            if (output_width_local <= Image_Width * scale_ratio_local) break;
+                            if (output_height_local <= Image_Height * scale_ratio_local) break;
+                            scale_ratio_local = scale_ratio_local * 2;
+                            if (Cancel == true) return;
+                        }
+                    }
+                    else
+                    {
+                        while (true)
+                        {
+                            if (output_width_local <= Image_Width * scale_ratio_local) break;
+                            scale_ratio_local = scale_ratio_local * 2;
+                            if (Cancel == true) return;
+                        }
+                        while (true)
+                        {
+                            if (output_height_local <= Image_Height * scale_ratio_local) break;
+                            scale_ratio_local = scale_ratio_local * 2;
+                            if (Cancel == true) return;
+                         }
+                    }
+                }
+                if (mag_mode_local == "Width_mode")
+                { Magick_resize_option = " -resize " + output_width_local + "x "; }
+                if (mag_mode_local == "Height_mode")
+                { Magick_resize_option = " -resize " + "x" + output_height_local + " "; }
+                if (mag_mode_local == "Width_height_mode")
+                {
+                    if (Keep_aspect_ratio == true)
+                    {
+                        Magick_resize_option = " -resize " + output_width_local + "x" + output_height_local + " ";
+                    }
+                    else
+                    {
+                        Magick_resize_option = " -resize " + output_width_local + "x" + output_height_local + "! ";
+                    }
+                }
 
                 int r = 2;
                 int r2 = 1;
                 string mag_value = "2";
-                if (scale_ratio == 1)
+                if (scale_ratio_public == 1 && mode_local == "noise")
                 {
                     r = 1;
                     mag_value = "1";
+                    scale_ratio_local = 1;
                 }
+
+                // debug code
+                /*
+                string debug_txt = System.IO.Path.ChangeExtension(output_final, "txt");
+                Encoding enc_debug = Encoding.UTF8;
+                StreamWriter writer_debug = new StreamWriter(debug_txt, false, enc_debug);
+                writer_debug.WriteLine(input_image);
+                writer_debug.WriteLine("mag_mode_local " + mag_mode_local);
+                writer_debug.WriteLine("Magick_resize_option " + Magick_resize_option);
+                writer_debug.WriteLine("param_outformat " + param_outformat);
+                writer_debug.WriteLine("param_output_quality " + param_output_quality);
+                writer_debug.WriteLine("txtScale_ratio_power_of_two " + txtScale_ratio_power_of_two.ToString());
+                writer_debug.WriteLine("scale_ratio_public " + scale_ratio_public.ToString());
+                writer_debug.WriteLine("scale_ratio_local " + scale_ratio_local.ToString());
+                writer_debug.WriteLine("Image_Width " + Image_Width);
+                writer_debug.WriteLine("Image_Height " + Image_Height);
+                writer_debug.WriteLine("output_width_public " + output_width_public.ToString());
+                writer_debug.WriteLine("output_height_public " + output_height_public);
+                writer_debug.WriteLine("output_width_local " + output_width_local.ToString());
+                writer_debug.WriteLine("output_height_local " + output_height_local.ToString());
+                writer_debug.Close();
+                
+                */
 
                 if (AlphaHas == true)
                 {
@@ -613,7 +799,7 @@ namespace waifu2x_ncnn_vulkan_gui
                     process.Start();
                     process.WaitForExit();
                 }
-                for (; r <= scale_ratio; r = r * 2, r2 = r2 * 2)
+                for (; r <= scale_ratio_local; r = r * 2, r2 = r2 * 2)
                 {
                     if (Cancel == true) return;
                     output_temp = System.IO.Path.GetTempPath() + random32 + "-" + r + "x.png";
@@ -626,7 +812,7 @@ namespace waifu2x_ncnn_vulkan_gui
                     {
                         if (AlphaHas == true)
                         {
-                            if (scale_ratio == 1)
+                            if (scale_ratio_local == 1)
                             {
                                 startInfo.Arguments = "/C " + binary_path + " -i \"" + input_rgb_temp + "\" -o \"" + output_rgb_temp + "\" -s " + mag_value + " " + noise_level_temp + " " + others_param;
                             }
@@ -663,7 +849,7 @@ namespace waifu2x_ncnn_vulkan_gui
                             System.Media.SystemSounds.Beep.Play();
                             MessageBox.Show("cmd.exe " + startInfo.Arguments + "\n\n" + stderr, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                         }
-                    if (scale_ratio != 1)
+                    if (scale_ratio_local != 1)
                     {
                         new FileInfo(input_temp).Delete();
                         new FileInfo(input_rgb_temp).Delete();
@@ -672,7 +858,7 @@ namespace waifu2x_ncnn_vulkan_gui
                 }
                 if (AlphaHas == true)
                 {
-                    startInfo.Arguments = "/C .\\ImageMagick\\magick.exe convert " + "\"" + output_rgb_temp + "\" " + "\"" + output_alpha_temp + "\" -compose CopyOpacity -composite "+ param_output_quality + "  \"" + output_final + "\"";
+                    startInfo.Arguments = "/C .\\ImageMagick\\magick.exe convert " + "\"" + output_rgb_temp + "\" " + "\"" + output_alpha_temp + "\" -compose CopyOpacity -composite "+ param_output_quality + Magick_resize_option + "  \"" + output_final + "\"";
                     process.StartInfo = startInfo;
                     process.Start();
                     process.WaitForExit();
@@ -681,15 +867,7 @@ namespace waifu2x_ncnn_vulkan_gui
                 } 
                 else 
                 {
-                    if (param_outformat.ToString() != "png")
-                    {
-                        startInfo.Arguments = "/C .\\ImageMagick\\magick.exe convert " + "\"" + output_temp + "\" " + param_output_quality + "  \"" + output_final + "\"";
-                        process.StartInfo = startInfo;
-                        process.Start();
-                        process.WaitForExit();
-                        new FileInfo(output_temp).Delete();
-                    }
-                    else 
+                    if (param_outformat.ToString() == "png" && Magick_resize_option.Trim() == "")
                     {
                         try
                         {
@@ -697,6 +875,14 @@ namespace waifu2x_ncnn_vulkan_gui
                         }
                         catch
                         { }
+                    }
+                    else 
+                    {
+                        startInfo.Arguments = "/C .\\ImageMagick\\magick.exe convert " + "\"" + output_temp + "\" " + param_output_quality + Magick_resize_option + "  \"" + output_final + "\"";
+                        process.StartInfo = startInfo;
+                        process.Start();
+                        process.WaitForExit();
+                        new FileInfo(output_temp).Delete();
                     }
 
                 }
@@ -859,11 +1045,13 @@ namespace waifu2x_ncnn_vulkan_gui
                 param_output_quality.Append("-quality " + txtOutQuality.Text);
             }
 
-            if (((int)slider_zoom.Value & ((int)slider_zoom.Value - 1)) != 0)
+            /*
+            if (((int.Parse(txtScale_ratio.Text) & int.Parse(txtScale_ratio.Text) - 1)) != 0)
             {
                 MessageBox.Show(@"Magnification must be a power of two.");
                 return;
             }
+            */
 
             if (param_mode.ToString() == "noise") if (param_model.ToString().Replace("-m ", "") != "models-cunet")
             {
@@ -884,26 +1072,81 @@ namespace waifu2x_ncnn_vulkan_gui
                 param_thread.Clear();
             }
 
-            param_mag.Clear();
-            param_mag.Append("-s ");
-            param_mag.Append(this.slider_value.Text);
-
             param_denoise2.Clear();
             param_denoise2.Append("-n ");
             param_denoise2.Append(param_denoise.ToString());
-
+            output_width_public = 0;
+            output_height_public = 0;
             // Set mode
-            if (param_mode.ToString() == "noise")
-            {
-                param_mag.Clear();
-                param_mag.Append("-s ");
-                param_mag.Append("1");
-            }
+
             if (param_mode.ToString() == "scale")
             {
                 param_denoise2.Clear();
                 param_denoise2.Append("-n ");
                 param_denoise2.Append("-1");
+            }
+
+            if (System.Text.RegularExpressions.Regex.IsMatch(
+                txtScale_ratio.Text,
+                @"^(\d+(\.\d+)?)$",
+                System.Text.RegularExpressions.RegexOptions.ECMAScript))
+            {
+                scale_ratio_public = float.Parse(txtScale_ratio.Text);
+            }
+            else
+            {
+                MessageBox.Show("Scale_ratio must be a number.");
+                return;
+            }
+
+            txtScale_ratio_power_of_two = false;
+            if (System.Text.RegularExpressions.Regex.IsMatch(
+                txtScale_ratio.Text,
+                @"^(2|4|8|16|32|64|128|256|512|1024)$",
+                System.Text.RegularExpressions.RegexOptions.ECMAScript))
+            {
+                txtScale_ratio_power_of_two = true;
+            }
+
+            if (param_mode.ToString() != "noise") if (param_mag_mode.ToString() == "Width_mode") if (System.Text.RegularExpressions.Regex.IsMatch(
+                txtOutput_width.Text,
+                @"^(\d+)$",
+                System.Text.RegularExpressions.RegexOptions.ECMAScript))
+            {
+                output_width_public = int.Parse(txtOutput_width.Text);
+            }
+            else
+            {
+                MessageBox.Show("Width must be a number.");
+                return;
+            }
+
+            if (param_mode.ToString() != "noise") if (param_mag_mode.ToString() == "Height_mode") if (System.Text.RegularExpressions.Regex.IsMatch(
+                txtOutput_height.Text,
+                @"^(\d+)$",
+                System.Text.RegularExpressions.RegexOptions.ECMAScript))
+            {
+                output_height_public = int.Parse(txtOutput_height.Text);
+            }
+            else
+            {
+                 MessageBox.Show("Height must be a number.");
+                 return;
+            }
+
+            if (param_mode.ToString() != "noise") if (param_mag_mode.ToString() == "Width_height_mode") if (System.Text.RegularExpressions.Regex.IsMatch(
+                txtOutput_width_height.Text,
+                @"^(\d+x\d+)$",
+                System.Text.RegularExpressions.RegexOptions.ECMAScript))
+            {
+                string[] width_height = txtOutput_width_height.Text.Split('x');
+                output_width_public = int.Parse(width_height[0]);
+                output_height_public = int.Parse(width_height[1]);
+            }
+            else
+            {
+                MessageBox.Show("Width and Height must be a number.\n\nexample: 1920x1080");
+                return;
             }
 
             this.btnRun.IsEnabled = false;
@@ -938,21 +1181,48 @@ namespace waifu2x_ncnn_vulkan_gui
 
                 if (param_mode.ToString() == "scale" || param_mode.ToString() == "noise_scale" || param_mode.ToString() == "auto_scale")
                 {
-                    param_dst_suffix.Append("(x");
-                    param_dst_suffix.Append(this.slider_zoom.Value.ToString());
-                    param_dst_suffix.Append(")");
+                    if (param_mag_mode.ToString() == "Scale_ratio_mode")
+                    {
+                        param_dst_suffix.Append("(x");
+                        param_dst_suffix.Append(txtScale_ratio.Text);
+                        param_dst_suffix.Append(")");
+                    }
+                    if (param_mag_mode.ToString() == "Width_mode") 
+                    {
+                        param_dst_suffix.Append("(width ");
+                        param_dst_suffix.Append(output_width_public);
+                        param_dst_suffix.Append(")");
+                    }
+                    if (param_mag_mode.ToString() == "Height_mode") 
+                    {
+                        param_dst_suffix.Append("(height ");
+                        param_dst_suffix.Append(output_height_public);
+                        param_dst_suffix.Append(")");
+                    }
+                    if (param_mag_mode.ToString() == "Width_height_mode")
+                    {
+                        param_dst_suffix.Append("(");
+                        if (checkKeep_aspect_ratio.IsChecked == true)
+                        {
+                            param_dst_suffix.Append("within ");
+                        }
+                        param_dst_suffix.Append(output_width_public);
+                        param_dst_suffix.Append("x");
+                        param_dst_suffix.Append(output_height_public);
+                        param_dst_suffix.Append(")");
+                    }
+
                 }
                 if (checkPrecision_fp32.IsChecked == true)
                 {
                     param_dst_suffix.Append("(FP32)");
                 }
             }
-
+            Keep_aspect_ratio = checkKeep_aspect_ratio.IsChecked.Value;
             Output_no_overwirit = checkOutput_no_overwirit.IsChecked.Value;
             Alphachannel_ImageMagick = checkAlphachannel_ImageMagick.IsChecked.Value;
-            scale_ratio = (int)slider_zoom.Value;
             if (param_mode.ToString() == "noise")
-            { scale_ratio = 1; }
+            { scale_ratio_public = 1; }
 
             FileCount = 0;
             var reg = new Regex(@".+\.(jpe?g|png|bmp|gif|tiff?|webp)$", RegexOptions.IgnoreCase);
@@ -978,7 +1248,7 @@ namespace waifu2x_ncnn_vulkan_gui
             prgbar.Maximum = FileCount;
             prgbar.Value = 0;
 
-            await Task.Run(() => tasks_waifu2x(int.Parse(param_thread.ToString()), FileCount));
+            await Task.Run(() => tasks_waifu2x(int.Parse(param_thread.ToString()), FileCount, param_mag_mode.ToString(), param_mode.ToString()));
             TimeSpan Processing_time;
             Processing_time = DateTime.Now - starttimea;
             while (true)

@@ -25,9 +25,13 @@
     <sys:String x:Key="Main_Mode_Set_NoiseScale">降噪 &amp; 放大</sys:String>
     <sys:String x:Key="Main_Mode_Set_Scale">只放大</sys:String>
     <sys:String x:Key="Main_Mode_Set_Noise">只降噪</sys:String>
-    <sys:String x:Key="Main_Mode_Mag">放大倍数 （2.0~16.0）:</sys:String>
-    <sys:String x:Key="Main_Mode_Denoise">降噪程度</sys:String>
     <sys:String x:Key="Main_Mode_Set_AutoScale">放大 &amp; 降噪（仅jpg）</sys:String>
+    <sys:String x:Key="Main_Mode_Scale_rate">放大尺寸</sys:String>
+    <sys:String x:Key="Main_Mode_Scale_ratio">放大倍率</sys:String>
+    <sys:String x:Key="Main_Mode_Output_width">放大后宽度</sys:String>
+    <sys:String x:Key="Main_Mode_Output_height">放大后高度</sys:String>
+    <sys:String x:Key="Main_Mode_Output_width_height">放大后宽高</sys:String>
+    <sys:String x:Key="Main_Mode_Denoise">降噪程度</sys:String>
     <sys:String x:Key="Main_Mode_Denoise_0">低</sys:String>
     <sys:String x:Key="Main_Mode_Denoise_1">中</sys:String>
     <sys:String x:Key="Main_Mode_Denoise_2">高</sys:String>
@@ -47,6 +51,7 @@
     <sys:String x:Key="Main_checkSoundBeep">处理后播放提示音</sys:String>
     <sys:String x:Key="Main_checkPrecision_fp32">执行高精度处理（fp32模式）</sys:String>
     <sys:String x:Key="Main_checkAlphachannel_ImageMagick">使用ImageMagick分离Alpha通道</sys:String>
+    <sys:String x:Key="Main_checkKeep_aspect_ratio">保持宽高比</sys:String>
     <!-- Run button -->
     <sys:String x:Key="Main_btnRun">执行！</sys:String>
     <!-- Abort button -->

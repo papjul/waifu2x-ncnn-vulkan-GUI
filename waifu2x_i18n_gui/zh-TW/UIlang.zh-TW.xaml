@@ -25,7 +25,11 @@
     <sys:String x:Key="Main_Mode_Set_NoiseScale">降噪 &amp; 放大</sys:String>
     <sys:String x:Key="Main_Mode_Set_Scale">僅放大</sys:String>
     <sys:String x:Key="Main_Mode_Set_Noise">僅降噪</sys:String>
-    <sys:String x:Key="Main_Mode_Mag">放大倍数 （2.0~16.0）:</sys:String>
+    <sys:String x:Key="Main_Mode_Scale_rate">放大倍率</sys:String>
+    <sys:String x:Key="Main_Mode_Scale_ratio">比例設定</sys:String>
+    <sys:String x:Key="Main_Mode_Output_width">轉換寬度設定</sys:String>
+    <sys:String x:Key="Main_Mode_Output_height">轉換高度設定</sys:String>
+    <sys:String x:Key="Main_Mode_Output_width_height">轉換寬度高度設定</sys:String>
     <sys:String x:Key="Main_Mode_Denoise">降噪程度</sys:String>
     <sys:String x:Key="Main_Mode_Set_AutoScale">放大 &amp; 降噪（僅jpg）</sys:String>
     <sys:String x:Key="Main_Mode_Denoise_0">低</sys:String>
@@ -47,6 +51,7 @@
     <sys:String x:Key="Main_checkSoundBeep">處理後播放提示音</sys:String>
     <sys:String x:Key="Main_checkPrecision_fp32">執行高精度處理（fp32模式）</sys:String>
     <sys:String x:Key="Main_checkAlphachannel_ImageMagick">使用ImageMagick分離Alpha通道</sys:String>
+    <sys:String x:Key="Main_checkKeep_aspect_ratio">保持縱橫比</sys:String>
     <!-- Run button -->
     <sys:String x:Key="Main_btnRun">執行！</sys:String>
     <!-- Abort button -->

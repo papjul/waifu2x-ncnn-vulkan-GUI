@@ -50,5 +50,20 @@
     <Setting Name="output_quality" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">100</Value>
     </Setting>
+    <Setting Name="Keep_aspect_ratio" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="Output_width" Type="System.String" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="Output_heigh" Type="System.String" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="Output_width_height" Type="System.String" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="mag_mode" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Scale_ratio_mode</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
