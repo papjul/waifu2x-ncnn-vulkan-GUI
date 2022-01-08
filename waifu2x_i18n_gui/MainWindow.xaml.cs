@@ -194,6 +194,7 @@ namespace waifu2x_ncnn_vulkan_gui
             Properties.Settings.Default.Alphachannel_ImageMagick = Convert.ToBoolean(checkAlphachannel_ImageMagick.IsChecked);
             Properties.Settings.Default.Keep_aspect_ratio = Convert.ToBoolean(checkKeep_aspect_ratio.IsChecked);
             Properties.Settings.Default.mode = param_mode.ToString();
+            Properties.Settings.Default.noise_level = param_denoise.ToString();
             Properties.Settings.Default.mag_mode = param_mag_mode.ToString();
 
             if (System.Text.RegularExpressions.Regex.IsMatch(
