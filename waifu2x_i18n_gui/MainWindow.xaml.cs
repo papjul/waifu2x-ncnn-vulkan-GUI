@@ -329,8 +329,8 @@ namespace waifu2x_ncnn_vulkan_gui
             string msg =
                 "Multilingual GUI for waifu2x-ncnn-vulkan\n" +
                 "f11894\n" +
-                "Version 2.0.4.7\n" +
-                "BuildDate: 22 Aug,2021\n" +
+                "Version 2.1.0.0\n" +
+                "BuildDate: 2022/01/09\n" +
                 "License: MIT License";
             MessageBox.Show(msg);
         }
@@ -705,7 +705,7 @@ namespace waifu2x_ncnn_vulkan_gui
                 int scale_ratio_local = (int)Math.Round(scale_ratio_public);
                 int output_width_local = output_width_public;
                 int output_height_local = output_height_public;
-                if (mag_mode_local == "Scale_ratio_mode" &&  txtScale_ratio_power_of_two == false)
+                if (mode_local != "noise" && mag_mode_local == "Scale_ratio_mode" &&  txtScale_ratio_power_of_two == false)
                 {
                     output_width_local = (int)Math.Round(Image_Width * scale_ratio_public, MidpointRounding.AwayFromZero);
                     output_height_local = (int)Math.Round(Image_Height * scale_ratio_public, MidpointRounding.AwayFromZero);
