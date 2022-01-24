@@ -25,11 +25,11 @@
     <sys:String x:Key="Main_Mode_Set_NoiseScale">Suavizar &amp; Ampliar</sys:String>
     <sys:String x:Key="Main_Mode_Set_Scale">Somente Ampliar</sys:String>
     <sys:String x:Key="Main_Mode_Set_Noise">Somente Suavizar</sys:String>
-    <sys:String x:Key="Main_Mode_Scale_rate">Magnification size</sys:String>
-    <sys:String x:Key="Main_Mode_Scale_ratio">Set rate</sys:String>
-    <sys:String x:Key="Main_Mode_Output_width">Set trans width</sys:String>
-    <sys:String x:Key="Main_Mode_Output_height">Set trans height</sys:String>
-    <sys:String x:Key="Main_Mode_Output_width_height">Set trans width and height</sys:String>
+    <sys:String x:Key="Main_Mode_Scale_rate">Tamanho da Ampliação</sys:String>
+    <sys:String x:Key="Main_Mode_Scale_ratio">Definir escala</sys:String>
+    <sys:String x:Key="Main_Mode_Output_width">Definir largura (pixels)</sys:String>
+    <sys:String x:Key="Main_Mode_Output_height">Definir altura (pixels)</sys:String>
+    <sys:String x:Key="Main_Mode_Output_width_height">Definir resolução (pixels)</sys:String>
     <sys:String x:Key="Main_Mode_Denoise">Suavizar</sys:String>
     <sys:String x:Key="Main_Mode_Set_AutoScale">Ampliar &amp; Suavizar (somente jpg)</sys:String>
     <sys:String x:Key="Main_Mode_Denoise_0">Nível 0</sys:String>
@@ -51,7 +51,7 @@
     <sys:String x:Key="Main_checkSoundBeep">Tocar um som após terminar de processar</sys:String>
     <sys:String x:Key="Main_checkPrecision_fp32">Executar processamento de alta precisão (modo fp32)</sys:String>
     <sys:String x:Key="Main_checkAlphachannel_ImageMagick">Separar os canais Alfa com ImageMagick</sys:String>
-    <sys:String x:Key="Main_checkKeep_aspect_ratio">Keep aspect ratio</sys:String>
+    <sys:String x:Key="Main_checkKeep_aspect_ratio">Manter a proporção</sys:String>
     <!-- Run button -->
     <sys:String x:Key="Main_btnRun">Vai!</sys:String>
     <!-- Abort button -->

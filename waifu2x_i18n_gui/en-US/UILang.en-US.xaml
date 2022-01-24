@@ -26,11 +26,11 @@
     <sys:String x:Key="Main_Mode_Set_Scale">Magnify only</sys:String>
     <sys:String x:Key="Main_Mode_Set_Noise">Denoise only</sys:String> 
     <sys:String x:Key="Main_Mode_Set_AutoScale">Magnify &amp; Denoise (jpg only)</sys:String>
-    <sys:String x:Key="Main_Mode_Scale_rate">Magnification size</sys:String>
+    <sys:String x:Key="Main_Mode_Scale_rate">Magnification Size</sys:String>
     <sys:String x:Key="Main_Mode_Scale_ratio">Set rate</sys:String>
-    <sys:String x:Key="Main_Mode_Output_width">Set trans width</sys:String>
-    <sys:String x:Key="Main_Mode_Output_height">Set trans height</sys:String>
-    <sys:String x:Key="Main_Mode_Output_width_height">Set trans width and height</sys:String>
+    <sys:String x:Key="Main_Mode_Output_width">Set width (pixels)</sys:String>
+    <sys:String x:Key="Main_Mode_Output_height">Set height (pixels)</sys:String>
+    <sys:String x:Key="Main_Mode_Output_width_height">Set resolution (pixels)</sys:String>
     <sys:String x:Key="Main_Mode_Denoise">Denoise</sys:String>
     <sys:String x:Key="Main_Mode_Denoise_0">Level 0</sys:String>
     <sys:String x:Key="Main_Mode_Denoise_1">Level 1</sys:String>
