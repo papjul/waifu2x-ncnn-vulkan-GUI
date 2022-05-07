@@ -872,6 +872,10 @@ namespace waifu2x_ncnn_vulkan_gui
                     {
                         try
                         {
+                            if (File.Exists(output_final))
+                            {
+                                File.Delete(output_final);
+                            }
                             System.IO.File.Move(output_temp, output_final);
                         }
                         catch
