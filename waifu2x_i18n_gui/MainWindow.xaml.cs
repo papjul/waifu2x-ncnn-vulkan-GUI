@@ -144,6 +144,7 @@ namespace waifu2x_ncnn_vulkan_gui
         public static StringBuilder param_denoise = new StringBuilder("");
         public static StringBuilder param_denoise2 = new StringBuilder("");
         public static StringBuilder param_model = new StringBuilder("models-cunet");
+        public static StringBuilder param_model2 = new StringBuilder("models-cunet");
         public static StringBuilder param_block = new StringBuilder("100");
         public static StringBuilder param_mode = new StringBuilder("noise_scale");
         public static StringBuilder param_gpu_id = new StringBuilder("0");
@@ -622,7 +623,7 @@ namespace waifu2x_ncnn_vulkan_gui
         private void run_waifu2x(string input_image, string output_final, string mag_mode_local, string mode_local)
         {
             string others_param = String.Join(" ",
-                param_model,
+                param_model2,
                 param_block,
                 param_tta,
                 param_gpu_id);
@@ -1076,6 +1077,9 @@ namespace waifu2x_ncnn_vulkan_gui
             {
                 param_thread.Clear();
             }
+
+            param_model2.Clear();
+            param_model2.Append(param_model.ToString());
 
             param_denoise2.Clear();
             param_denoise2.Append("-n ");
