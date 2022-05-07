@@ -147,6 +147,7 @@ namespace waifu2x_ncnn_vulkan_gui
         public static StringBuilder param_model2 = new StringBuilder("models-cunet");
         public static StringBuilder param_block = new StringBuilder("100");
         public static StringBuilder param_mode = new StringBuilder("noise_scale");
+        public static StringBuilder param_mode2 = new StringBuilder("noise_scale");
         public static StringBuilder param_gpu_id = new StringBuilder("0");
         public static StringBuilder param_thread = new StringBuilder("2");
         public static StringBuilder param_tta = new StringBuilder("");
@@ -650,7 +651,7 @@ namespace waifu2x_ncnn_vulkan_gui
                 Guid g = System.Guid.NewGuid();
                 string random32 = (g.ToString("N").Substring(0, 32));
                 noise_level_temp = param_denoise2.ToString();
-                if (!System.Text.RegularExpressions.Regex.IsMatch(System.IO.Path.GetExtension(input_image), @"\.jpe?g", RegexOptions.IgnoreCase)) if (param_mode.ToString() == "auto_scale")
+                if (!System.Text.RegularExpressions.Regex.IsMatch(System.IO.Path.GetExtension(input_image), @"\.jpe?g", RegexOptions.IgnoreCase)) if (param_mode2.ToString() == "auto_scale")
                     {
                         noise_level_temp = "-n -1";
                     }
@@ -1058,8 +1059,9 @@ namespace waifu2x_ncnn_vulkan_gui
                 return;
             }
             */
-
-            if (param_mode.ToString() == "noise") if (param_model.ToString().Replace("-m ", "") != "models-cunet")
+            param_mode2.Clear();
+            param_mode2.Append(param_mode.ToString());
+            if (param_mode2.ToString() == "noise") if (param_model.ToString().Replace("-m ", "") != "models-cunet")
             {
                 MessageBox.Show("\"Denoise only\" is available only for CUnet models.");
                 return;
@@ -1088,7 +1090,7 @@ namespace waifu2x_ncnn_vulkan_gui
             output_height_public = 0;
             // Set mode
 
-            if (param_mode.ToString() == "scale")
+            if (param_mode2.ToString() == "scale")
             {
                 param_denoise2.Clear();
                 param_denoise2.Append("-n ");
@@ -1117,7 +1119,7 @@ namespace waifu2x_ncnn_vulkan_gui
                 txtScale_ratio_power_of_two = true;
             }
 
-            if (param_mode.ToString() != "noise") if (param_mag_mode.ToString() == "Width_mode") if (System.Text.RegularExpressions.Regex.IsMatch(
+            if (param_mode2.ToString() != "noise") if (param_mag_mode.ToString() == "Width_mode") if (System.Text.RegularExpressions.Regex.IsMatch(
                 txtOutput_width.Text,
                 @"^(\d+)$",
                 System.Text.RegularExpressions.RegexOptions.ECMAScript))
@@ -1130,7 +1132,7 @@ namespace waifu2x_ncnn_vulkan_gui
                 return;
             }
 
-            if (param_mode.ToString() != "noise") if (param_mag_mode.ToString() == "Height_mode") if (System.Text.RegularExpressions.Regex.IsMatch(
+            if (param_mode2.ToString() != "noise") if (param_mag_mode.ToString() == "Height_mode") if (System.Text.RegularExpressions.Regex.IsMatch(
                 txtOutput_height.Text,
                 @"^(\d+)$",
                 System.Text.RegularExpressions.RegexOptions.ECMAScript))
@@ -1143,7 +1145,7 @@ namespace waifu2x_ncnn_vulkan_gui
                  return;
             }
 
-            if (param_mode.ToString() != "noise") if (param_mag_mode.ToString() == "Width_height_mode") if (System.Text.RegularExpressions.Regex.IsMatch(
+            if (param_mode2.ToString() != "noise") if (param_mag_mode.ToString() == "Width_height_mode") if (System.Text.RegularExpressions.Regex.IsMatch(
                 txtOutput_width_height.Text,
                 @"^(\d+x\d+)$",
                 System.Text.RegularExpressions.RegexOptions.ECMAScript))
@@ -1174,9 +1176,9 @@ namespace waifu2x_ncnn_vulkan_gui
                 if (param_model.ToString().Replace("-m ", "") == "models-upconv_7_photo")
                 { param_dst_suffix.Append("(UpPhoto)"); }
                 param_dst_suffix.Append("(");
-                param_dst_suffix.Append(param_mode.ToString().Replace("-m ", ""));
+                param_dst_suffix.Append(param_mode2.ToString().Replace("-m ", ""));
                 param_dst_suffix.Append(")");
-                if (param_mode.ToString() == "noise" || param_mode.ToString() == "noise_scale" || param_mode.ToString() == "auto_scale")
+                if (param_mode2.ToString() == "noise" || param_mode2.ToString() == "noise_scale" || param_mode2.ToString() == "auto_scale")
                 {
                     param_dst_suffix.Append("(");
                     param_dst_suffix.Append("Level");
@@ -1188,7 +1190,7 @@ namespace waifu2x_ncnn_vulkan_gui
                     param_dst_suffix.Append("(tta)");
                 }
 
-                if (param_mode.ToString() == "scale" || param_mode.ToString() == "noise_scale" || param_mode.ToString() == "auto_scale")
+                if (param_mode2.ToString() == "scale" || param_mode2.ToString() == "noise_scale" || param_mode2.ToString() == "auto_scale")
                 {
                     if (param_mag_mode.ToString() == "Scale_ratio_mode")
                     {
@@ -1230,7 +1232,7 @@ namespace waifu2x_ncnn_vulkan_gui
             Keep_aspect_ratio = checkKeep_aspect_ratio.IsChecked.Value;
             Output_no_overwirit = checkOutput_no_overwirit.IsChecked.Value;
             Alphachannel_ImageMagick = checkAlphachannel_ImageMagick.IsChecked.Value;
-            if (param_mode.ToString() == "noise")
+            if (param_mode2.ToString() == "noise")
             { scale_ratio_public = 1; }
 
             FileCount = 0;
@@ -1257,7 +1259,7 @@ namespace waifu2x_ncnn_vulkan_gui
             prgbar.Maximum = FileCount;
             prgbar.Value = 0;
 
-            await Task.Run(() => tasks_waifu2x(int.Parse(param_thread.ToString()), FileCount, param_mag_mode.ToString(), param_mode.ToString()));
+            await Task.Run(() => tasks_waifu2x(int.Parse(param_thread.ToString()), FileCount, param_mag_mode.ToString(), param_mode2.ToString()));
             TimeSpan Processing_time;
             Processing_time = DateTime.Now - starttimea;
             while (true)
