@@ -331,8 +331,8 @@ namespace waifu2x_ncnn_vulkan_gui
             string msg =
                 "Multilingual GUI for waifu2x-ncnn-vulkan\n" +
                 "f11894\n" +
-                "Version 2.1.0.0\n" +
-                "BuildDate: 2022/01/09\n" +
+                "Version 2.1.0.2\n" +
+                "BuildDate: 2022/05/07\n" +
                 "License: MIT License";
             MessageBox.Show(msg);
         }
@@ -850,7 +850,9 @@ namespace waifu2x_ncnn_vulkan_gui
                     if (process.ExitCode != 0) if (Cancel == false)
                         {
                             System.Media.SystemSounds.Beep.Play();
-                            MessageBox.Show("cmd.exe " + startInfo.Arguments + "\n\n" + stderr, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                            CLIOutput.Dispatcher.Invoke(() => CLIOutput.Focus(), DispatcherPriority.Background);
+                            CLIOutput.Dispatcher.Invoke(() => this.CLIOutput.AppendText("Error: The process failed and will be retried.\ncmd.exe " + startInfo.Arguments + "\n" + stderr + "\n"), DispatcherPriority.Background);
+                            CLIOutput.Dispatcher.Invoke(() => CLIOutput.Select(CLIOutput.Text.Length, 0), DispatcherPriority.Background);
                         }
                     if (scale_ratio_local != 1)
                     {
@@ -898,7 +900,9 @@ namespace waifu2x_ncnn_vulkan_gui
                     if (retryCount == 5)
                     {
                         System.Media.SystemSounds.Beep.Play();
-                        MessageBox.Show("Output file could not be found.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        CLIOutput.Dispatcher.Invoke(() => CLIOutput.Focus(), DispatcherPriority.Background);
+                        CLIOutput.Dispatcher.Invoke(() => this.CLIOutput.AppendText("Output file could not be found.\ninput " + input_image + "\noutput " + output_final + "\n\n"), DispatcherPriority.Background);
+                        CLIOutput.Dispatcher.Invoke(() => CLIOutput.Select(CLIOutput.Text.Length, 0), DispatcherPriority.Background);
                         try
                         {
                             Encoding enc = Encoding.UTF8;
@@ -1258,6 +1262,7 @@ namespace waifu2x_ncnn_vulkan_gui
 
             prgbar.Maximum = FileCount;
             prgbar.Value = 0;
+            this.CLIOutput.Clear();
 
             await Task.Run(() => tasks_waifu2x(int.Parse(param_thread.ToString()), FileCount, param_mag_mode.ToString(), param_mode2.ToString()));
             TimeSpan Processing_time;

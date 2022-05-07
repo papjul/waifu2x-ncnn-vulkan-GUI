@@ -7,8 +7,8 @@
         mc:Ignorable="d"
         Closing="MainWindow_Closing"  
         Height="590" Width="10007"
-        MinHeight="485" MinWidth="1110"
-        MaxHeight="485" MaxWidth="1110"
+        MinHeight="610" MinWidth="1110"
+        MaxHeight="610" MaxWidth="1110"
         ResizeMode="CanMinimize"
         Title="{DynamicResource ResourceKey=MainWnd_Title}" SizeToContent="WidthAndHeight" Background="LightGray">
     <Grid>
@@ -149,7 +149,6 @@
         <Button Name="btnAbort" Grid.Column="2" Grid.Row="4" MaxHeight="240" Padding="5" IsEnabled="False" Content="{DynamicResource ResourceKey=Main_btnAbort}" Click="OnAbort"></Button>
         <ProgressBar x:Name="prgbar" HorizontalAlignment="Left" Height="40" Margin="3" VerticalAlignment="Top" Width="1089" Background="#7F000000" Foreground="#4CF3F3F3" Grid.ColumnSpan="3" Grid.Row="5" Grid.Column="1" />
         <Label x:Name="pLabel" Content="" HorizontalAlignment="Left" Margin="10" VerticalAlignment="Top" Foreground="White" HorizontalContentAlignment="Center" Grid.ColumnSpan="2" Width="1089" Grid.Column="1" Grid.Row="5" />
-
-
+        <TextBox Name="CLIOutput" Grid.Column="0" Grid.Row="5"  Grid.ColumnSpan="4" MinHeight="120" MaxHeight="120" MinWidth="1089" MaxWidth="1089" Margin="1,48,5,-48" Padding="3" Background="White" IsReadOnly="False" TextWrapping="Wrap"  VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">Error Log</TextBox>
     </Grid>
 </Window>
