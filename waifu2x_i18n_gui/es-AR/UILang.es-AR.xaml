@@ -13,25 +13,25 @@
     <sys:String x:Key="Main_IO_SrcPath">Origen:</sys:String>
     <sys:String x:Key="Main_IO_DstPath">Destino:</sys:String>
     <sys:String x:Key="Main_IO_btnSrc">Elegir Origen</sys:String>
-    <sys:String x:Key="Main_IO_SrcClear">Limpiar</sys:String>
+    <sys:String x:Key="Main_IO_SrcClear">Vaciar</sys:String>
     <sys:String x:Key="Main_IO_btnDst">Elegir Destino</sys:String>
-    <sys:String x:Key="Main_IO_DstClear">Limpiar</sys:String>
-    <sys:String x:Key="Main_IO_Src_Tooltip">Nombre de archivo o dirección de carpeta. Campo OBLIGATORIO</sys:String>
-    <sys:String x:Key="Main_IO_Dst_Tooltip">Dirección de salida. Si queda vacío, se generará archivo nuevo en carpeta de origen</sys:String>
+    <sys:String x:Key="Main_IO_DstClear">Vaciar</sys:String>
+    <sys:String x:Key="Main_IO_Src_Tooltip">Dirección de archivo o carpeta. Campo OBLIGATORIO</sys:String>
+    <sys:String x:Key="Main_IO_Dst_Tooltip">Dirección de salida. Si queda vacío, se generará el archivo nuevo en carpeta de origen</sys:String>
     <sys:String x:Key="Main_IO_OutFiletype">Extensión de salida</sys:String>
     <sys:String x:Key="Main_IO_OutFilequality">Calidad de salida</sys:String>
     <!-- Tab:Mode -->
     <sys:String x:Key="Main_Mode_Set">Modo de Conversión</sys:String>
-    <sys:String x:Key="Main_Mode_Set_NoiseScale">Reducir ruido y Magnificar</sys:String>
+    <sys:String x:Key="Main_Mode_Set_NoiseScale">Reducir ruido y magnificar</sys:String>
     <sys:String x:Key="Main_Mode_Set_Scale">Solo magnificar</sys:String>
     <sys:String x:Key="Main_Mode_Set_Noise">Solo reducir ruido</sys:String>
-    <sys:String x:Key="Main_Mode_Scale_rate">Magnification size</sys:String>
-    <sys:String x:Key="Main_Mode_Scale_ratio">Set rate</sys:String>
-    <sys:String x:Key="Main_Mode_Output_width">Set trans width</sys:String>
-    <sys:String x:Key="Main_Mode_Output_height">Set trans height</sys:String>
-    <sys:String x:Key="Main_Mode_Output_width_height">Set trans width and height</sys:String> 
-    <sys:String x:Key="Main_Mode_Denoise">Reducir ruido</sys:String>
-    <sys:String x:Key="Main_Mode_Set_AutoScale">Magnif. y Red. ruido (sólo jpg)</sys:String>
+    <sys:String x:Key="Main_Mode_Scale_rate">Tamaño Magnificado</sys:String>
+    <sys:String x:Key="Main_Mode_Scale_ratio">Fijar escala</sys:String>
+    <sys:String x:Key="Main_Mode_Output_width">Fijar ancho (píxeles)</sys:String>
+    <sys:String x:Key="Main_Mode_Output_height">Fijar altura (píxeles)</sys:String>
+    <sys:String x:Key="Main_Mode_Output_width_height">Fijar resolución (píx.)</sys:String> 
+    <sys:String x:Key="Main_Mode_Denoise">Reducir Ruido</sys:String>
+    <sys:String x:Key="Main_Mode_Set_AutoScale">Magnif. y red. ruido (sólo jpg)</sys:String>
     <sys:String x:Key="Main_Mode_Denoise_0">Nivel 0</sys:String>
     <sys:String x:Key="Main_Mode_Denoise_1">Nivel 1</sys:String>
     <sys:String x:Key="Main_Mode_Denoise_2">Nivel 2</sys:String>
@@ -40,20 +40,20 @@
     <sys:String x:Key="Main_Mode_Model_CUnet">Illustración 2D (Modelo CUnet)</sys:String>
     <sys:String x:Key="Main_Mode_Model_UpRGB">Illustración 2D (Modelo UpRGB)</sys:String> 
     <sys:String x:Key="Main_Mode_Model_UpPhoto">Foto (Modelo UpPhoto)</sys:String> 
-    <sys:String x:Key="Main_Device_Block">Tamaño de Bloque</sys:String>
+    <sys:String x:Key="Main_Device_Block">Tamaño Bloque</sys:String>
     <sys:String x:Key="Main_Device_gp">Dispositivo</sys:String>
     <sys:String x:Key="Main_Device_GPU_ID">ID de GPU</sys:String>
     <!-- Tabs -->
     <sys:String x:Key="MainTab_Preferences">Preferencias</sys:String>
     <!-- Tab:Preferences -->
-    <sys:String x:Key="Main_checkStore_output_dir">Guardar última ubicación de salida</sys:String>
+    <sys:String x:Key="Main_checkStore_output_dir">Guardar última ubicación de destino</sys:String>
     <sys:String x:Key="Main_checkOutput_no_overwirit">No sobreescribir archivos</sys:String>
-    <sys:String x:Key="Main_checkSoundBeep">Reproducir tono al finalizar procesamiento</sys:String>
-    <sys:String x:Key="Main_checkPrecision_fp32">Ejecutar en modo de alta precisión (modo fp32)</sys:String>
+    <sys:String x:Key="Main_checkSoundBeep">Reproducir tono al finalizar</sys:String>
+    <sys:String x:Key="Main_checkPrecision_fp32">Ejecutar procesado de alta precisión (modo fp32)</sys:String>
     <sys:String x:Key="Main_checkAlphachannel_ImageMagick">Separar canal de transparencia (alpha) con ImageMagick</sys:String>
-    <sys:String x:Key="Main_checkKeep_aspect_ratio">Keep aspect ratio</sys:String>
+    <sys:String x:Key="Main_checkKeep_aspect_ratio">Mantener relación de aspecto</sys:String>
     <!-- Run button -->
-    <sys:String x:Key="Main_btnRun">Ejecutar</sys:String>
+    <sys:String x:Key="Main_btnRun">Ejecutar!</sys:String>
     <!-- Abort button -->
     <sys:String x:Key="Main_btnAbort">Abortar</sys:String>
 </ResourceDictionary>
