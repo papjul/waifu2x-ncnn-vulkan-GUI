@@ -331,8 +331,8 @@ namespace waifu2x_ncnn_vulkan_gui
             string msg =
                 "Multilingual GUI for waifu2x-ncnn-vulkan\n" +
                 "f11894\n" +
-                "Version 2.1.0.2\n" +
-                "BuildDate: 2022/05/07\n" +
+                "Version 2.1.0.3\n" +
+                "BuildDate: 2022/06/26\n" +
                 "License: MIT License";
             MessageBox.Show(msg);
         }
@@ -901,7 +901,7 @@ namespace waifu2x_ncnn_vulkan_gui
                     {
                         System.Media.SystemSounds.Beep.Play();
                         CLIOutput.Dispatcher.Invoke(() => CLIOutput.Focus(), DispatcherPriority.Background);
-                        CLIOutput.Dispatcher.Invoke(() => this.CLIOutput.AppendText("Output file could not be found.\ninput " + input_image + "\noutput " + output_final + "\n\n"), DispatcherPriority.Background);
+                        CLIOutput.Dispatcher.Invoke(() => this.CLIOutput.AppendText("ERROR: Output file could not be found.\ninput " + input_image + "\noutput " + output_final + "\n\n"), DispatcherPriority.Background);
                         CLIOutput.Dispatcher.Invoke(() => CLIOutput.Select(CLIOutput.Text.Length, 0), DispatcherPriority.Background);
                         try
                         {
