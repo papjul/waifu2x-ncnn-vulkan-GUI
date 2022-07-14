@@ -40,6 +40,7 @@
     <sys:String x:Key="Main_Mode_Model_CUnet">2D illustration (CUnet Model)</sys:String>
     <sys:String x:Key="Main_Mode_Model_UpRGB">2D illustration (UpRGB Model)</sys:String> 
     <sys:String x:Key="Main_Mode_Model_UpPhoto">Photo (UpPhoto Model)</sys:String> 
+    <sys:String x:Key="Main_Mode_Model_RealCugan">2D illustration (Real-CUGAN)</sys:String> 
     <sys:String x:Key="Main_Device_Block">Block Size</sys:String>
     <sys:String x:Key="Main_Device_gp">Device</sys:String>
     <sys:String x:Key="Main_Device_GPU_ID">GPU ID</sys:String>

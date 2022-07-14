@@ -105,6 +105,7 @@
                                 <RadioButton Tag="models-cunet" Name="btnCUnet" Margin="2" Content="{DynamicResource ResourceKey=Main_Mode_Model_CUnet}" Checked="OnModelChecked"></RadioButton>
                                 <RadioButton Tag="models-upconv_7_anime_style_art_rgb" Name="btnUpRGB" Margin="2" Content="{DynamicResource ResourceKey=Main_Mode_Model_UpRGB}" Checked="OnModelChecked"></RadioButton>
                                 <RadioButton Tag="models-upconv_7_photo" Name="btnUpPhoto" Margin="2" Content="{DynamicResource ResourceKey=Main_Mode_Model_UpPhoto}" Checked="OnModelChecked"></RadioButton>
+                                <RadioButton Tag="models-se" Name="btnRealCugan" Margin="2" Content="{DynamicResource ResourceKey=Main_Mode_Model_RealCugan}" Checked="OnModelChecked"></RadioButton>
                             </StackPanel>
                         </GroupBox>
                         <GroupBox Name="gpBlock" Header="{DynamicResource ResourceKey=Main_Device_Block}" Padding="3" Margin="3">
