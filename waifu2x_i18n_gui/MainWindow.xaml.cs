@@ -886,14 +886,13 @@ namespace waifu2x_ncnn_vulkan_gui
 
                     process.StartInfo = startInfo;
                     process.Start();
-                    string stderr = process.StandardError.ReadToEnd();
-                    string stdout = process.StandardOutput.ReadToEnd();
+                    string stdout = process.StandardOutput.ReadToEnd() + process.StandardError.ReadToEnd();
                     process.WaitForExit();
                     if (process.ExitCode != 0) if (Cancel == false)
                         {
                             System.Media.SystemSounds.Beep.Play();
                             CLIOutput.Dispatcher.Invoke(() => CLIOutput.Focus(), DispatcherPriority.Background);
-                            CLIOutput.Dispatcher.Invoke(() => this.CLIOutput.AppendText("Error: The process failed and will be retried.\ncmd.exe " + startInfo.Arguments + "\n" + stderr + "\n"), DispatcherPriority.Background);
+                            CLIOutput.Dispatcher.Invoke(() => this.CLIOutput.AppendText("Error: The process failed and will be retried.\ncmd.exe " + startInfo.Arguments + "\n" + stdout + "\n"), DispatcherPriority.Background);
                             CLIOutput.Dispatcher.Invoke(() => CLIOutput.Select(CLIOutput.Text.Length, 0), DispatcherPriority.Background);
                         }
                     if (scale_ratio_local != 1)
