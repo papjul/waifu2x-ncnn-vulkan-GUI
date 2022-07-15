@@ -41,6 +41,9 @@
     <sys:String x:Key="Main_Mode_Model_UpRGB">2D 일러스트(UpRGB방식)</sys:String> 
     <sys:String x:Key="Main_Mode_Model_UpPhoto">Photo(UpPhoto방식)</sys:String> 
     <sys:String x:Key="Main_Mode_Model_RealCugan">2D 일러스트(Real-CUGAN)</sys:String> 
+    <sys:String x:Key="Main_Mode_Model_RealEsrgan_x4plus">Photo(realesrgan-x4plus)</sys:String> 
+    <sys:String x:Key="Main_Mode_Model_RealEsrnet_x4plus">Photo(realesrnet-x4plus)</sys:String> 
+    <sys:String x:Key="Main_Mode_Model_RealEsrgan_x4plus_Anime">2D 일러스트(realesrgan-x4plus-anime)</sys:String> 
     <sys:String x:Key="Main_Device_Block">조각 크기</sys:String>
     <sys:String x:Key="Main_Device_gp">장치</sys:String>
     <sys:String x:Key="Main_Device_GPU_ID">GPU ID</sys:String>

@@ -40,7 +40,10 @@
     <sys:String x:Key="Main_Mode_Model_CUnet">二次元イラスト(CUnetモデル)</sys:String>
     <sys:String x:Key="Main_Mode_Model_UpRGB">二次元イラスト(UpRGBモデル)</sys:String> 
     <sys:String x:Key="Main_Mode_Model_UpPhoto">写真・アニメ(UpPhotoモデル)</sys:String> 
-    <sys:String x:Key="Main_Mode_Model_RealCugan">二次元イラスト(Real-CUGAN)</sys:String> 
+    <sys:String x:Key="Main_Mode_Model_RealCugan">アニメ(Real-CUGAN)</sys:String> 
+    <sys:String x:Key="Main_Mode_Model_RealEsrgan_x4plus">写真(realesrgan-x4plus)</sys:String> 
+    <sys:String x:Key="Main_Mode_Model_RealEsrnet_x4plus">写真(realesrnet-x4plus)</sys:String> 
+    <sys:String x:Key="Main_Mode_Model_RealEsrgan_x4plus_Anime">二次元イラスト・アニメ(realesrgan-x4plus-anime)</sys:String> 
     <sys:String x:Key="Main_Device_Block">分割サイズ</sys:String>
     <sys:String x:Key="Main_Device_gp">デバイス</sys:String>
     <sys:String x:Key="Main_Device_GPU_ID">GPU ID</sys:String>

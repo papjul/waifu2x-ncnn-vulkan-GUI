@@ -41,6 +41,9 @@
     <sys:String x:Key="Main_Mode_Model_UpRGB">Ilustração 2D (Modelo UpRGB)</sys:String> 
     <sys:String x:Key="Main_Mode_Model_UpPhoto">Foto (Modelo UpPhoto)</sys:String> 
     <sys:String x:Key="Main_Mode_Model_RealCugan">Ilustração 2D (Real-CUGAN)</sys:String> 
+    <sys:String x:Key="Main_Mode_Model_RealEsrgan_x4plus">Foto (realesrgan-x4plus)</sys:String> 
+    <sys:String x:Key="Main_Mode_Model_RealEsrnet_x4plus">Foto (realesrnet-x4plus)</sys:String> 
+    <sys:String x:Key="Main_Mode_Model_RealEsrgan_x4plus_Anime">Ilustração 2D (realesrgan-x4plus-anime)</sys:String> 
     <sys:String x:Key="Main_Device_Block">Tamanho do Bloco</sys:String>
     <sys:String x:Key="Main_Device_gp">Dispositivo</sys:String>
     <sys:String x:Key="Main_Device_GPU_ID">ID da GPU</sys:String>
