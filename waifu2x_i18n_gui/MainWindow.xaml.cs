@@ -932,6 +932,7 @@ namespace waifu2x_ncnn_vulkan_gui
                 } 
                 else 
                 {
+                    if (Cancel == true) return;
                     if (param_outformat.ToString() == "png" && Magick_resize_option.Trim() == "")
                     {
                         try
