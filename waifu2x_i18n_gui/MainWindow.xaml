@@ -6,9 +6,9 @@
         xmlns:local="clr-namespace:waifu2x_ncnn_vulkan_gui"
         mc:Ignorable="d"
         Closing="MainWindow_Closing"  
-        Height="590" Width="1057"
-        MinHeight="610" MinWidth="1160"
-        MaxHeight="610" MaxWidth="1160"
+        Height="590" Width="1177"
+        MinHeight="610" MinWidth="1280"
+        MaxHeight="610" MaxWidth="1280"
         ResizeMode="CanMinimize"
         Title="{DynamicResource ResourceKey=MainWnd_Title}" SizeToContent="WidthAndHeight" Background="LightGray">
     <Grid>
@@ -43,16 +43,16 @@
         </Menu>
         <TabControl Grid.Row="1" Grid.RowSpan="3" Grid.ColumnSpan="4" >
             <TabItem Header="{DynamicResource ResourceKey=MainTab_IO}">
-                <StackPanel Orientation="Vertical" Margin="3" MinWidth="1133" MinHeight="250">
+                <StackPanel Orientation="Vertical" Margin="3" MinWidth="1253" MinHeight="250">
                     <StackPanel Orientation="Horizontal" Margin="3" HorizontalAlignment="Right">
                         <Label Target="{Binding ElementName=txtSrcPath}" HorizontalAlignment="Right" Content="{DynamicResource ResourceKey=Main_IO_SrcPath}"></Label>
-                        <TextBox Name="txtSrcPath" MinWidth="820" MaxWidth="820" MaxHeight="100" MinHeight="100" AllowDrop="True" PreviewDragOver="On_DragOver" PreviewDragEnter="On_DragOver" PreviewDrop="On_SrcDrop" ToolTip="{DynamicResource ResourceKey=Main_IO_Src_Tooltip}" VerticalScrollBarVisibility="Visible"></TextBox>
+                        <TextBox Name="txtSrcPath" MinWidth="940" MaxWidth="940" MaxHeight="100" MinHeight="100" AllowDrop="True" PreviewDragOver="On_DragOver" PreviewDragEnter="On_DragOver" PreviewDrop="On_SrcDrop" ToolTip="{DynamicResource ResourceKey=Main_IO_Src_Tooltip}" VerticalScrollBarVisibility="Visible"></TextBox>
                         <Button Name="btnOpenSrc" MinWidth="90" MaxWidth="90" HorizontalAlignment="Right" Content="{DynamicResource ResourceKey=Main_IO_btnSrc}" Click="OnBtnSrc"></Button>
                         <Button Name="btnSrcClear" MinWidth="90" MaxWidth="90" HorizontalAlignment="Right" Content="{DynamicResource ResourceKey=Main_IO_SrcClear}" Click="OnSrcClear"></Button>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="3" HorizontalAlignment="Right">
                         <Label Target="{Binding ElementName=txtDstPath}" HorizontalAlignment="Right" Content="{DynamicResource ResourceKey=Main_IO_DstPath}"></Label>
-                        <TextBox Name="txtDstPath" MinWidth="820" MaxWidth="820" AllowDrop="True" PreviewDragEnter="On_DragOver" PreviewDragOver="On_DragOver" PreviewDrop="On_DstDrop" ToolTip="{DynamicResource ResourceKey=Main_IO_Dst_Tooltip}"></TextBox>
+                        <TextBox Name="txtDstPath" MinWidth="940" MaxWidth="940" AllowDrop="True" PreviewDragEnter="On_DragOver" PreviewDragOver="On_DragOver" PreviewDrop="On_DstDrop" ToolTip="{DynamicResource ResourceKey=Main_IO_Dst_Tooltip}"></TextBox>
                         <Button Name="btnOpenDst" MinWidth="90" MaxWidth="90" HorizontalAlignment="Right" Content="{DynamicResource ResourceKey=Main_IO_btnDst}" Click="OnBtnDst"></Button>
                         <Button Name="btnDstClear" MinWidth="90" MaxWidth="90" HorizontalAlignment="Right" Content="{DynamicResource ResourceKey=Main_IO_DstClear}" Click="OnDstClear"></Button>
                     </StackPanel>
@@ -106,7 +106,9 @@
                                     <ComboBoxItem Tag="models-cunet" Content="{DynamicResource ResourceKey=Main_Mode_Model_CUnet}" IsSelected="True" Selected="OnModelChecked"/>
                                     <ComboBoxItem Tag="models-upconv_7_anime_style_art_rgb" Content="{DynamicResource ResourceKey=Main_Mode_Model_UpRGB}" Selected="OnModelChecked" />
                                     <ComboBoxItem Tag="models-upconv_7_photo" Content="{DynamicResource ResourceKey=Main_Mode_Model_UpPhoto}" Selected="OnModelChecked"/>
-                                    <ComboBoxItem Tag="models-se" Content="{DynamicResource ResourceKey=Main_Mode_Model_RealCugan}" Selected="OnModelChecked"/>
+                                    <Separator/>
+                                    <ComboBoxItem Tag="models-se" Content="{DynamicResource ResourceKey=Main_Mode_Model_RealCugan_se}" Selected="OnModelChecked"/>
+                                    <Separator/>
                                     <ComboBoxItem Tag="realesrgan-x4plus" Content="{DynamicResource ResourceKey=Main_Mode_Model_RealEsrgan_x4plus}" Selected="OnModelChecked"/>
                                     <ComboBoxItem Tag="realesrnet-x4plus" Content="{DynamicResource ResourceKey=Main_Mode_Model_RealEsrnet_x4plus}" Selected="OnModelChecked"/>
                                     <ComboBoxItem Tag="realesrgan-x4plus-anime" Content="{DynamicResource ResourceKey=Main_Mode_Model_RealEsrgan_x4plus_Anime}" Selected="OnModelChecked"/>
@@ -137,7 +139,7 @@
                 </StackPanel>
             </TabItem>
             <TabItem Header="{DynamicResource ResourceKey=MainTab_Preferences}">
-                <StackPanel Orientation="Vertical" Margin="3" MinWidth="1133" MinHeight="312">
+                <StackPanel Orientation="Vertical" Margin="3" MinWidth="1253" MinHeight="312">
                     <GroupBox Name="gpDandD" Padding="3" Margin="3">
                         <StackPanel Orientation="Vertical" Margin="3">
                             <CheckBox Name="checkStore_output_dir" Margin="3" Content="{DynamicResource ResourceKey=Main_checkStore_output_dir}" ></CheckBox>
@@ -153,8 +155,8 @@
         </TabControl>
         <Button Name="btnRun" Grid.Column="3" Grid.Row="4" MaxHeight="240" Padding="5" Content="{DynamicResource ResourceKey=Main_btnRun}" Click="OnRun"></Button>
         <Button Name="btnAbort" Grid.Column="2" Grid.Row="4" MaxHeight="240" Padding="5" IsEnabled="False" Content="{DynamicResource ResourceKey=Main_btnAbort}" Click="OnAbort"></Button>
-        <ProgressBar x:Name="prgbar" HorizontalAlignment="Left" Height="40" Margin="3" VerticalAlignment="Top" Width="1149" Background="#7F000000" Foreground="#4CF3F3F3" Grid.ColumnSpan="3" Grid.Row="5" Grid.Column="1" />
-        <Label x:Name="pLabel" Content="" HorizontalAlignment="Left" Margin="10" VerticalAlignment="Top" Foreground="White" HorizontalContentAlignment="Center" Grid.ColumnSpan="2" Width="1149" Grid.Column="1" Grid.Row="5" />
-        <TextBox Name="CLIOutput" Grid.Column="0" Grid.Row="5"  Grid.ColumnSpan="4" MinHeight="120" MaxHeight="120" MinWidth="1089" MaxWidth="1149" Margin="1,48,5,-48" Padding="3" Background="White" IsReadOnly="False" TextWrapping="Wrap"  VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">Error Log</TextBox>
+        <ProgressBar x:Name="prgbar" HorizontalAlignment="Left" Height="40" Margin="3" VerticalAlignment="Top" Width="1269" Background="#7F000000" Foreground="#4CF3F3F3" Grid.ColumnSpan="3" Grid.Row="5" Grid.Column="1" />
+        <Label x:Name="pLabel" Content="" HorizontalAlignment="Left" Margin="10" VerticalAlignment="Top" Foreground="White" HorizontalContentAlignment="Center" Grid.ColumnSpan="2" Width="1269" Grid.Column="1" Grid.Row="5" />
+        <TextBox Name="CLIOutput" Grid.Column="0" Grid.Row="5"  Grid.ColumnSpan="4" MinHeight="120" MaxHeight="120" MinWidth="1219" MaxWidth="1269" Margin="1,48,5,-48" Padding="3" Background="White" IsReadOnly="False" TextWrapping="Wrap"  VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">Error Log</TextBox>
     </Grid>
 </Window>

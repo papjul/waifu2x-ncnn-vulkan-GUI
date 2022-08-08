@@ -1272,7 +1272,7 @@ namespace waifu2x_ncnn_vulkan_gui
                 if (param_model.ToString().Replace("-m ", "") == "models-upconv_7_photo")
                 { param_dst_suffix.Append("(UpPhoto)"); }
                 if (param_model.ToString().Replace("-m ", "") == "models-se")
-                { param_dst_suffix.Append("(Real-CUGAN)"); }
+                { param_dst_suffix.Append("(Real-CUGAN-se)"); }
                 if (param_model.ToString().Replace("-n ", "") == "realesrgan-x4plus")
                 { param_dst_suffix.Append("(realesrgan-x4plus)"); }
                 if (param_model.ToString().Replace("-n ", "") == "realesrnet-x4plus")
