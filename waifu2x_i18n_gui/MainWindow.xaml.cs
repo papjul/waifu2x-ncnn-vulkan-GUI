@@ -999,22 +999,22 @@ namespace waifu2x_ncnn_vulkan_gui
             binary_type.Clear();
             if (param_model.ToString().Replace("-n ", "") == "realesrgan-x4plus" || param_model.ToString().Replace("-n ", "") == "realesrnet-x4plus" || param_model.ToString().Replace("-n ", "") == "realesrgan-x4plus-anime")
             {
-                if (!File.Exists("realcugan-ncnn-vulkan.exe"))
+                if (!File.Exists("realesrgan-ncnn-vulkan\\realesrgan-ncnn-vulkan.exe"))
                 {
-                    MessageBox.Show(@"realesrgan-ncnn-vulkan.exe is missing!");
+                    MessageBox.Show(@"realesrgan-ncnn-vulkan\\realesrgan-ncnn-vulkan.exe is missing!");
                     return;
                 }
-                binary_path.Append(".\\realesrgan-ncnn-vulkan.exe ");
+                binary_path.Append(".\\realesrgan-ncnn-vulkan\\realesrgan-ncnn-vulkan.exe ");
                 binary_type.Append("realesrgan");
             }
             else if (param_model.ToString().Replace("-m ", "") == "models-se")
             {
-                if (!File.Exists("realcugan-ncnn-vulkan.exe"))
+                if (!File.Exists("realcugan-ncnn-vulkan\\realcugan-ncnn-vulkan.exe"))
                 {
-                    MessageBox.Show(@"realcugan-ncnn-vulkan.exe is missing!");
+                    MessageBox.Show(@"realcugan-ncnn-vulkan\\realcugan-ncnn-vulkan.exe is missing!");
                     return;
                 }
-                binary_path.Append(".\\realcugan-ncnn-vulkan.exe ");
+                binary_path.Append(".\\realcugan-ncnn-vulkan\\realcugan-ncnn-vulkan.exe ");
                 binary_type.Append("realcugan");
             } 
             else
@@ -1022,21 +1022,21 @@ namespace waifu2x_ncnn_vulkan_gui
                 binary_type.Append("waifu2x");
                 if (checkPrecision_fp32.IsChecked == true)
                 {
-                    if (!File.Exists("fp32\\waifu2x-ncnn-vulkan.exe"))
+                    if (!File.Exists("waifu2x-ncnn-vulkan\\waifu2x-ncnn-vulkan-fp32.exe"))
                     {
-                        MessageBox.Show(@"fp32\\waifu2x-ncnn-vulkan.exe is missing!");
+                        MessageBox.Show(@"waifu2x-ncnn-vulkan\\waifu2x-ncnn-vulkan-fp32.exe is missing!");
                         return;
                     }
-                    binary_path.Append(".\\fp32\\waifu2x-ncnn-vulkan.exe ");
+                    binary_path.Append(".\\waifu2x-ncnn-vulkan\\waifu2x-ncnn-vulkan-fp32.exe ");
                 }
                 else
                 {
-                    if (!File.Exists("waifu2x-ncnn-vulkan.exe"))
+                    if (!File.Exists("waifu2x-ncnn-vulkan\\waifu2x-ncnn-vulkan.exe"))
                     {
-                        MessageBox.Show(@"waifu2x-ncnn-vulkan.exe is missing!");
+                        MessageBox.Show(@"waifu2x-ncnn-vulkan\\waifu2x-ncnn-vulkan.exe is missing!");
                         return;
                     }
-                    binary_path.Append(".\\waifu2x-ncnn-vulkan.exe ");
+                    binary_path.Append(".\\waifu2x-ncnn-vulkan\\waifu2x-ncnn-vulkan.exe ");
                 }
             }
 
