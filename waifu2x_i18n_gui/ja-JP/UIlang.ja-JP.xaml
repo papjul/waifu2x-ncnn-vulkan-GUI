@@ -41,6 +41,7 @@
     <sys:String x:Key="Main_Mode_Model_UpRGB">二次元イラスト(waifu2x UpRGBモデル)</sys:String> 
     <sys:String x:Key="Main_Mode_Model_UpPhoto">写真・アニメ(waifu2x UpPhotoモデル)</sys:String> 
     <sys:String x:Key="Main_Mode_Model_RealCugan_se">アニメ(Real-CUGAN seモデル)</sys:String> 
+    <sys:String x:Key="Main_Mode_Model_RealCugan_pro">アニメ(Real-CUGAN proモデル)</sys:String> 
     <sys:String x:Key="Main_Mode_Model_RealEsrgan_x4plus">写真(Real-ESRGAN realesrgan-x4plusモデル)</sys:String> 
     <sys:String x:Key="Main_Mode_Model_RealEsrnet_x4plus">写真(Real-ESRGAN realesrnet-x4plusモデル)</sys:String> 
     <sys:String x:Key="Main_Mode_Model_RealEsrgan_x4plus_Anime">二次元イラスト・アニメ(Real-ESRGAN realesrgan-x4plus-animeモデル)</sys:String> 

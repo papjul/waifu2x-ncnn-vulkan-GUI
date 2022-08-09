@@ -108,6 +108,7 @@
                                     <ComboBoxItem Tag="models-upconv_7_photo" Content="{DynamicResource ResourceKey=Main_Mode_Model_UpPhoto}" Selected="OnModelChecked"/>
                                     <Separator/>
                                     <ComboBoxItem Tag="models-se" Content="{DynamicResource ResourceKey=Main_Mode_Model_RealCugan_se}" Selected="OnModelChecked"/>
+                                    <ComboBoxItem Tag="models-pro" Content="{DynamicResource ResourceKey=Main_Mode_Model_RealCugan_pro}" Selected="OnModelChecked"/>
                                     <Separator/>
                                     <ComboBoxItem Tag="realesrgan-x4plus" Content="{DynamicResource ResourceKey=Main_Mode_Model_RealEsrgan_x4plus}" Selected="OnModelChecked"/>
                                     <ComboBoxItem Tag="realesrnet-x4plus" Content="{DynamicResource ResourceKey=Main_Mode_Model_RealEsrnet_x4plus}" Selected="OnModelChecked"/>

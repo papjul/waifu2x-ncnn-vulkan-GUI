@@ -483,6 +483,17 @@ namespace waifu2x_ncnn_vulkan_gui
                 btnModeNoise.IsEnabled = true;
                 btnModeAutoScale.IsEnabled = true;
             }
+            if (optsrc.Tag.ToString() == "models-pro")
+            {
+                btnDenoise0.IsChecked = true;
+                btnDenoise1.IsEnabled = false;
+                btnDenoise2.IsEnabled = false;
+            }
+            else
+            {
+                btnDenoise1.IsEnabled = true;
+                btnDenoise2.IsEnabled = true;
+            }
         }
         private async void OnAbort(object sender, RoutedEventArgs e)
         {
@@ -789,10 +800,18 @@ namespace waifu2x_ncnn_vulkan_gui
                     mag_value = "4";
                     r = r * 4;
                 }
-                else if (binary_type.ToString() == "realcugan" && r * 4 <= scale_ratio_local)
+                else if (binary_type.ToString() == "realcugan")
                 {
-                    mag_value = "4";
-                    r = r * 4;
+                    if (param_model2.ToString().Replace("-m ", "") == "models-se" && noise_level_temp != "-n 1" && noise_level_temp != "-n 2" && r * 4 <= scale_ratio_local)
+                    {
+                        mag_value = "4";
+                        r = r * 4;
+                    }
+                    else
+                    {
+                        mag_value = "2";
+                        r = r * 2;
+                    }
                 }
                 else
                 {
@@ -909,10 +928,19 @@ namespace waifu2x_ncnn_vulkan_gui
                         mag_value = "4";
                         r = r * 4;
                     } 
-                    else if (binary_type.ToString() == "realcugan" && r * 4 <= scale_ratio_local)
+                    else if (binary_type.ToString() == "realcugan")
                     {
-                        mag_value = "4";
-                        r = r * 4;
+                        
+                        if (param_model2.ToString().Replace("-m ", "") == "models-se" && noise_level_temp != "-n 1" && noise_level_temp != "-n 2" && r * 4 <= scale_ratio_local)
+                        {
+                            mag_value = "4";
+                            r = r * 4;
+                        }
+                        else
+                        {
+                            mag_value = "2";
+                            r = r * 2;
+                        }
                     }
                     else
                     {
@@ -1007,7 +1035,7 @@ namespace waifu2x_ncnn_vulkan_gui
                 binary_path.Append(".\\realesrgan-ncnn-vulkan\\realesrgan-ncnn-vulkan.exe ");
                 binary_type.Append("realesrgan");
             }
-            else if (param_model.ToString().Replace("-m ", "") == "models-se")
+            else if (param_model.ToString().Replace("-m ", "") == "models-se" || param_model.ToString().Replace("-m ", "") == "models-pro")
             {
                 if (!File.Exists("realcugan-ncnn-vulkan\\realcugan-ncnn-vulkan.exe"))
                 {
@@ -1273,6 +1301,8 @@ namespace waifu2x_ncnn_vulkan_gui
                 { param_dst_suffix.Append("(UpPhoto)"); }
                 if (param_model.ToString().Replace("-m ", "") == "models-se")
                 { param_dst_suffix.Append("(Real-CUGAN-se)"); }
+                if (param_model.ToString().Replace("-m ", "") == "models-pro")
+                { param_dst_suffix.Append("(Real-CUGAN-pro)"); }
                 if (param_model.ToString().Replace("-n ", "") == "realesrgan-x4plus")
                 { param_dst_suffix.Append("(realesrgan-x4plus)"); }
                 if (param_model.ToString().Replace("-n ", "") == "realesrnet-x4plus")

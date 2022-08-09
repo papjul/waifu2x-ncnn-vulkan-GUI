@@ -41,6 +41,7 @@
     <sys:String x:Key="Main_Mode_Model_UpRGB">2D插圖 (waifu2x UpRGB 模型)</sys:String>
     <sys:String x:Key="Main_Mode_Model_UpPhoto">照片 (waifu2x UpPhoto 模型)</sys:String>
     <sys:String x:Key="Main_Mode_Model_RealCugan_se">2D插圖 (Real-CUGAN se模型)</sys:String> 
+    <sys:String x:Key="Main_Mode_Model_RealCugan_pro">2D插圖 (Real-CUGAN pro模型)</sys:String> 
     <sys:String x:Key="Main_Mode_Model_RealEsrgan_x4plus">照片 (Real-ESRGANrealesrgan-x4plus 模型)</sys:String> 
     <sys:String x:Key="Main_Mode_Model_RealEsrnet_x4plus">照片 (Real-ESRGAN realesrnet-x4plus模型 )</sys:String> 
     <sys:String x:Key="Main_Mode_Model_RealEsrgan_x4plus_Anime">2D插圖 (Real-ESRGAN realesrgan-x4plus-anime模型 )</sys:String> 

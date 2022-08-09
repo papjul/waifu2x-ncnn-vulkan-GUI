@@ -41,6 +41,7 @@
     <sys:String x:Key="Main_Mode_Model_UpRGB">Illustración 2D (waifu2x Modelo UpRGB)</sys:String> 
     <sys:String x:Key="Main_Mode_Model_UpPhoto">Foto (waifu2x Modelo UpPhoto)</sys:String> 
     <sys:String x:Key="Main_Mode_Model_RealCugan_se">Illustración 2D (Real-CUGAN Modelo se)</sys:String> 
+    <sys:String x:Key="Main_Mode_Model_RealCugan_pro">Illustración 2D (Real-CUGAN Modelo pro)</sys:String> 
     <sys:String x:Key="Main_Mode_Model_RealEsrgan_x4plus">Foto (Real-ESRGAN Modelo realesrgan-x4plus)</sys:String> 
     <sys:String x:Key="Main_Mode_Model_RealEsrnet_x4plus">Foto (Real-ESRGAN Modelo realesrnet-x4plus)</sys:String> 
     <sys:String x:Key="Main_Mode_Model_RealEsrgan_x4plus_Anime">Illustración 2D (Real-ESRGAN Modelo realesrgan-x4plus-anime)</sys:String> 
