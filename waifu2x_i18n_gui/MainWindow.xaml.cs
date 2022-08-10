@@ -509,7 +509,7 @@ namespace waifu2x_ncnn_vulkan_gui
             Cancel = true;
             this.btnRun.IsEnabled = true;
             this.btnAbort.IsEnabled = false;
-            string[] process_array = new string[4] { "waifu2x-ncnn-vulkan", "realcugan-ncnn-vulkan", "realesrgan-ncnn-vulkan", "magick" };
+            string[] process_array = new string[6] { "waifu2x-ncnn-vulkan", "waifu2x-ncnn-vulkan-fp32", "realcugan-ncnn-vulkan", "realesrgan-ncnn-vulkan", "realsr-ncnn-vulkan", "magick" };
             try
             {
                 for (int i = 0; i < process_array.Length; i++)
