@@ -474,7 +474,16 @@ namespace waifu2x_ncnn_vulkan_gui
                 btnModeNoiseScale.IsEnabled = false;
                 btnModeNoise.IsEnabled = false;
                 btnModeAutoScale.IsEnabled = false;
-            } 
+            }
+            else if (optsrc.Tag.ToString() == "models-DF2K" || optsrc.Tag.ToString() == "models-DF2K_JPEG")
+            {
+                param_model.Append("-m ");
+                param_model.Append(optsrc.Tag.ToString());
+                btnModeScale.IsChecked = true;
+                btnModeNoiseScale.IsEnabled = false;
+                btnModeNoise.IsEnabled = false;
+                btnModeAutoScale.IsEnabled = false;
+            }
             else
             {
                 param_model.Append("-m ");
@@ -676,15 +685,17 @@ namespace waifu2x_ncnn_vulkan_gui
             {
                 Guid g = System.Guid.NewGuid();
                 string random32 = (g.ToString("N").Substring(0, 32));
-                if (binary_type.ToString() != "realesrgan")
+                if (binary_type.ToString() == "waifu2x" || binary_type.ToString() == "realcugan")
                 { 
-                    noise_level_temp = param_denoise2.ToString();
                     noise_level_temp2 = "-n -1";
-                }
-                
-                if (binary_type.ToString() != "realesrgan" && !System.Text.RegularExpressions.Regex.IsMatch(System.IO.Path.GetExtension(input_image), @"\.jpe?g", RegexOptions.IgnoreCase) && param_mode2.ToString() == "auto_scale")
-                {
-                     noise_level_temp = "-n -1";
+                    if (!System.Text.RegularExpressions.Regex.IsMatch(System.IO.Path.GetExtension(input_image), @"\.jpe?g", RegexOptions.IgnoreCase) && param_mode2.ToString() == "auto_scale")
+                    {
+                        noise_level_temp = "-n -1";
+                    }
+                    else
+                    {
+                        noise_level_temp = param_denoise2.ToString();
+                    }
                 }
 
                 bool AlphaHas = false;
@@ -795,7 +806,12 @@ namespace waifu2x_ncnn_vulkan_gui
                 int run_times = 1;
                 string mag_value = "2";
 
-                if (binary_type.ToString() == "realesrgan")
+                if (binary_type.ToString() == "realsr")
+                {
+                    mag_value = "4";
+                    r = r * 4;
+                }
+                else if (binary_type.ToString() == "realesrgan")
                 {
                     mag_value = "4";
                     r = r * 4;
@@ -923,7 +939,12 @@ namespace waifu2x_ncnn_vulkan_gui
                     if (r >= scale_ratio_local) break;
                     if (mag_value == "4") r2 = r2 * 4;
                     if (mag_value == "2") r2 = r2 * 2;
-                    if (binary_type.ToString() == "realesrgan")
+                    if (binary_type.ToString() == "realsr")
+                    {
+                        mag_value = "4";
+                        r = r * 4;
+                    }
+                    else if (binary_type.ToString() == "realesrgan")
                     {
                         mag_value = "4";
                         r = r * 4;
@@ -1025,7 +1046,17 @@ namespace waifu2x_ncnn_vulkan_gui
             Cancel = false;
             binary_path.Clear();
             binary_type.Clear();
-            if (param_model.ToString().Replace("-n ", "") == "realesrgan-x4plus" || param_model.ToString().Replace("-n ", "") == "realesrnet-x4plus" || param_model.ToString().Replace("-n ", "") == "realesrgan-x4plus-anime")
+            if (param_model.ToString().Replace("-m ", "") == "models-DF2K" || param_model.ToString().Replace("-m ", "") == "models-DF2K_JPEG")
+            {
+                if (!File.Exists("realsr-ncnn-vulkan\\realsr-ncnn-vulkan.exe"))
+                {
+                    MessageBox.Show(@"realsr-ncnn-vulkan\\realsr-ncnn-vulkan.exe is missing!");
+                    return;
+                }
+                binary_path.Append(".\\realsr-ncnn-vulkan\\realsr-ncnn-vulkan.exe ");
+                binary_type.Append("realsr");
+            }
+            else if (param_model.ToString().Replace("-n ", "") == "realesrgan-x4plus" || param_model.ToString().Replace("-n ", "") == "realesrnet-x4plus" || param_model.ToString().Replace("-n ", "") == "realesrgan-x4plus-anime")
             {
                 if (!File.Exists("realesrgan-ncnn-vulkan\\realesrgan-ncnn-vulkan.exe"))
                 {
@@ -1309,6 +1340,10 @@ namespace waifu2x_ncnn_vulkan_gui
                 { param_dst_suffix.Append("(realesrnet-x4plus)"); }
                 if (param_model.ToString().Replace("-n ", "") == "realesrgan-x4plus-anime")
                 { param_dst_suffix.Append("(realesrgan-x4plus-anime)"); }
+                if (param_model.ToString().Replace("-m ", "") == "models-DF2K")
+                { param_dst_suffix.Append("(DF2K)"); }
+                if (param_model.ToString().Replace("-m ", "") == "models-DF2K_JPEG")
+                { param_dst_suffix.Append("(DF2K_JPEG)"); }
                 param_dst_suffix.Append("(");
                 param_dst_suffix.Append(param_mode2.ToString().Replace("-m ", ""));
                 param_dst_suffix.Append(")");

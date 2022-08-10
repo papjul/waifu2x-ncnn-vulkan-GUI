@@ -113,6 +113,9 @@
                                     <ComboBoxItem Tag="realesrgan-x4plus" Content="{DynamicResource ResourceKey=Main_Mode_Model_RealEsrgan_x4plus}" Selected="OnModelChecked"/>
                                     <ComboBoxItem Tag="realesrnet-x4plus" Content="{DynamicResource ResourceKey=Main_Mode_Model_RealEsrnet_x4plus}" Selected="OnModelChecked"/>
                                     <ComboBoxItem Tag="realesrgan-x4plus-anime" Content="{DynamicResource ResourceKey=Main_Mode_Model_RealEsrgan_x4plus_Anime}" Selected="OnModelChecked"/>
+                                    <Separator/>
+                                    <ComboBoxItem Tag="models-DF2K" Content="{DynamicResource ResourceKey=Main_Mode_Model_RealSR_DF2K}" Selected="OnModelChecked"/>
+                                    <ComboBoxItem Tag="models-DF2K_JPEG" Content="{DynamicResource ResourceKey=Main_Mode_Model_RealSR_DF2K_JPEG}" Selected="OnModelChecked"/>
                                 </ComboBox>
                             </StackPanel>
                         </GroupBox>
