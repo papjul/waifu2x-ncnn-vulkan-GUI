@@ -466,7 +466,7 @@ namespace waifu2x_ncnn_vulkan_gui
         {
             ComboBoxItem optsrc = sender as ComboBoxItem;
             param_model.Clear();
-            if (optsrc.Tag.ToString() == "realesrgan-x4plus" || optsrc.Tag.ToString() == "realesrnet-x4plus" || optsrc.Tag.ToString() == "realesrgan-x4plus-anime")
+            if (optsrc.Tag.ToString() == "realesrgan-x4plus" || optsrc.Tag.ToString() == "realesrnet-x4plus" || optsrc.Tag.ToString() == "realesrgan-x4plus-anime" || optsrc.Tag.ToString() == "realesr-animevideov3")
             {
                 param_model.Append("-n ");
                 param_model.Append(optsrc.Tag.ToString());
@@ -813,8 +813,16 @@ namespace waifu2x_ncnn_vulkan_gui
                 }
                 else if (binary_type.ToString() == "realesrgan")
                 {
-                    mag_value = "4";
-                    r = r * 4;
+                    if (param_model2.ToString().Replace("-n ", "") == "realesr-animevideov3" && r * 2 >= scale_ratio_local)
+                    {
+                        mag_value = "2";
+                        r = r * 2;
+                    }
+                    else
+                    {
+                        mag_value = "4";
+                        r = r * 4;
+                    }
                 }
                 else if (binary_type.ToString() == "realcugan")
                 {
@@ -946,12 +954,19 @@ namespace waifu2x_ncnn_vulkan_gui
                     }
                     else if (binary_type.ToString() == "realesrgan")
                     {
-                        mag_value = "4";
-                        r = r * 4;
+                        if (param_model2.ToString().Replace("-n ", "") == "realesr-animevideov3" && r * 2 >= scale_ratio_local)
+                        {
+                            mag_value = "2";
+                            r = r * 2;
+                        }
+                        else
+                        {
+                            mag_value = "4";
+                            r = r * 4;
+                        }
                     } 
                     else if (binary_type.ToString() == "realcugan")
-                    {
-                        
+                    {         
                         if (param_model2.ToString().Replace("-m ", "") == "models-se" && noise_level_temp != "-n 1" && noise_level_temp != "-n 2" && r * 4 <= scale_ratio_local)
                         {
                             mag_value = "4";
@@ -1056,7 +1071,7 @@ namespace waifu2x_ncnn_vulkan_gui
                 binary_path.Append(".\\realsr-ncnn-vulkan\\realsr-ncnn-vulkan.exe ");
                 binary_type.Append("realsr");
             }
-            else if (param_model.ToString().Replace("-n ", "") == "realesrgan-x4plus" || param_model.ToString().Replace("-n ", "") == "realesrnet-x4plus" || param_model.ToString().Replace("-n ", "") == "realesrgan-x4plus-anime")
+            else if (param_model.ToString().Replace("-n ", "") == "realesrgan-x4plus" || param_model.ToString().Replace("-n ", "") == "realesrnet-x4plus" || param_model.ToString().Replace("-n ", "") == "realesrgan-x4plus-anime" || param_model.ToString().Replace("-n ", "") == "realesr-animevideov3")
             {
                 if (!File.Exists("realesrgan-ncnn-vulkan\\realesrgan-ncnn-vulkan.exe"))
                 {
@@ -1340,6 +1355,8 @@ namespace waifu2x_ncnn_vulkan_gui
                 { param_dst_suffix.Append("(realesrnet-x4plus)"); }
                 if (param_model.ToString().Replace("-n ", "") == "realesrgan-x4plus-anime")
                 { param_dst_suffix.Append("(realesrgan-x4plus-anime)"); }
+                if (param_model.ToString().Replace("-n ", "") == "realesr-animevideov3")
+                { param_dst_suffix.Append("(realesr-animevideov3)"); }
                 if (param_model.ToString().Replace("-m ", "") == "models-DF2K")
                 { param_dst_suffix.Append("(DF2K)"); }
                 if (param_model.ToString().Replace("-m ", "") == "models-DF2K_JPEG")

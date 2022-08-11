@@ -45,6 +45,7 @@
     <sys:String x:Key="Main_Mode_Model_RealEsrgan_x4plus">写真 (Real-ESRGAN realesrgan-x4plusモデル)</sys:String> 
     <sys:String x:Key="Main_Mode_Model_RealEsrnet_x4plus">写真 (Real-ESRGAN realesrnet-x4plusモデル)</sys:String> 
     <sys:String x:Key="Main_Mode_Model_RealEsrgan_x4plus_Anime">二次元イラスト・アニメ (Real-ESRGAN realesrgan-x4plus-animeモデル)</sys:String> 
+    <sys:String x:Key="Main_Mode_Model_RealEsr_animevideov3">アニメ (Real-ESRGAN realesr-animevideov3モデル)</sys:String> 
     <sys:String x:Key="Main_Mode_Model_RealSR_DF2K">写真 (RealSR DF2Kモデル)</sys:String> 
     <sys:String x:Key="Main_Mode_Model_RealSR_DF2K_JPEG">写真 (RealSR DF2K_JPEGモデル)</sys:String> 
     <sys:String x:Key="Main_Device_Block">分割サイズ</sys:String>
