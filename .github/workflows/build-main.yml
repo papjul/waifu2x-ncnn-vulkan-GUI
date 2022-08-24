@@ -1,0 +1,38 @@
+name: Build on main
+
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - id: commit
+      uses: pr-mpt/actions-commit-hash@v1
+      with:
+        commit: "${{ github.event.workflow_run.head_sha }}"
+        prefix: "sha-"
+    - name: build
+      shell: cmd
+      run: |
+        msbuild .\waifu2x_ncnn_vulkan_gui.sln /verbosity:normal
+        copy /y .\waifu2x_i18n_gui\bin\x64\Release\waifu2x_ncnn_vulkan_gui.exe .\
+        copy /y .\waifu2x_i18n_gui\ja-JP\UIlang.ja-JP.xaml .\
+        copy /y .\waifu2x_i18n_gui\en-US\UILang.en-US.xaml .\
+        copy /y .\waifu2x_i18n_gui\zh-CN\UIlang.zh-CN.xaml .\
+        copy /y .\waifu2x_i18n_gui\zh-TW\UIlang.zh-TW.xaml .\
+        copy /y .\waifu2x_i18n_gui\pt-BR\UIlang.pt-BR.xaml .\
+        copy /y .\waifu2x_i18n_gui\es-AR\UILang.es-AR.xaml .\
+        copy /y .\waifu2x_i18n_gui\ko-KR\UILang.ko-KR.xaml .\
+        7z a "waifu2x-ncnn-vulkan-GUI_${{ steps.commit.outputs.long }}.zip" waifu2x_ncnn_vulkan_gui.exe *.xml
+    - name: Upload result
+      uses: actions/upload-artifact@v2
+      with:
+        name: waifu2x-ncnn-vulkan-GUI
+        path: |
+          waifu2x-ncnn-vulkan-GUI_*.zip
