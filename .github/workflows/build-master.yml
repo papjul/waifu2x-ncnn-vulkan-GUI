@@ -19,7 +19,7 @@ jobs:
     - name: build
       shell: cmd
       run: |
-        msbuild .\waifu2x_ncnn_vulkan_gui.sln /verbosity:normal
+        msbuild .\waifu2x_ncnn_vulkan_gui.sln /verbosity:normal /p:Configuration=Release;Platform="x64"
         copy /y .\waifu2x_i18n_gui\bin\x64\Release\waifu2x_ncnn_vulkan_gui.exe .\
         copy /y .\waifu2x_i18n_gui\ja-JP\UIlang.ja-JP.xaml .\
         copy /y .\waifu2x_i18n_gui\en-US\UILang.en-US.xaml .\
