@@ -31,7 +31,7 @@ jobs:
     - name: Upload result
       uses: actions/upload-artifact@v2
       with:
-        name: waifu2x-ncnn-vulkan-GUI
+        name: waifu2x-ncnn-vulkan-GUI_${{ steps.commit.outputs.long }}
         path: |
           waifu2x_ncnn_vulkan_gui.exe
           *.xaml
