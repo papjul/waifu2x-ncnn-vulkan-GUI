@@ -28,10 +28,10 @@ jobs:
         copy /y .\waifu2x_i18n_gui\pt-BR\UIlang.pt-BR.xaml .\
         copy /y .\waifu2x_i18n_gui\es-AR\UILang.es-AR.xaml .\
         copy /y .\waifu2x_i18n_gui\ko-KR\UILang.ko-KR.xaml .\
-        7z a "waifu2x-ncnn-vulkan-GUI_${{ steps.commit.outputs.long }}.zip" waifu2x_ncnn_vulkan_gui.exe *.xml
     - name: Upload result
       uses: actions/upload-artifact@v2
       with:
         name: waifu2x-ncnn-vulkan-GUI
         path: |
-          waifu2x-ncnn-vulkan-GUI_*.zip
+          waifu2x_ncnn_vulkan_gui.exe
+          *.xaml
