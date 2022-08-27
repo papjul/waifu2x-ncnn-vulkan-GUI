@@ -325,8 +325,8 @@ namespace waifu2x_ncnn_vulkan_gui
             string msg =
                 "Multilingual GUI for waifu2x-ncnn-vulkan\n" +
                 "f11894\n" +
-                "Version 2.1.1.1\n" +
-                "BuildDate: 2022/08/11\n" +
+                "Version 2.1.1.2\n" +
+                "BuildDate: 2022/08/28\n" +
                 "License: MIT License";
             MessageBox.Show(msg);
         }
@@ -494,7 +494,8 @@ namespace waifu2x_ncnn_vulkan_gui
             }
             if (optsrc.Tag.ToString() == "models-pro")
             {
-                btnDenoise0.IsChecked = true;
+                if (param_denoise.ToString() == "1" || param_denoise.ToString() == "2")
+                { btnDenoise0.IsChecked = true; }
                 btnDenoise1.IsEnabled = false;
                 btnDenoise2.IsEnabled = false;
             }
