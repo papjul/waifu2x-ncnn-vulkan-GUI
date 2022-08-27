@@ -28,6 +28,7 @@ jobs:
         copy /y .\waifu2x_i18n_gui\pt-BR\UIlang.pt-BR.xaml .\
         copy /y .\waifu2x_i18n_gui\es-AR\UILang.es-AR.xaml .\
         copy /y .\waifu2x_i18n_gui\ko-KR\UILang.ko-KR.xaml .\
+        copy /y .\waifu2x_i18n_gui\fr-FR\UILang.fr-FR.xaml .\
     - name: Upload result
       uses: actions/upload-artifact@v2
       with:
