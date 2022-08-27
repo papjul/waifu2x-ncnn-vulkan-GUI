@@ -160,8 +160,8 @@
                 </StackPanel>
             </TabItem>
         </TabControl>
-        <Button Name="btnRun" Grid.Column="3" Grid.Row="4" MaxHeight="240" Padding="5" Content="{DynamicResource ResourceKey=Main_btnRun}" Click="OnRun"></Button>
-        <Button Name="btnAbort" Grid.Column="2" Grid.Row="4" MaxHeight="240" Padding="5" IsEnabled="False" Content="{DynamicResource ResourceKey=Main_btnAbort}" Click="OnAbort"></Button>
+        <Button Name="btnRun" Grid.Column="3" Grid.Row="4" MaxHeight="240" MinWidth="420" Padding="5" Content="{DynamicResource ResourceKey=Main_btnRun}" Click="OnRun"></Button>
+        <Button Name="btnAbort" Grid.Column="2" Grid.Row="4" MaxHeight="240" MinWidth="420" Padding="5" IsEnabled="False" Content="{DynamicResource ResourceKey=Main_btnAbort}" Click="OnAbort"></Button>
         <ProgressBar x:Name="prgbar" HorizontalAlignment="Left" Height="40" Margin="3" VerticalAlignment="Top" Width="1269" Background="#7F000000" Foreground="#4CF3F3F3" Grid.ColumnSpan="3" Grid.Row="5" Grid.Column="1" />
         <Label x:Name="pLabel" Content="" HorizontalAlignment="Left" Margin="10" VerticalAlignment="Top" Foreground="White" HorizontalContentAlignment="Center" Grid.ColumnSpan="2" Width="1269" Grid.Column="1" Grid.Row="5" />
         <TextBox Name="CLIOutput" Grid.Column="0" Grid.Row="5"  Grid.ColumnSpan="4" MinHeight="120" MaxHeight="120" MinWidth="1219" MaxWidth="1269" Margin="1,48,5,-48" Padding="3" Background="White" IsReadOnly="False" TextWrapping="Wrap"  VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">Error Log</TextBox>
